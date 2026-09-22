@@ -223,6 +223,73 @@ a:focus-visible {
   transform: scale(1.08) rotate(-8deg);
 }
 
+/* ============ PIN de acceso ============ */
+html.bloqueado .app-shell,
+html.bloqueado .theme-toggle-btn {
+  display: none;
+}
+
+.pin-lock-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 16px;
+}
+
+.pin-lock-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  padding: 36px 32px;
+  width: 100%;
+  max-width: 340px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: modal-entra 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.pin-lock-logo {
+  width: 56px;
+  height: 56px;
+  font-size: 26px;
+  margin: 0 auto 8px;
+}
+
+.pin-lock-card h2 {
+  font-size: 18px;
+}
+
+.pin-lock-input {
+  margin-top: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  font-size: 22px;
+  letter-spacing: 10px;
+  text-align: center;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.pin-lock-error {
+  color: var(--danger);
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.pin-lock-btn {
+  width: 100%;
+  margin-top: 8px;
+}
+
 .logo-mark {
   width: 34px;
   height: 34px;
