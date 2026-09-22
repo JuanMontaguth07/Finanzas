@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-  renderCategorias();
+  renderCategoriasLista();
+  inicializarCategorias();
 
   document.getElementById('btn-exportar-excel').addEventListener('click', exportarExcel);
   document.getElementById('btn-exportar-respaldo').addEventListener('click', exportarRespaldoJson);
@@ -33,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     importarRespaldoJson(file, modoImportacion, (ok, errorMsg) => {
       if (ok) {
         showToast(modoImportacion === 'combinar' ? 'Datos combinados correctamente.' : 'Respaldo importado correctamente.');
-        renderCategorias();
+        renderCategoriasLista();
       } else {
         showToast(`No se pudo importar el respaldo: ${errorMsg}`, 'error');
       }
@@ -58,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-borrar-confirmar').addEventListener('click', () => {
     Storage.resetState();
     cerrarModalBorrar();
-    renderCategorias();
+    renderCategoriasLista();
     showToast('Todos los datos han sido eliminados.');
   });
 
@@ -119,12 +120,106 @@ function buscarDuplicados() {
   });
 }
 
-function renderCategorias() {
-  const categorias = Storage.getCategorias();
-  document.getElementById('categorias-chips').innerHTML = categorias
-    .map((c) => {
-      const meta = getCategoryMeta(c);
-      return `<span class="chip" style="background:${meta.color}20;color:${meta.color}">${meta.emoji} ${escapeHtml(c)}</span>`;
-    })
+function renderCategoriasLista() {
+  const categorias = Storage.getCategoriasConMeta();
+  document.getElementById('categorias-lista').innerHTML = categorias
+    .map(
+      (c) => `
+    <div class="category-row">
+      <span class="chip" style="background:${c.color}20;color:${c.color}">${c.emoji} ${escapeHtml(c.nombre)}</span>
+      <div class="category-row-actions">
+        <button class="icon-btn" data-action="editar-categoria" data-nombre="${escapeHtml(c.nombre)}" aria-label="Editar">✎</button>
+        <button class="icon-btn icon-btn-danger" data-action="eliminar-categoria" data-nombre="${escapeHtml(c.nombre)}" aria-label="Eliminar">🗑</button>
+      </div>
+    </div>`
+    )
     .join('');
+}
+
+function inicializarCategorias() {
+  const overlay = document.getElementById('modal-categoria-overlay');
+  const titulo = document.getElementById('modal-categoria-title');
+  const form = document.getElementById('form-categoria');
+  const inputOriginal = document.getElementById('categoria-nombre-original');
+  const inputNombre = document.getElementById('input-categoria-nombre');
+  const inputEmoji = document.getElementById('input-categoria-emoji');
+  const inputColor = document.getElementById('input-categoria-color');
+
+  function abrirModal(categoria = null) {
+    inputOriginal.value = categoria ? categoria.nombre : '';
+    inputNombre.value = categoria ? categoria.nombre : '';
+    inputNombre.disabled = Boolean(categoria);
+    inputEmoji.value = categoria ? categoria.emoji : '';
+    inputColor.value = categoria ? categoria.color : '#8b5cf6';
+    titulo.textContent = categoria ? `Editar "${categoria.nombre}"` : 'Nueva categoría';
+    clearFieldErrors(form);
+    overlay.hidden = false;
+    inputNombre.focus();
+  }
+
+  function cerrarModal() {
+    overlay.hidden = true;
+    inputNombre.disabled = false;
+    form.reset();
+    clearFieldErrors(form);
+  }
+
+  document.getElementById('btn-nueva-categoria').addEventListener('click', () => abrirModal());
+  document.getElementById('modal-categoria-close').addEventListener('click', cerrarModal);
+  document.getElementById('btn-categoria-cancelar').addEventListener('click', cerrarModal);
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) cerrarModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !overlay.hidden) cerrarModal();
+  });
+
+  document.getElementById('categorias-lista').addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    const { action, nombre } = btn.dataset;
+
+    if (action === 'editar-categoria') {
+      const categoria = Storage.getCategoriasConMeta().find((c) => c.nombre === nombre);
+      if (categoria) abrirModal(categoria);
+    } else if (action === 'eliminar-categoria') {
+      if (!confirm(`¿Eliminar la categoría "${nombre}"?`)) return;
+      try {
+        Storage.deleteCategoria(nombre);
+        renderCategoriasLista();
+        showToast('Categoría eliminada.');
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    clearFieldErrors(form);
+
+    const esEdicion = Boolean(inputOriginal.value);
+    const nombre = inputNombre.value.trim();
+    const emoji = inputEmoji.value.trim();
+    const color = inputColor.value;
+
+    if (!nombre) {
+      showFieldError(inputNombre, 'Escribe un nombre.');
+      return;
+    }
+
+    try {
+      if (esEdicion) {
+        Storage.updateCategoria(inputOriginal.value, { emoji: emoji || '🏷️', color });
+        showToast('Categoría actualizada.');
+      } else {
+        Storage.addCategoria({ nombre, emoji: emoji || '🏷️', color });
+        showToast('Categoría creada.');
+      }
+      cerrarModal();
+      renderCategoriasLista();
+    } catch (err) {
+      showFieldError(inputNombre, err.message);
+    }
+  });
 }

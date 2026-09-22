@@ -2,6 +2,14 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('financeAppTheme');
+        if (t === 'oscuro' || t === 'claro') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#8b5cf6">
   <link rel="manifest" href="manifest.json">
@@ -11,6 +19,7 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body data-page="configuracion">
+  <button class="theme-toggle-btn" id="theme-toggle" aria-label="Cambiar tema">🌙</button>
   <div class="app-shell">
     <aside class="sidebar">
       <div class="sidebar-header">
@@ -51,14 +60,27 @@
       </section>
 
       <section class="card">
+        <h2 class="section-title">Apariencia</h2>
+        <p class="settings-hint">Elige el tema de la aplicación.</p>
+        <div class="segmented segmented-tema" id="tema-segmented">
+          <button type="button" class="segmented-option" data-tema="claro">☀️ Claro</button>
+          <button type="button" class="segmented-option" data-tema="auto">🖥️ Automático</button>
+          <button type="button" class="segmented-option" data-tema="oscuro">🌙 Oscuro</button>
+        </div>
+      </section>
+
+      <section class="card">
         <h2 class="section-title">Moneda</h2>
         <p class="settings-hint">La aplicación trabaja actualmente en <strong>COP — Peso colombiano</strong>. Soporte para más monedas es una mejora futura.</p>
       </section>
 
       <section class="card">
         <h2 class="section-title">Categorías</h2>
-        <p class="settings-hint">Categorías disponibles para tus movimientos y presupuestos.</p>
-        <div id="categorias-chips" class="category-chips"></div>
+        <p class="settings-hint">Personaliza el nombre, emoji y color de tus categorías, o crea nuevas.</p>
+        <div id="categorias-lista" class="category-list"></div>
+        <div class="settings-actions" style="margin-top: 14px;">
+          <button class="btn btn-ghost" id="btn-nueva-categoria">+ Nueva categoría</button>
+        </div>
       </section>
 
       <section class="card">
@@ -95,6 +117,38 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="modal-categoria-overlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-categoria-title">
+      <div class="modal-header">
+        <h2 id="modal-categoria-title">Nueva categoría</h2>
+        <button class="modal-close" id="modal-categoria-close" aria-label="Cerrar">&times;</button>
+      </div>
+      <form id="form-categoria" class="form-grid">
+        <input type="hidden" id="categoria-nombre-original">
+
+        <div class="form-field form-field-full">
+          <label for="input-categoria-nombre">Nombre</label>
+          <input type="text" id="input-categoria-nombre" placeholder="Ej. Mascotas" required>
+        </div>
+
+        <div class="form-field">
+          <label for="input-categoria-emoji">Emoji</label>
+          <input type="text" id="input-categoria-emoji" placeholder="🐾" maxlength="4">
+        </div>
+
+        <div class="form-field">
+          <label for="input-categoria-color">Color</label>
+          <input type="color" id="input-categoria-color" value="#8b5cf6">
+        </div>
+
+        <div class="form-actions form-field-full">
+          <button type="button" class="btn btn-ghost" id="btn-categoria-cancelar">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="lib/xlsx.full.min.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/format.js"></script>
@@ -103,6 +157,7 @@
   <script src="js/ui.js"></script>
   <script src="js/nav.js"></script>
   <script src="js/configuracion.js"></script>
+  <script src="js/theme.js"></script>
   <script src="js/pwa.js"></script>
 </body>
 </html>

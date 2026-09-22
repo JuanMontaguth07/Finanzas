@@ -28,19 +28,35 @@ document.addEventListener('DOMContentLoaded', () => {
   attachCurrencyMask(els.inputObjetivoMeta);
   attachCurrencyMask(els.inputAporteValor);
 
+  function diasRestantesTexto(fechaObjetivo) {
+    if (!fechaObjetivo) return '';
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    const [y, m, d] = fechaObjetivo.split('-').map(Number);
+    const objetivo = new Date(y, m - 1, d);
+    const dias = Math.round((objetivo - hoy) / 86400000);
+    if (dias < 0) return ' · <span class="goal-card-overdue">venció hace ' + Math.abs(dias) + ' día(s)</span>';
+    if (dias === 0) return ' · <span class="goal-card-overdue">¡es hoy!</span>';
+    return ` · quedan ${dias} día${dias === 1 ? '' : 's'}`;
+  }
+
   function render() {
-    const objetivos = Storage.getObjetivos();
+    const objetivos = Storage.getObjetivos()
+      .slice()
+      .sort((a, b) => (b.prioritario === true) - (a.prioritario === true));
     els.empty.hidden = objetivos.length > 0;
 
     els.list.innerHTML = objetivos
       .map((o) => {
         const ahorrado = Storage.getAhorradoObjetivo(o);
         const pct = Math.min(Math.round((ahorrado / o.meta) * 100), 100);
+        const esPrioritario = o.prioritario === true;
         return `
-        <div class="card goal-card">
+        <div class="card goal-card${esPrioritario ? ' goal-card-prioritario' : ''}">
           <div class="goal-card-header">
             <h3>🎯 ${escapeHtml(o.nombre)}</h3>
             <div class="goal-card-actions">
+              <button class="icon-btn${esPrioritario ? ' icon-btn-star-active' : ''}" data-action="prioridad" data-id="${o.id}" aria-label="${esPrioritario ? 'Quitar de prioritarios' : 'Marcar como prioritario'}" title="${esPrioritario ? 'Quitar de prioritarios' : 'Marcar como prioritario'}">${esPrioritario ? '⭐' : '☆'}</button>
               <button class="icon-btn" data-action="editar" data-id="${o.id}" aria-label="Editar">✎</button>
               <button class="icon-btn icon-btn-danger" data-action="eliminar" data-id="${o.id}" aria-label="Eliminar">🗑</button>
             </div>
@@ -50,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <span class="goal-card-ahorrado">${formatCurrency(ahorrado)}</span>
             <span class="goal-card-meta">de ${formatCurrency(o.meta)} (${pct}%)</span>
           </div>
-          ${o.fechaObjetivo ? `<p class="goal-card-date">Meta para: ${formatDate(o.fechaObjetivo)}</p>` : ''}
+          ${o.fechaObjetivo ? `<p class="goal-card-date">Meta para: ${formatDate(o.fechaObjetivo)}${diasRestantesTexto(o.fechaObjetivo)}</p>` : ''}
           <button class="btn btn-ghost goal-card-aporte-btn" data-action="aportar" data-id="${o.id}">+ Agregar aporte</button>
         </div>`;
       })
@@ -171,7 +187,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const objetivo = Storage.getObjetivos().find((o) => o.id === id);
     if (!objetivo) return;
 
-    if (action === 'editar') {
+    if (action === 'prioridad') {
+      Storage.toggleObjetivoPrioritario(id);
+      render();
+    } else if (action === 'editar') {
       abrirModalObjetivo(objetivo);
     } else if (action === 'eliminar') {
       if (confirm(`¿Eliminar el objetivo "${objetivo.nombre}"? Se perderán sus aportes registrados.`)) {

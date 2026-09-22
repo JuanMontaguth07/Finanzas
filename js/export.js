@@ -53,12 +53,32 @@ function construirLibroExcel() {
 
 function exportarExcel() {
   if (typeof XLSX === 'undefined') {
-    alert('No se pudo cargar el generador de Excel. Revisa que el archivo lib/xlsx.full.min.js esté presente.');
+    showToast('No se pudo cargar el generador de Excel. Revisa que el archivo lib/xlsx.full.min.js esté presente.', 'error');
     return;
   }
-  const libro = construirLibroExcel();
-  XLSX.writeFile(libro, `finanzas-${todayIso()}.xlsx`);
-  showToast('Excel exportado.');
+
+  const boton = document.getElementById('btn-exportar-excel');
+  const textoOriginal = boton ? boton.innerHTML : '';
+  if (boton) {
+    boton.disabled = true;
+    boton.innerHTML = '<span class="spinner spinner-sm"></span> Generando…';
+  }
+
+  // setTimeout deja que el navegador pinte el spinner antes de hacer el
+  // trabajo sincrono (construir + escribir el libro), que puede tomar un
+  // instante con muchos movimientos.
+  setTimeout(() => {
+    try {
+      const libro = construirLibroExcel();
+      XLSX.writeFile(libro, `finanzas-${todayIso()}.xlsx`);
+      showToast('Excel exportado.');
+    } finally {
+      if (boton) {
+        boton.disabled = false;
+        boton.innerHTML = textoOriginal;
+      }
+    }
+  }, 50);
 }
 
 function exportarRespaldoJson() {

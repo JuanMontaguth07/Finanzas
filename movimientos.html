@@ -2,6 +2,14 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('financeAppTheme');
+        if (t === 'oscuro' || t === 'claro') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#8b5cf6">
   <link rel="manifest" href="manifest.json">
@@ -11,6 +19,7 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body data-page="movimientos">
+  <button class="theme-toggle-btn" id="theme-toggle" aria-label="Cambiar tema">🌙</button>
   <div class="app-shell">
     <aside class="sidebar">
       <div class="sidebar-header">
@@ -151,6 +160,7 @@
   <script src="js/movimientos.js"></script>
   <script src="js/nequi-parser.js"></script>
   <script src="js/importar-nequi.js"></script>
+  <script src="js/theme.js"></script>
   <script src="js/pwa.js"></script>
 </body>
 </html>
