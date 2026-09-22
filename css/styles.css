@@ -373,6 +373,12 @@ a:focus-visible {
 .icon-btn:hover { background: var(--surface-alt); }
 .icon-btn-danger:hover { background: var(--danger-soft); border-color: var(--danger); color: var(--danger); }
 
+.page-header-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 /* ============ Modal ============ */
 .modal-overlay {
   position: fixed;
@@ -395,6 +401,10 @@ a:focus-visible {
   max-width: 480px;
   max-height: 90vh;
   overflow-y: auto;
+}
+
+.modal-wide {
+  max-width: 640px;
 }
 
 .modal-header {
@@ -876,6 +886,72 @@ a:focus-visible {
 
 .modal-footer {
   padding: 20px;
+}
+
+/* ============ Importar extracto ============ */
+.import-preview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 360px;
+  overflow-y: auto;
+  margin-top: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.import-row {
+  display: grid;
+  grid-template-columns: 20px 90px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.import-row:last-child { border-bottom: none; }
+.import-row:hover { background: var(--surface-alt); }
+
+.import-row-duplicado {
+  opacity: 0.5;
+}
+
+.import-row-fecha {
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.import-row-desc {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.import-row-tag {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.import-row-valor {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .import-row {
+    grid-template-columns: 20px 1fr;
+    grid-template-areas:
+      "check fecha"
+      "check desc"
+      "check valor";
+  }
+  .import-row input { grid-area: check; }
+  .import-row-fecha { grid-area: fecha; }
+  .import-row-desc { grid-area: desc; white-space: normal; }
+  .import-row-valor { grid-area: valor; }
 }
 
 /* ============ Field errors ============ */
