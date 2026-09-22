@@ -118,13 +118,13 @@ function renderIngresosVsGastos() {
   container.innerHTML = serie
     .map(
       (s) => `
-    <div class="chart-bar-group">
+    <a class="chart-bar-group" href="movimientos.html?mes=${s.mes}" title="Ver movimientos de ${monthLabel(s.mes)} en detalle">
       <div class="chart-bar-pair">
         <div class="chart-bar chart-bar-ingreso" style="height:${(s.ingresos / max) * 100}%" title="Ingresos: ${formatCurrency(s.ingresos)}"></div>
         <div class="chart-bar chart-bar-gasto" style="height:${(s.gastos / max) * 100}%" title="Gastos: ${formatCurrency(s.gastos)}"></div>
       </div>
       <span class="chart-bar-label">${monthLabel(s.mes)}</span>
-    </div>`
+    </a>`
     )
     .join('');
 }

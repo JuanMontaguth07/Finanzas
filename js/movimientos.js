@@ -196,6 +196,14 @@ document.addEventListener('DOMContentLoaded', () => {
     renderTabla();
   });
 
+  // Si llegamos desde un enlace del dashboard (ej. clic en una barra del
+  // gráfico de un mes), pre-aplicamos ese filtro de mes.
+  const mesDesdeUrl = new URLSearchParams(window.location.search).get('mes');
+  if (mesDesdeUrl) {
+    state.filtros.mes = mesDesdeUrl;
+    els.filtroMes.value = mesDesdeUrl;
+  }
+
   poblarCategorias();
   renderTabla();
 
