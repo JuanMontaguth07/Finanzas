@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mis-finanzas-v1';
+const CACHE_NAME = 'mis-finanzas-v2';
 
 const ASSETS = [
   './',
@@ -18,6 +18,8 @@ const ASSETS = [
   './js/pwa.js',
   './js/dashboard.js',
   './js/movimientos.js',
+  './js/nequi-parser.js',
+  './js/importar-nequi.js',
   './js/presupuestos.js',
   './js/objetivos.js',
   './js/configuracion.js',
