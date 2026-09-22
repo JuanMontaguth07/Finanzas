@@ -1,4 +1,10 @@
-const CACHE_NAME = 'mis-finanzas-v2';
+const CACHE_NAME = 'mis-finanzas-v3';
+
+// El "app shell" (HTML/JS/CSS/manifest) se sirve siempre de red primero,
+// para que las actualizaciones se vean de inmediato mientras haya internet.
+// Las librerías pesadas (fuentes, xlsx, pdf.js) casi nunca cambian, asi que
+// esas se sirven del cache primero por velocidad.
+const APP_SHELL_PATTERN = /\.(html|js|css|json)$/;
 
 const ASSETS = [
   './',
@@ -49,14 +55,19 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Cache-first: sirve del cache si existe; si no, va a la red y guarda copia para la próxima vez offline.
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-      return fetch(event.request)
+  const url = new URL(event.request.url);
+  if (url.origin !== self.location.origin) return;
+
+  const esAppShell = event.request.mode === 'navigate' || APP_SHELL_PATTERN.test(url.pathname);
+
+  if (esAppShell) {
+    // Network-first: intenta traer la version mas reciente; si no hay
+    // internet, cae al cache para seguir funcionando offline.
+    event.respondWith(
+      fetch(event.request)
         .then((response) => {
           if (response.ok) {
             const clone = response.clone();
@@ -64,7 +75,22 @@ self.addEventListener('fetch', (event) => {
           }
           return response;
         })
-        .catch(() => cached);
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Cache-first para librerias pesadas que casi nunca cambian.
+  event.respondWith(
+    caches.match(event.request).then((cached) => {
+      if (cached) return cached;
+      return fetch(event.request).then((response) => {
+        if (response.ok) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        }
+        return response;
+      });
     })
   );
 });
