@@ -53,12 +53,36 @@ document.addEventListener('DOMContentLoaded', () => {
     );
   }
 
+  // Si el PDF tiene contraseña, pdf.js llama a onPassword en vez de resolver
+  // directamente. Pedimos la contraseña con un prompt y reintentamos; si el
+  // usuario cancela, rechazamos con un error identificable para no mostrar
+  // un mensaje de "error" cuando en realidad solo canceló.
+  function abrirPdfConContrasena(pdfjsLib, buffer) {
+    return new Promise((resolve, reject) => {
+      const loadingTask = pdfjsLib.getDocument({ data: buffer });
+      loadingTask.onPassword = (callback, reason) => {
+        const mensaje =
+          reason === pdfjsLib.PasswordResponses.INCORRECT_PASSWORD
+            ? 'Contraseña incorrecta. Intenta de nuevo:'
+            : 'Este PDF está protegido con contraseña. Ingrésala:';
+        const password = window.prompt(mensaje);
+        if (!password) {
+          loadingTask.destroy();
+          reject(new Error('IMPORTAR_CANCELADO'));
+          return;
+        }
+        callback(password);
+      };
+      loadingTask.promise.then(resolve, reject);
+    });
+  }
+
   async function extraerLineasPdf(file) {
     const pdfjsLib = await import('../lib/pdfjs/pdf.min.mjs');
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'lib/pdfjs/pdf.worker.min.mjs';
 
     const buffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+    const pdf = await abrirPdfConContrasena(pdfjsLib, buffer);
 
     const lineas = [];
     for (let numPagina = 1; numPagina <= pdf.numPages; numPagina++) {
@@ -134,6 +158,10 @@ document.addEventListener('DOMContentLoaded', () => {
       movimientosEncontrados = parsearLineasNequi(lineas);
       renderResultados();
     } catch (err) {
+      if (err.message === 'IMPORTAR_CANCELADO') {
+        els.body.innerHTML = '<p class="empty-state-inline">Importación cancelada.</p>';
+        return;
+      }
       console.error('Error leyendo el extracto:', err);
       els.body.innerHTML =
         '<p class="empty-state-inline">Hubo un error leyendo el PDF. Verifica que el archivo no esté dañado e inténtalo de nuevo.</p>';
