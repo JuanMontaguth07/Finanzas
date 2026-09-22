@@ -61,7 +61,63 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCategorias();
     showToast('Todos los datos han sido eliminados.');
   });
+
+  document.getElementById('btn-buscar-duplicados').addEventListener('click', buscarDuplicados);
 });
+
+function buscarDuplicados() {
+  const movimientos = Storage.getMovimientos();
+  const grupos = new Map();
+
+  movimientos.forEach((m) => {
+    const llave = `${m.fecha}|${m.descripcion}|${m.tipo}|${m.valor}`;
+    if (!grupos.has(llave)) grupos.set(llave, []);
+    grupos.get(llave).push(m);
+  });
+
+  const duplicados = Array.from(grupos.values()).filter((grupo) => grupo.length > 1);
+  const contenedor = document.getElementById('duplicados-resultado');
+
+  if (duplicados.length === 0) {
+    contenedor.innerHTML = '<p class="empty-state-inline">No se encontraron movimientos duplicados. 🎉</p>';
+    return;
+  }
+
+  const totalSobrantes = duplicados.reduce((sum, grupo) => sum + (grupo.length - 1), 0);
+
+  contenedor.innerHTML = `
+    <p class="settings-hint" style="color: var(--danger); font-weight: 600;">
+      Se encontraron ${duplicados.length} movimiento(s) repetidos (${totalSobrantes} copia(s) de más).
+    </p>
+    <div class="import-preview-list">
+      ${duplicados
+        .map(
+          (grupo) => `
+        <div class="import-row" style="cursor: default;">
+          <span></span>
+          <span class="import-row-fecha">${formatDate(grupo[0].fecha)}</span>
+          <span class="import-row-desc">${escapeHtml(grupo[0].descripcion)} <span class="import-row-tag">× ${grupo.length}</span></span>
+          <span class="import-row-valor valor-${grupo[0].tipo}">${formatCurrency(grupo[0].valor)}</span>
+        </div>`
+        )
+        .join('')}
+    </div>
+    <div class="settings-actions" style="margin-top: 14px;">
+      <button class="btn btn-danger" id="btn-borrar-duplicados">Dejar solo una copia de cada uno</button>
+    </div>
+  `;
+
+  document.getElementById('btn-borrar-duplicados').addEventListener('click', () => {
+    if (!confirm(`Esto eliminará ${totalSobrantes} movimiento(s) duplicados, dejando solo una copia de cada uno. ¿Continuar?`)) return;
+
+    duplicados.forEach((grupo) => {
+      grupo.slice(1).forEach((m) => Storage.deleteMovimiento(m.id));
+    });
+
+    showToast(`Se eliminaron ${totalSobrantes} movimiento(s) duplicados.`);
+    buscarDuplicados();
+  });
+}
 
 function renderCategorias() {
   const categorias = Storage.getCategorias();

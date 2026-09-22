@@ -61,6 +61,40 @@ body {
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
+  position: relative;
+  overflow-x: hidden;
+}
+
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(90px);
+  z-index: 0;
+  opacity: 0.28;
+  pointer-events: none;
+}
+
+body::before {
+  width: 420px;
+  height: 420px;
+  background: var(--primary);
+  top: -140px;
+  right: -140px;
+}
+
+body::after {
+  width: 380px;
+  height: 380px;
+  background: var(--accent-pink);
+  bottom: -160px;
+  left: -120px;
+}
+
+.app-shell {
+  position: relative;
+  z-index: 1;
 }
 
 h1, h2, h3 { font-weight: 700; }
@@ -498,6 +532,60 @@ a:focus-visible {
   margin-bottom: 14px;
 }
 
+/* ============ Hero balance ============ */
+.hero-balance {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  padding: 30px 36px;
+  background: linear-gradient(135deg, var(--primary), var(--accent-pink));
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hero-balance-label {
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.9;
+  position: relative;
+}
+
+.hero-balance-value {
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  position: relative;
+}
+
+.hero-balance::before,
+.hero-balance::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.hero-balance::before {
+  width: 220px;
+  height: 220px;
+  top: -110px;
+  right: -50px;
+}
+
+.hero-balance::after {
+  width: 130px;
+  height: 130px;
+  bottom: -80px;
+  right: 130px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 480px) {
+  .hero-balance-value { font-size: 32px; }
+}
+
 /* ============ KPI cards ============ */
 .kpi-grid {
   display: grid;
@@ -533,9 +621,6 @@ a:focus-visible {
 .kpi-positive { color: var(--success); }
 .kpi-negative { color: var(--danger); }
 .kpi-accent { color: var(--primary); }
-
-.kpi-violet { background: linear-gradient(135deg, #f5f0ff, var(--surface)); }
-.kpi-violet .kpi-value { color: var(--primary-dark); }
 
 .kpi-green { background: linear-gradient(135deg, #e9fbf3, var(--surface)); }
 .kpi-green .kpi-value { color: var(--success); }
