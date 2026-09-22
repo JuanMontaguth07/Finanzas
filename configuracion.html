@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#8b5cf6">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <title>Configuración · Mis Finanzas</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="configuracion">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span class="logo-mark">💸</span>
+        <span class="logo-text">Finanzas</span>
+      </div>
+      <nav id="sidebar-nav" class="sidebar-nav"></nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="page-header">
+        <div>
+          <h1>Configuración</h1>
+          <p class="page-subtitle">Moneda, categorías, exportación y respaldo de datos</p>
+        </div>
+      </header>
+
+      <section class="card">
+        <h2 class="section-title">Exportar datos</h2>
+        <p class="settings-hint">Descarga todos tus movimientos, resumen y objetivos en un archivo Excel, o guarda un respaldo completo para recuperarlo más adelante.</p>
+        <div class="settings-actions">
+          <button class="btn btn-primary" id="btn-exportar-excel">Exportar a Excel</button>
+          <button class="btn btn-ghost" id="btn-exportar-respaldo">Exportar respaldo (JSON)</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Importar respaldo</h2>
+        <p class="settings-hint">
+          <strong>Combinar</strong> une los datos del archivo con los que ya tienes aquí, sin duplicar nada (útil si usas la app en más de un navegador o equipo).
+          <strong>Reemplazar</strong> borra lo actual y deja solo lo del archivo (útil para restaurar tras perder los datos).
+        </p>
+        <div class="settings-actions">
+          <button class="btn btn-primary" id="btn-importar-combinar">Importar y combinar</button>
+          <button class="btn btn-ghost" id="btn-importar-reemplazar">Importar y reemplazar</button>
+          <input type="file" id="input-importar-respaldo" accept="application/json" hidden>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Moneda</h2>
+        <p class="settings-hint">La aplicación trabaja actualmente en <strong>COP — Peso colombiano</strong>. Soporte para más monedas es una mejora futura.</p>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Categorías</h2>
+        <p class="settings-hint">Categorías disponibles para tus movimientos y presupuestos.</p>
+        <div id="categorias-chips" class="category-chips"></div>
+      </section>
+
+      <section class="card danger-zone">
+        <h2 class="section-title">Zona de peligro</h2>
+        <p class="settings-hint">Elimina permanentemente todos los movimientos, presupuestos y objetivos guardados en este navegador.</p>
+        <button class="btn btn-danger" id="btn-borrar-datos">Borrar todos los datos</button>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="modal-borrar-overlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-borrar-title">
+      <div class="modal-header">
+        <h2 id="modal-borrar-title">¿Borrar todos los datos?</h2>
+        <button class="modal-close" id="btn-borrar-close" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Esta acción eliminará permanentemente todos tus movimientos, presupuestos y objetivos guardados en este navegador. <strong>No se puede deshacer.</strong></p>
+        <p>Si quieres conservar tus datos, cancela y usa primero "Exportar respaldo".</p>
+      </div>
+      <div class="form-actions modal-footer">
+        <button type="button" class="btn btn-ghost" id="btn-borrar-cancelar">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="btn-borrar-confirmar">Sí, borrar todo</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="lib/xlsx.full.min.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/format.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/export.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/configuracion.js"></script>
+  <script src="js/pwa.js"></script>
+</body>
+</html>

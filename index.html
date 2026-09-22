@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#8b5cf6">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <title>Dashboard · Mis Finanzas</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="dashboard">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span class="logo-mark">💸</span>
+        <span class="logo-text">Finanzas</span>
+      </div>
+      <nav id="sidebar-nav" class="sidebar-nav"></nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="page-header">
+        <div>
+          <h1>Dashboard</h1>
+          <p class="page-subtitle">Resumen de tu situación financiera</p>
+        </div>
+      </header>
+
+      <section class="kpi-grid">
+        <div class="card kpi-card kpi-violet">
+          <span class="kpi-label">💜 Dinero disponible</span>
+          <span class="kpi-value" id="kpi-disponible">$ 0</span>
+        </div>
+        <div class="card kpi-card kpi-green">
+          <span class="kpi-label">📈 Ingresos del mes</span>
+          <span class="kpi-value" id="kpi-ingresos">$ 0</span>
+        </div>
+        <div class="card kpi-card kpi-rose">
+          <span class="kpi-label">📉 Gastos del mes</span>
+          <span class="kpi-value" id="kpi-gastos">$ 0</span>
+        </div>
+        <div class="card kpi-card kpi-amber">
+          <span class="kpi-label">📄 Obligaciones pendientes</span>
+          <span class="kpi-value" id="kpi-obligaciones">—</span>
+          <span class="kpi-sub" id="kpi-obligaciones-sub"></span>
+        </div>
+        <div class="card kpi-card kpi-pink">
+          <span class="kpi-label">🐷 Ahorro total</span>
+          <span class="kpi-value" id="kpi-ahorro">$ 0</span>
+        </div>
+        <div class="card kpi-card kpi-cyan">
+          <span class="kpi-label">✨ Tasa de ahorro (mes)</span>
+          <span class="kpi-value" id="kpi-tasa-ahorro">—</span>
+          <span class="kpi-sub" id="kpi-tasa-ahorro-sub"></span>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Progreso de objetivos</h2>
+        <div id="objetivos-resumen" class="goals-mini-list"></div>
+      </section>
+
+      <section class="charts-grid">
+        <div class="card">
+          <h2 class="section-title">Gastos por categoría (este mes)</h2>
+          <p class="settings-hint">La variación es contra el mes anterior.</p>
+          <div id="chart-gastos-categoria" class="hbar-chart"></div>
+        </div>
+        <div class="card">
+          <h2 class="section-title">Ingresos vs gastos (últimos 6 meses)</h2>
+          <div id="chart-ingresos-gastos" class="chart-bars"></div>
+          <div class="chart-legend">
+            <span class="legend-item"><span class="legend-dot legend-dot-ingreso"></span>Ingresos</span>
+            <span class="legend-item"><span class="legend-dot legend-dot-gasto"></span>Gastos</span>
+          </div>
+        </div>
+        <div class="card">
+          <h2 class="section-title">Evolución del ahorro (últimos 6 meses)</h2>
+          <div id="chart-ahorro" class="chart-bars"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/format.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/pwa.js"></script>
+</body>
+</html>

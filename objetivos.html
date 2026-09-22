@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#8b5cf6">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <title>Objetivos · Mis Finanzas</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="objetivos">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span class="logo-mark">💸</span>
+        <span class="logo-text">Finanzas</span>
+      </div>
+      <nav id="sidebar-nav" class="sidebar-nav"></nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="page-header">
+        <div>
+          <h1>Objetivos</h1>
+          <p class="page-subtitle">Tus metas de ahorro, como el viaje a Chile</p>
+        </div>
+        <button class="btn btn-primary" id="btn-nuevo-objetivo">+ Nuevo objetivo</button>
+      </header>
+
+      <section id="objetivos-list" class="goals-grid"></section>
+      <p class="empty-state-inline" id="objetivos-empty" hidden>
+        Aún no tienes objetivos de ahorro. Crea el primero, por ejemplo "Viaje a Chile".
+      </p>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="modal-objetivo-overlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-objetivo-title">
+      <div class="modal-header">
+        <h2 id="modal-objetivo-title">Nuevo objetivo</h2>
+        <button class="modal-close" id="modal-objetivo-close" aria-label="Cerrar">&times;</button>
+      </div>
+      <form id="form-objetivo" class="form-grid">
+        <input type="hidden" id="objetivo-id">
+
+        <div class="form-field form-field-full">
+          <label for="input-objetivo-nombre">Nombre</label>
+          <input type="text" id="input-objetivo-nombre" placeholder="Ej. Viaje a Chile" required>
+        </div>
+
+        <div class="form-field">
+          <label for="input-objetivo-meta">Meta (COP)</label>
+          <div class="currency-input-wrap">
+            <span>$</span>
+            <input type="text" id="input-objetivo-meta" placeholder="5.000.000" required>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="input-objetivo-fecha">Fecha objetivo (opcional)</label>
+          <input type="date" id="input-objetivo-fecha">
+        </div>
+
+        <div class="form-actions form-field-full">
+          <button type="button" class="btn btn-ghost" id="btn-objetivo-cancelar">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-aporte-overlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-aporte-title">
+      <div class="modal-header">
+        <h2 id="modal-aporte-title">Agregar aporte</h2>
+        <button class="modal-close" id="modal-aporte-close" aria-label="Cerrar">&times;</button>
+      </div>
+      <form id="form-aporte" class="form-grid">
+        <input type="hidden" id="aporte-objetivo-id">
+
+        <div class="form-field">
+          <label for="input-aporte-valor">Valor (COP)</label>
+          <div class="currency-input-wrap">
+            <span>$</span>
+            <input type="text" id="input-aporte-valor" placeholder="100.000" required>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="input-aporte-fecha">Fecha</label>
+          <input type="date" id="input-aporte-fecha" required>
+        </div>
+
+        <div class="form-actions form-field-full">
+          <button type="button" class="btn btn-ghost" id="btn-aporte-cancelar">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Agregar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/format.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/objetivos.js"></script>
+  <script src="js/pwa.js"></script>
+</body>
+</html>

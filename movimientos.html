@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#8b5cf6">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <title>Movimientos · Mis Finanzas</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="movimientos">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span class="logo-mark">💸</span>
+        <span class="logo-text">Finanzas</span>
+      </div>
+      <nav id="sidebar-nav" class="sidebar-nav"></nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="page-header">
+        <div>
+          <h1>Movimientos</h1>
+          <p class="page-subtitle">Registra y consulta tus ingresos y gastos</p>
+        </div>
+        <button class="btn btn-primary" id="btn-nuevo-movimiento">+ Nuevo movimiento</button>
+      </header>
+
+      <section class="card filters-bar">
+        <div class="filter-field">
+          <label for="filtro-mes">Mes</label>
+          <input type="month" id="filtro-mes">
+        </div>
+        <div class="filter-field">
+          <label for="filtro-categoria">Categoría</label>
+          <select id="filtro-categoria"></select>
+        </div>
+        <div class="filter-field">
+          <label for="filtro-tipo">Tipo</label>
+          <select id="filtro-tipo">
+            <option value="">Todos</option>
+            <option value="ingreso">Ingreso</option>
+            <option value="gasto">Gasto</option>
+          </select>
+        </div>
+        <div class="filter-field filter-search">
+          <label for="filtro-busqueda">Buscar</label>
+          <input type="search" id="filtro-busqueda" placeholder="Buscar por descripción…">
+        </div>
+        <button class="btn btn-ghost" id="btn-limpiar-filtros">Limpiar filtros</button>
+      </section>
+
+      <section class="card">
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Descripción</th>
+                <th>Categoría</th>
+                <th>Tipo</th>
+                <th>Valor</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-movimientos-body"></tbody>
+          </table>
+        </div>
+        <p class="empty-state-inline" id="movimientos-empty" hidden>
+          No hay movimientos que coincidan con los filtros. Prueba a limpiar los filtros o crea uno nuevo.
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="modal-overlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h2 id="modal-title">Nuevo movimiento</h2>
+        <button class="modal-close" id="modal-close" aria-label="Cerrar">&times;</button>
+      </div>
+      <form id="form-movimiento" class="form-grid">
+        <input type="hidden" id="movimiento-id">
+
+        <div class="form-field form-field-full">
+          <label>Tipo</label>
+          <div class="segmented" id="tipo-segmented">
+            <button type="button" class="segmented-option active" data-tipo="gasto">Gasto</button>
+            <button type="button" class="segmented-option" data-tipo="ingreso">Ingreso</button>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="input-fecha">Fecha</label>
+          <input type="date" id="input-fecha" required>
+        </div>
+
+        <div class="form-field">
+          <label for="input-valor">Valor (COP)</label>
+          <div class="currency-input-wrap">
+            <span>$</span>
+            <input type="text" id="input-valor" placeholder="0" required>
+          </div>
+        </div>
+
+        <div class="form-field form-field-full">
+          <label for="input-descripcion">Descripción</label>
+          <input type="text" id="input-descripcion" placeholder="Ej. Almuerzo" required>
+        </div>
+
+        <div class="form-field form-field-full">
+          <label for="input-categoria">Categoría</label>
+          <select id="input-categoria" required></select>
+        </div>
+
+        <div class="form-actions form-field-full">
+          <button type="button" class="btn btn-ghost" id="btn-cancelar">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/format.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/movimientos.js"></script>
+  <script src="js/pwa.js"></script>
+</body>
+</html>
