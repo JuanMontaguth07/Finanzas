@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    els.body.innerHTML = '<p class="empty-state-inline">Leyendo el PDF…</p>';
+    els.body.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>Leyendo el PDF…</p></div>';
     els.confirmar.disabled = true;
 
     try {

@@ -30,19 +30,11 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-const CATEGORY_META = {
-  Comida: { emoji: '🍔', color: '#fb923c' },
-  Transporte: { emoji: '🚌', color: '#38bdf8' },
-  Gym: { emoji: '🏋️', color: '#34d399' },
-  Regalos: { emoji: '🎁', color: '#f472b6' },
-  Entretenimiento: { emoji: '🎮', color: '#a78bfa' },
-  Obligaciones: { emoji: '📄', color: '#64748b' },
-  Chile: { emoji: '✈️', color: '#22d3ee' },
-  Otros: { emoji: '📦', color: '#94a3b8' },
-};
-
 const CATEGORY_DEFAULT = { emoji: '🏷️', color: '#94a3b8' };
 
+// El emoji/color de cada categoria ahora vive en Storage (el usuario los
+// puede editar desde Configuración), asi que se consulta ahi en vez de un
+// mapa fijo en el codigo.
 function getCategoryMeta(categoria) {
-  return CATEGORY_META[categoria] || CATEGORY_DEFAULT;
+  return Storage.getCategoriaMeta(categoria) || CATEGORY_DEFAULT;
 }
