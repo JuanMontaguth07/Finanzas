@@ -73,6 +73,26 @@ const Storage = {
     return movimiento;
   },
 
+  // Guarda varios movimientos en una sola lectura/escritura (usado por la
+  // importacion de extractos) en vez de una por movimiento, para que sea
+  // rapido con lotes grandes y para que un fallo a mitad de camino no deje
+  // el guardado a medias sin avisar.
+  addMovimientos(dataArray) {
+    const state = loadState();
+    const nuevos = dataArray.map((data) => ({
+      id: generateId(),
+      fecha: data.fecha,
+      descripcion: data.descripcion.trim(),
+      categoria: data.categoria,
+      tipo: data.tipo,
+      valor: Number(data.valor),
+      createdAt: new Date().toISOString(),
+    }));
+    state.movimientos.push(...nuevos);
+    saveState(state);
+    return nuevos;
+  },
+
   updateMovimiento(id, data) {
     const state = loadState();
     const idx = state.movimientos.findIndex((m) => m.id === id);

@@ -181,10 +181,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const marcados = Array.from(els.body.querySelectorAll('input[type="checkbox"]:checked')).map((chk) =>
       Number(chk.dataset.index)
     );
-    marcados.forEach((i) => Storage.addMovimiento(movimientosEncontrados[i]));
+    const seleccionados = marcados.map((i) => movimientosEncontrados[i]);
 
-    cerrarModal();
-    if (typeof renderTablaMovimientos === 'function') renderTablaMovimientos();
-    showToast(`Se importaron ${marcados.length} movimiento${marcados.length === 1 ? '' : 's'}.`);
+    try {
+      Storage.addMovimientos(seleccionados);
+      cerrarModal();
+      if (typeof renderTablaMovimientos === 'function') renderTablaMovimientos();
+      showToast(`Se importaron ${seleccionados.length} movimiento${seleccionados.length === 1 ? '' : 's'}.`);
+    } catch (err) {
+      console.error('Error guardando los movimientos importados:', err);
+      showToast(
+        'No se pudieron guardar los movimientos. Puede que el almacenamiento del navegador esté lleno — intenta importar menos a la vez o exporta y borra movimientos viejos primero.',
+        'error'
+      );
+    }
   });
 });
