@@ -10,6 +10,15 @@
       } catch (e) {}
     })();
   </script>
+  <script>
+    (function () {
+      try {
+        var pin = localStorage.getItem('financeAppPin');
+        var desbloqueado = sessionStorage.getItem('financeAppUnlocked') === 'true';
+        if (pin && !desbloqueado) document.documentElement.classList.add('bloqueado');
+      } catch (e) {}
+    })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#8b5cf6">
   <link rel="manifest" href="manifest.json">
@@ -36,6 +45,12 @@
           <p class="page-subtitle">Moneda, categorías, exportación y respaldo de datos</p>
         </div>
       </header>
+
+      <section class="card">
+        <h2 class="section-title">🔒 PIN de acceso</h2>
+        <p class="settings-hint" id="pin-estado-texto">Protege la app con un PIN — se pide una vez por sesión del navegador. No es cifrado real: es un candado contra miradas casuales, no contra alguien con herramientas de desarrollador.</p>
+        <div class="settings-actions" id="pin-acciones"></div>
+      </section>
 
       <section class="card">
         <h2 class="section-title">Exportar datos</h2>
@@ -117,6 +132,29 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="modal-pin-overlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-pin-title">
+      <div class="modal-header">
+        <h2 id="modal-pin-title">Configurar PIN</h2>
+        <button class="modal-close" id="modal-pin-close" aria-label="Cerrar">&times;</button>
+      </div>
+      <form id="form-pin" class="form-grid">
+        <div class="form-field form-field-full">
+          <label for="input-pin-nuevo">PIN (4 a 6 dígitos)</label>
+          <input type="password" inputmode="numeric" pattern="[0-9]*" id="input-pin-nuevo" maxlength="6" placeholder="••••" required>
+        </div>
+        <div class="form-field form-field-full">
+          <label for="input-pin-confirmar">Confirma el PIN</label>
+          <input type="password" inputmode="numeric" pattern="[0-9]*" id="input-pin-confirmar" maxlength="6" placeholder="••••" required>
+        </div>
+        <div class="form-actions form-field-full">
+          <button type="button" class="btn btn-ghost" id="btn-pin-cancelar">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="modal-categoria-overlay" hidden>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-categoria-title">
       <div class="modal-header">
@@ -156,8 +194,9 @@
   <script src="js/export.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/nav.js"></script>
-  <script src="js/configuracion.js"></script>
   <script src="js/theme.js"></script>
+  <script src="js/pin.js"></script>
+  <script src="js/configuracion.js"></script>
   <script src="js/pwa.js"></script>
 </body>
 </html>

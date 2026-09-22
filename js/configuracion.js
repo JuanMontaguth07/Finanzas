@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   renderCategoriasLista();
   inicializarCategorias();
+  inicializarPin();
 
   document.getElementById('btn-exportar-excel').addEventListener('click', exportarExcel);
   document.getElementById('btn-exportar-respaldo').addEventListener('click', exportarRespaldoJson);
@@ -222,4 +223,86 @@ function inicializarCategorias() {
       showFieldError(inputNombre, err.message);
     }
   });
+}
+
+function inicializarPin() {
+  const overlay = document.getElementById('modal-pin-overlay');
+  const form = document.getElementById('form-pin');
+  const inputNuevo = document.getElementById('input-pin-nuevo');
+  const inputConfirmar = document.getElementById('input-pin-confirmar');
+
+  function renderEstadoPin() {
+    const activo = pinActivo();
+    document.getElementById('pin-estado-texto').innerHTML = activo
+      ? 'Tu PIN está activo — se pide una vez por sesión del navegador. No es cifrado real: es un candado contra miradas casuales, no contra alguien con herramientas de desarrollador.'
+      : 'No tienes un PIN configurado. Cualquiera que abra la app en este navegador puede ver tus datos.';
+
+    document.getElementById('pin-acciones').innerHTML = activo
+      ? '<button class="btn btn-ghost" id="btn-cambiar-pin">Cambiar PIN</button><button class="btn btn-danger" id="btn-quitar-pin">Quitar PIN</button>'
+      : '<button class="btn btn-primary" id="btn-configurar-pin">Configurar PIN</button>';
+
+    const btnConfigurar = document.getElementById('btn-configurar-pin');
+    if (btnConfigurar) btnConfigurar.addEventListener('click', abrirModal);
+
+    const btnCambiar = document.getElementById('btn-cambiar-pin');
+    if (btnCambiar) btnCambiar.addEventListener('click', abrirModal);
+
+    const btnQuitar = document.getElementById('btn-quitar-pin');
+    if (btnQuitar) {
+      btnQuitar.addEventListener('click', () => {
+        if (!confirm('¿Quitar el PIN? Cualquiera que abra la app en este navegador podrá ver tus datos sin que se le pida nada.')) return;
+        quitarPin();
+        renderEstadoPin();
+        showToast('PIN eliminado.');
+      });
+    }
+  }
+
+  function abrirModal() {
+    clearFieldErrors(form);
+    form.reset();
+    overlay.hidden = false;
+    inputNuevo.focus();
+  }
+
+  function cerrarModal() {
+    overlay.hidden = true;
+    form.reset();
+    clearFieldErrors(form);
+  }
+
+  document.getElementById('modal-pin-close').addEventListener('click', cerrarModal);
+  document.getElementById('btn-pin-cancelar').addEventListener('click', cerrarModal);
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) cerrarModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !overlay.hidden) cerrarModal();
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearFieldErrors(form);
+
+    const pin = inputNuevo.value;
+    const confirmacion = inputConfirmar.value;
+
+    let valido = true;
+    if (!/^\d{4,6}$/.test(pin)) {
+      showFieldError(inputNuevo, 'Debe ser numérico, de 4 a 6 dígitos.');
+      valido = false;
+    }
+    if (pin !== confirmacion) {
+      showFieldError(inputConfirmar, 'No coincide con el PIN anterior.');
+      valido = false;
+    }
+    if (!valido) return;
+
+    await establecerPin(pin);
+    cerrarModal();
+    renderEstadoPin();
+    showToast('PIN configurado.');
+  });
+
+  renderEstadoPin();
 }
