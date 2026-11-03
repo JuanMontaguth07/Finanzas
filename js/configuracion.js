@@ -151,7 +151,7 @@ function inicializarCategorias() {
     inputNombre.value = categoria ? categoria.nombre : '';
     inputNombre.disabled = Boolean(categoria);
     inputEmoji.value = categoria ? categoria.emoji : '';
-    inputColor.value = categoria ? categoria.color : '#c96442';
+    inputColor.value = categoria ? categoria.color : '#3b5e91';
     titulo.textContent = categoria ? `Editar "${categoria.nombre}"` : 'Nueva categoría';
     clearFieldErrors(form);
     overlay.hidden = false;

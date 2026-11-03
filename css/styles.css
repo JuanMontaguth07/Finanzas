@@ -1,195 +1,239 @@
 /* ============ Fonts ============ */
+/* Alternativas libres (OFL) a las fuentes de Claude: Source Serif 4 para
+   titulos, Inter para la interfaz y JetBrains Mono para terminal y cifras.
+   Son variables: un solo archivo cubre todos los pesos. */
 @font-face {
-  font-family: 'Poppins';
+  font-family: 'Inter';
   font-style: normal;
-  font-weight: 400;
+  font-weight: 400 700;
   font-display: swap;
-  src: url('../lib/fonts/poppins-400.woff2') format('woff2');
+  src: url('../lib/fonts/inter-latin.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Poppins';
+  font-family: 'Source Serif 4';
   font-style: normal;
-  font-weight: 600;
+  font-weight: 400 600;
   font-display: swap;
-  src: url('../lib/fonts/poppins-600.woff2') format('woff2');
+  src: url('../lib/fonts/source-serif-4-latin.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Poppins';
+  font-family: 'JetBrains Mono';
   font-style: normal;
-  font-weight: 700;
+  font-weight: 400 700;
   font-display: swap;
-  src: url('../lib/fonts/poppins-700.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Poppins';
-  font-style: normal;
-  font-weight: 800;
-  font-display: swap;
-  src: url('../lib/fonts/poppins-800.woff2') format('woff2');
+  src: url('../lib/fonts/jetbrains-mono-latin.woff2') format('woff2');
 }
 
 /* ============ Reset & base ============ */
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 
-/* Paleta estilo Claude Code: crema calido, terracota, verde oliva para las plantas */
+/* Paleta de oficina: blancos y grises palidos, azul marino claro y verde de
+   plantas. Las superficies son de vidrio esmerilado (semitransparentes con
+   backdrop-filter) para que se vea la oficina del fondo (js/fondo.js). */
 :root {
-  --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', serif;
-  --font-mono: ui-monospace, 'Cascadia Code', 'Cascadia Mono', 'SF Mono', Consolas, Menlo, monospace;
-  --bg: #faf9f5;
-  --surface: #ffffff;
-  --surface-alt: #f2f0e8;
-  --border: #e6e2d6;
-  --text: #1f1e1d;
-  --text-muted: #73716a;
-  --primary: #c96442;
-  --primary-dark: #a9502f;
-  --primary-rgb: 201, 100, 66;
-  --accent: #d97757;
-  --accent-soft: #f7ebe3;
-  --primary-soft: #f6e6dc;
-  --grad-main: linear-gradient(135deg, #c4603e, #d97757);
-  --terminal-bg: #262624;
-  --terminal-text: #f5f4ee;
-  --terminal-muted: #a6a39a;
-  --plant: #788c5d;
-  --plant-dark: #5c6f45;
-  --plant-light: #a9bc8e;
-  --success: #5f8a4f;
-  --success-soft: #edf2e6;
-  --danger: #b5483d;
-  --danger-soft: #f8e9e6;
-  --warning: #b07d1f;
-  --warning-soft: #f8f0dd;
-  --cyan: #4f7fa8;
-  --cyan-soft: #e8eff5;
-  --grid-dot: rgba(31, 30, 29, 0.07);
-  --fondo-mancha-1: 217, 119, 87;
-  --fondo-mancha-2: 120, 140, 93;
-  --fondo-mancha-3: 212, 162, 127;
-  --fondo-glifo: 201, 100, 66;
-  --fondo-intensidad: 0.26;
-  --toast-bg: #262624;
-  --toast-text: #f5f4ee;
-  --toast-border: #3a3936;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-serif: 'Source Serif 4', ui-serif, Georgia, Cambria, 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', Consolas, Menlo, monospace;
+  --bg: #e9eef4;
+  --surface: rgba(255, 255, 255, 0.62);
+  --surface-solid: #ffffff;
+  --surface-alt: rgba(226, 233, 241, 0.7);
+  --border: rgba(29, 43, 62, 0.1);
+  --text: #1a2738;
+  --text-muted: #56657a;
+  --primary: #3b5e91;
+  --primary-dark: #2b4a78;
+  --primary-rgb: 59, 94, 145;
+  --on-primary: #ffffff;
+  --accent: #7a9cc9;
+  --accent-soft: rgba(122, 156, 201, 0.16);
+  --primary-soft: rgba(59, 94, 145, 0.12);
+  --grad-main: linear-gradient(135deg, #2b4a78, #5a80b8);
+  --terminal-bg: rgba(16, 25, 38, 0.9);
+  --terminal-text: #e8eef6;
+  --terminal-muted: #8fa1b8;
+  --terminal-acento: #8cb0e0;
+  --plant: #4f9e6b;
+  --plant-dark: #2f7a4b;
+  --plant-light: #9fd4ae;
+  --success: #3a8a58;
+  --success-soft: rgba(63, 143, 92, 0.12);
+  --danger: #c0514a;
+  --danger-soft: rgba(196, 84, 75, 0.12);
+  --warning: #a8770f;
+  --warning-soft: rgba(181, 129, 25, 0.13);
+  --cyan: #2a7f8f;
+  --cyan-soft: rgba(46, 135, 151, 0.12);
+  --vidrio: blur(18px) saturate(1.3);
+  --planta-brillo: 1;
+  --toast-bg: #15202e;
+  --toast-text: #e8eef6;
+  --toast-border: #2a3a52;
   --radius: 14px;
   --radius-sm: 9px;
-  --shadow: 0 1px 2px rgba(31, 30, 29, 0.04), 0 1px 3px rgba(31, 30, 29, 0.06);
-  --shadow-md: 0 10px 28px rgba(31, 30, 29, 0.1);
+  --shadow: 0 1px 2px rgba(20, 32, 50, 0.05), 0 4px 14px rgba(20, 32, 50, 0.06);
+  --shadow-md: 0 12px 32px rgba(20, 32, 50, 0.14);
   --sidebar-width: 240px;
   color-scheme: light;
 }
 
 :root[data-theme="oscuro"] {
-  --bg: #1f1e1d;
-  --surface: #262624;
-  --surface-alt: #30302e;
-  --border: #3d3c38;
-  --text: #f5f4ee;
-  --text-muted: #a6a39a;
-  --primary: #d97757;
-  --primary-dark: #c96442;
-  --primary-rgb: 217, 119, 87;
-  --accent: #e8957a;
-  --accent-soft: #3a2a23;
-  --primary-soft: #3d2c24;
-  --grad-main: linear-gradient(135deg, #c96442, #d97757);
-  --terminal-bg: #141413;
-  --terminal-text: #f5f4ee;
-  --terminal-muted: #a6a39a;
-  --plant: #9cb07f;
-  --plant-dark: #788c5d;
-  --plant-light: #bccca5;
-  --success: #94b37f;
-  --success-soft: #26301f;
-  --danger: #e5826f;
-  --danger-soft: #3d221d;
-  --warning: #dcae58;
-  --warning-soft: #362b14;
-  --cyan: #8ab4d8;
-  --cyan-soft: #1f2c37;
-  --grid-dot: rgba(245, 244, 238, 0.05);
-  --fondo-mancha-1: 217, 119, 87;
-  --fondo-mancha-2: 120, 140, 93;
-  --fondo-mancha-3: 160, 110, 80;
-  --fondo-glifo: 232, 149, 122;
-  --fondo-intensidad: 0.14;
-  --toast-bg: #141413;
-  --toast-text: #f5f4ee;
-  --toast-border: #3d3c38;
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.45);
+  --bg: #0b121c;
+  --surface: rgba(18, 28, 43, 0.58);
+  --surface-solid: #152132;
+  --surface-alt: rgba(42, 58, 84, 0.5);
+  --border: rgba(160, 185, 220, 0.13);
+  --text: #e6edf6;
+  --text-muted: #9aabc2;
+  --primary: #8cb0e0;
+  --primary-dark: #6a90c6;
+  --primary-rgb: 140, 176, 224;
+  --on-primary: #0e1928;
+  --accent: #b5cdee;
+  --accent-soft: rgba(140, 176, 224, 0.13);
+  --primary-soft: rgba(140, 176, 224, 0.15);
+  --grad-main: linear-gradient(135deg, #4a6fa3, #8cb0e0);
+  --terminal-bg: rgba(7, 12, 20, 0.88);
+  --terminal-text: #e6edf6;
+  --terminal-muted: #8696ad;
+  --terminal-acento: #8cb0e0;
+  --plant: #6cc28c;
+  --plant-dark: #3f9a63;
+  --plant-light: #a7dcb7;
+  --success: #7cc79a;
+  --success-soft: rgba(124, 199, 154, 0.13);
+  --danger: #ef8f86;
+  --danger-soft: rgba(239, 143, 134, 0.13);
+  --warning: #e5bb62;
+  --warning-soft: rgba(229, 187, 98, 0.13);
+  --cyan: #79c6d3;
+  --cyan-soft: rgba(121, 198, 211, 0.12);
+  --planta-brillo: 0.42;
+  --toast-bg: #0b121c;
+  --toast-text: #e6edf6;
+  --toast-border: #2a3a52;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 14px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.5);
   color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="claro"]) {
-    --bg: #1f1e1d;
-    --surface: #262624;
-    --surface-alt: #30302e;
-    --border: #3d3c38;
-    --text: #f5f4ee;
-    --text-muted: #a6a39a;
-    --primary: #d97757;
-    --primary-dark: #c96442;
-    --primary-rgb: 217, 119, 87;
-    --accent: #e8957a;
-    --accent-soft: #3a2a23;
-    --primary-soft: #3d2c24;
-    --grad-main: linear-gradient(135deg, #c96442, #d97757);
-    --terminal-bg: #141413;
-    --terminal-text: #f5f4ee;
-    --terminal-muted: #a6a39a;
-    --plant: #9cb07f;
-    --plant-dark: #788c5d;
-    --plant-light: #bccca5;
-    --success: #94b37f;
-    --success-soft: #26301f;
-    --danger: #e5826f;
-    --danger-soft: #3d221d;
-    --warning: #dcae58;
-    --warning-soft: #362b14;
-    --cyan: #8ab4d8;
-    --cyan-soft: #1f2c37;
-    --grid-dot: rgba(245, 244, 238, 0.05);
-    --fondo-mancha-1: 217, 119, 87;
-    --fondo-mancha-2: 120, 140, 93;
-    --fondo-mancha-3: 160, 110, 80;
-    --fondo-glifo: 232, 149, 122;
-    --fondo-intensidad: 0.14;
-    --toast-bg: #141413;
-    --toast-text: #f5f4ee;
-    --toast-border: #3d3c38;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.45);
+    --bg: #0b121c;
+    --surface: rgba(18, 28, 43, 0.58);
+    --surface-solid: #152132;
+    --surface-alt: rgba(42, 58, 84, 0.5);
+    --border: rgba(160, 185, 220, 0.13);
+    --text: #e6edf6;
+    --text-muted: #9aabc2;
+    --primary: #8cb0e0;
+    --primary-dark: #6a90c6;
+    --primary-rgb: 140, 176, 224;
+    --on-primary: #0e1928;
+    --accent: #b5cdee;
+    --accent-soft: rgba(140, 176, 224, 0.13);
+    --primary-soft: rgba(140, 176, 224, 0.15);
+    --grad-main: linear-gradient(135deg, #4a6fa3, #8cb0e0);
+    --terminal-bg: rgba(7, 12, 20, 0.88);
+    --terminal-text: #e6edf6;
+    --terminal-muted: #8696ad;
+    --terminal-acento: #8cb0e0;
+    --plant: #6cc28c;
+    --plant-dark: #3f9a63;
+    --plant-light: #a7dcb7;
+    --success: #7cc79a;
+    --success-soft: rgba(124, 199, 154, 0.13);
+    --danger: #ef8f86;
+    --danger-soft: rgba(239, 143, 134, 0.13);
+    --warning: #e5bb62;
+    --warning-soft: rgba(229, 187, 98, 0.13);
+    --cyan: #79c6d3;
+    --cyan-soft: rgba(121, 198, 211, 0.12);
+    --planta-brillo: 0.42;
+    --toast-bg: #0b121c;
+    --toast-text: #e6edf6;
+    --toast-border: #2a3a52;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 14px rgba(0, 0, 0, 0.25);
+    --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.5);
     color-scheme: dark;
   }
 }
 
 body {
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background-color: var(--bg);
-  background-image: radial-gradient(var(--grid-dot) 1px, transparent 1.4px);
-  background-size: 22px 22px;
+  font-family: var(--font-sans);
+  /* Respaldo si no hay WebGL: un degradado de cielo/oficina */
+  background: linear-gradient(180deg, #dde6f0 0%, #eef2f6 55%, #e3e8ee 100%) fixed;
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   position: relative;
   overflow-x: hidden;
 }
 
-/* Canvas del fondo animado (js/fondo.js) */
+:root[data-theme="oscuro"] body {
+  background: linear-gradient(180deg, #0a1428 0%, #0d1622 55%, #080d15 100%) fixed;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="claro"]) body {
+    background: linear-gradient(180deg, #0a1428 0%, #0d1622 55%, #080d15 100%) fixed;
+  }
+}
+
+/* ============ Oficina de fondo (js/fondo.js) ============ */
+/* El shader se dibuja a media resolucion y se desenfoca con CSS, como una
+   foto con poca profundidad de campo. */
 .fondo-dinamico {
   position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  inset: -24px;
+  width: calc(100% + 48px);
+  height: calc(100% + 48px);
   z-index: 0;
   pointer-events: none;
+  filter: blur(6px);
+}
+
+/* Plantas de oficina en primer plano, tambien desenfocadas */
+.oficina-plantas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.oficina-planta {
+  position: absolute;
+  bottom: -10px;
+  filter: blur(3px) brightness(var(--planta-brillo));
+  transition: filter 1.6s ease;
+  will-change: transform;
+}
+
+.oficina-planta svg { display: block; width: 100%; height: 100%; overflow: visible; }
+
+.oficina-planta-izq { left: -40px; width: 300px; height: 420px; }
+.oficina-planta-der { right: -50px; width: 260px; height: 360px; }
+
+.oficina-hoja {
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: oficina-hoja-mece 6s ease-in-out infinite alternate;
+}
+
+@keyframes oficina-hoja-mece {
+  from { transform: rotate(-2.5deg); }
+  to { transform: rotate(3deg); }
+}
+
+@media (max-width: 768px) {
+  .oficina-planta-izq { width: 200px; height: 280px; left: -60px; }
+  .oficina-planta-der { width: 170px; height: 240px; right: -60px; }
 }
 
 ::selection {
   background: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
 }
 
 html {
@@ -232,6 +276,8 @@ a:focus-visible {
   width: var(--sidebar-width);
   flex-shrink: 0;
   background: var(--surface);
+  -webkit-backdrop-filter: var(--vidrio);
+  backdrop-filter: var(--vidrio);
   border-right: 1px solid var(--border);
   padding: 24px 16px;
   display: flex;
@@ -259,6 +305,8 @@ a:focus-visible {
   border-radius: 10px;
   border: 1px solid var(--border);
   background: var(--surface);
+  -webkit-backdrop-filter: var(--vidrio);
+  backdrop-filter: var(--vidrio);
   box-shadow: var(--shadow-md);
   font-size: 17px;
   cursor: pointer;
@@ -292,6 +340,8 @@ html.bloqueado .theme-toggle-btn {
 
 .pin-lock-card {
   background: var(--surface);
+  -webkit-backdrop-filter: var(--vidrio);
+  backdrop-filter: var(--vidrio);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow-md);
@@ -379,8 +429,8 @@ html.bloqueado .theme-toggle-btn {
   width: 34px;
   height: 34px;
   border-radius: var(--radius-sm);
-  background: var(--terminal-bg);
-  color: var(--accent);
+  background: #15202e;
+  color: var(--terminal-acento);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -532,6 +582,8 @@ html.bloqueado .theme-toggle-btn {
 /* ============ Cards ============ */
 .card {
   background: var(--surface);
+  -webkit-backdrop-filter: var(--vidrio);
+  backdrop-filter: var(--vidrio);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 20px;
@@ -574,7 +626,7 @@ html.bloqueado .theme-toggle-btn {
 
 .btn-primary {
   background: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
   box-shadow: 0 1px 2px rgba(var(--primary-rgb), 0.3);
 }
 .btn-primary:hover { background: var(--primary-dark); box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3); }
@@ -774,7 +826,7 @@ html.bloqueado .theme-toggle-btn {
 }
 
 .modal {
-  background: var(--surface);
+  background: var(--surface-solid);
   border-radius: var(--radius);
   box-shadow: var(--shadow-md);
   width: 100%;
@@ -876,7 +928,7 @@ html.bloqueado .theme-toggle-btn {
 
 .segmented-option.active {
   background: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
 }
 
 .segmented-option.active[data-tipo="ingreso"] { background: var(--success); }
@@ -912,9 +964,11 @@ html.bloqueado .theme-toggle-btn {
   border-radius: var(--radius);
   padding: 0 0 26px;
   background: var(--terminal-bg);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
   color: var(--terminal-text);
-  border: 1px solid rgba(var(--primary-rgb), 0.55);
-  box-shadow: 0 14px 34px rgba(31, 30, 29, 0.18);
+  border: 1px solid rgba(140, 176, 224, 0.45);
+  box-shadow: 0 16px 40px rgba(10, 18, 30, 0.28);
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -939,7 +993,7 @@ html.bloqueado .theme-toggle-btn {
   background: #4a4945;
 }
 
-.hero-terminal-barra i:first-child { background: var(--accent); }
+.hero-terminal-barra i:first-child { background: var(--terminal-acento); }
 
 .hero-terminal-barra span { margin-left: 8px; }
 
@@ -958,7 +1012,7 @@ html.bloqueado .theme-toggle-btn {
   gap: 8px;
 }
 
-.hero-balance-label .glifo-spinner { color: var(--accent); font-size: 16px; }
+.hero-balance-label .glifo-spinner { color: var(--terminal-acento); font-size: 16px; }
 
 .hero-balance-value {
   font-size: 40px;
@@ -974,7 +1028,7 @@ html.bloqueado .theme-toggle-btn {
   width: 0.5em;
   height: 0.9em;
   margin-left: 8px;
-  background: var(--accent);
+  background: var(--terminal-acento);
   animation: cursor-parpadea 1.1s steps(1) infinite;
 }
 
@@ -983,12 +1037,12 @@ html.bloqueado .theme-toggle-btn {
   margin-top: 4px;
   padding: 4px 10px;
   border-radius: 6px;
-  background: rgba(245, 244, 238, 0.08);
+  background: rgba(232, 238, 246, 0.08);
   font-size: 12px;
 }
 
-.hero-chip-positivo { color: #a9c98f; }
-.hero-chip-negativo { color: #f0a08f; }
+.hero-chip-positivo { color: #9fd4ae; }
+.hero-chip-negativo { color: #f2a59d; }
 
 .hero-chip[hidden] { display: none; }
 
@@ -1630,7 +1684,7 @@ html.bloqueado .theme-toggle-btn {
 /* Viñeta "⏺" como los resultados de herramientas en Claude Code */
 .toast::before {
   content: '⏺ ';
-  color: #94b37f;
+  color: #7cc79a;
 }
 
 .toast-visible {
@@ -1638,7 +1692,7 @@ html.bloqueado .theme-toggle-btn {
   transform: translateY(0);
 }
 
-.toast-error::before { color: #e5826f; }
+.toast-error::before { color: #ef8f86; }
 
 @media (max-width: 768px) {
   .toast-container {
@@ -1857,6 +1911,8 @@ html.bloqueado .mascota { display: none; }
   max-width: min(230px, calc(100vw - 24px));
   padding: 10px 30px 10px 14px;
   background: var(--surface);
+  -webkit-backdrop-filter: var(--vidrio);
+  backdrop-filter: var(--vidrio);
   color: var(--text);
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -1881,6 +1937,8 @@ html.bloqueado .mascota { display: none; }
   width: 12px;
   height: 12px;
   background: var(--surface);
+  -webkit-backdrop-filter: var(--vidrio);
+  backdrop-filter: var(--vidrio);
   border-right: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   transform: rotate(45deg);
