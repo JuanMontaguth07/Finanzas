@@ -32,7 +32,7 @@ function mascotaSvg(sufijo = '') {
       <stop offset="1" stop-color="#cdd6e2"/>
     </linearGradient>
   </defs>
-  <ellipse class="mascota-sombra" cx="60" cy="106" rx="28" ry="4"/>
+  <ellipse class="mascota-sombra" cx="60" cy="109.5" rx="28" ry="3.6"/>
   <g class="mascota-cuerpo">
     <g class="mascota-hojas">
       <path d="M60 52 C60 42 59 34 60 24" fill="none" stroke="#2f7a4b" stroke-width="3" stroke-linecap="round"/>
@@ -61,6 +61,16 @@ function mascotaSvg(sufijo = '') {
     <g class="mascota-moneda">
       <circle cx="82" cy="14" r="7" fill="#e8b04a" stroke="#b8862a" stroke-width="1.8"/>
       <text x="82" y="17.3" text-anchor="middle" font-size="9" font-weight="800" fill="#6b4c0e">$</text>
+    </g>
+
+    <!-- Patitas: van antes de la maceta para que asomen por debajo -->
+    <g class="mascota-pata mascota-pata-izq">
+      <ellipse cx="46" cy="104.6" rx="7.6" ry="4.7" fill="#f8fafc" stroke="#b8c4d3" stroke-width="1.4"/>
+      <ellipse cx="44.2" cy="106.4" rx="2.5" ry="1.4" fill="#f4a3a8" opacity="0.65"/>
+    </g>
+    <g class="mascota-pata mascota-pata-der">
+      <ellipse cx="74" cy="104.6" rx="7.6" ry="4.7" fill="#f8fafc" stroke="#b8c4d3" stroke-width="1.4"/>
+      <ellipse cx="75.8" cy="106.4" rx="2.5" ry="1.4" fill="#f4a3a8" opacity="0.65"/>
     </g>
 
     <path d="M28 62 H92 L85 99 Q84 103 79 103 H41 Q36 103 35 99 Z" fill="url(#mascota-maceta${sufijo})" stroke="#c3cedb"/>
@@ -109,12 +119,17 @@ function mascotaSvg(sufijo = '') {
     <g class="mascota-brazo mascota-brazo-izq">
       <path d="M30 70 Q22 73 19 81" fill="none" stroke="#b8c4d3" stroke-width="6.5" stroke-linecap="round"/>
       <path d="M30 70 Q22 73 19 81" fill="none" stroke="#f1f4f8" stroke-width="4" stroke-linecap="round"/>
-      <circle cx="19" cy="82" r="3.6" fill="#f8fafc" stroke="#b8c4d3" stroke-width="1.3"/>
+      <!-- manita: pulgar, palma y almohadilla -->
+      <circle cx="22.6" cy="79.4" r="1.9" fill="#f8fafc" stroke="#b8c4d3" stroke-width="1.1"/>
+      <circle cx="19" cy="82.6" r="4.2" fill="#f8fafc" stroke="#b8c4d3" stroke-width="1.3"/>
+      <circle cx="18.4" cy="83.3" r="1.4" fill="#f4a3a8" opacity="0.6"/>
     </g>
     <g class="mascota-brazo mascota-brazo-der">
       <path d="M90 70 Q98 73 101 81" fill="none" stroke="#b8c4d3" stroke-width="6.5" stroke-linecap="round"/>
       <path d="M90 70 Q98 73 101 81" fill="none" stroke="#f1f4f8" stroke-width="4" stroke-linecap="round"/>
-      <circle cx="101" cy="82" r="3.6" fill="#f8fafc" stroke="#b8c4d3" stroke-width="1.3"/>
+      <circle cx="97.4" cy="79.4" r="1.9" fill="#f8fafc" stroke="#b8c4d3" stroke-width="1.1"/>
+      <circle cx="101" cy="82.6" r="4.2" fill="#f8fafc" stroke="#b8c4d3" stroke-width="1.3"/>
+      <circle cx="101.6" cy="83.3" r="1.4" fill="#f4a3a8" opacity="0.6"/>
     </g>
   </g>
 </svg>`;
@@ -268,7 +283,7 @@ const MASCOTA_SALUDOS = ['¡Hola! 👋', '¡Ey, por aquí! 🌿', 'Hola de nuevo
 const MASCOTA_GOLPES = ['¡Auch! 😵', 'Eso dolió… 🤕', 'Veo estrellitas ✨', '¡Ay, mi maceta!'];
 const MASCOTA_PARED = ['¡Mírame, soy escaladora! 🧗', 'Desde aquí vigilo tus gastos 👀', '¡Me agarré! 💪'];
 // Gestos que hace sola cuando esta quieta
-const MASCOTA_GESTOS = ['mascota--mira', 'mascota--saluda', 'mascota--estira'];
+const MASCOTA_GESTOS = ['mascota--mira', 'mascota--saluda', 'mascota--estira', 'mascota--tap'];
 // Elementos sobre los que se puede parar
 const MASCOTA_PLATAFORMAS = '.card, .hero-balance, .resumen-filtro';
 // Animacion CSS -> clase que la dispara. Al terminar se quita la clase, si no
@@ -286,6 +301,7 @@ const MASCOTA_ANIMACIONES = {
   'mascota-saluda': 'mascota--saluda',
   'mascota-crece-izq': 'mascota--regada',
   'mascota-moneda': 'mascota--moneda',
+  'pata-tap': 'mascota--tap',
 };
 
 // Fisica (pixeles y segundos)
@@ -603,6 +619,18 @@ const Mascota = {
       return;
     }
 
+    // Antes de despegar se agacha un instante (anticipacion).
+    if (m.espera > 0) {
+      m.espera -= dt;
+      this.y = this.alturaSuperficie(this.superficie);
+      if (m.espera <= 0) {
+        m.desdeY = this.y;
+        this.el.classList.remove('mascota--agacha');
+        this.el.classList.add('mascota--saltando');
+      }
+      return;
+    }
+
     // Saltar: el destino se recalcula en cada cuadro por si hay scroll.
     if (m.hacia && !this.esPlataformaValida(m.hacia)) {
       m.hacia = null;
@@ -617,6 +645,7 @@ const Mascota = {
       this.superficie = m.hacia;
       this.y = yFin;
       this.animar('mascota--aterriza');
+      this.polvo();
       this.terminarMovimiento();
     }
   },
@@ -627,6 +656,12 @@ const Mascota = {
     this.vel.y -= MASCOTA_GRAVEDAD * dt;
     this.x += this.vel.x * dt;
     this.y += this.vel.y * dt;
+
+    // Se inclina hacia donde vuela y se estira un poco al caer rapido.
+    const inclinacion = Math.max(Math.min(this.vel.x / 45, 28), -28);
+    const estiramiento = 1 + Math.min(Math.abs(this.vel.y) / 7000, 0.14);
+    this.el.style.setProperty('--inclinacion', `${inclinacion.toFixed(1)}deg`);
+    this.el.style.setProperty('--estiramiento', estiramiento.toFixed(3));
 
     // Paredes: si choca fuerte se marea y rebota; si no, a veces se agarra.
     const maxX = window.innerWidth - this.ancho();
@@ -674,7 +709,7 @@ const Mascota = {
     this.superficie = null;
     this.pared = null;
     this.movimiento = null;
-    this.el.classList.remove('mascota--caminando', 'mascota--saltando', 'mascota--trepando', 'mascota--en-pared', 'mascota--pared-izq', 'mascota--pared-der');
+    this.el.classList.remove('mascota--caminando', 'mascota--saltando', 'mascota--agacha', 'mascota--trepando', 'mascota--en-pared', 'mascota--pared-izq', 'mascota--pared-der');
     this.el.classList.add('mascota--en-aire');
     if (Math.abs(vx) > 30) this.el.classList.toggle('mascota--izq', vx < 0);
   },
@@ -682,11 +717,26 @@ const Mascota = {
   aterrizar(velocidad) {
     this.modo = 'suelo';
     this.vel = null;
-    this.el.classList.remove('mascota--en-aire');
+    this.el.classList.remove('mascota--en-aire', 'mascota--volteretas');
+    if (velocidad > 350) this.polvo();
     if (velocidad > MASCOTA_GOLPE_CAIDA && !this.saltoVoluntario) this.golpe();
     else if (velocidad > 350) this.animar('mascota--aterriza');
     this.guardarPosicion();
     this.programarPaseo();
+  },
+
+  // Nubecitas de polvo a los lados de las patitas al aterrizar.
+  polvo() {
+    if (!this.el || sinMovimiento()) return;
+    [-1, -1, 1, 1].forEach((lado, i) => {
+      const p = document.createElement('span');
+      p.className = 'mascota-polvo';
+      p.style.setProperty('--dx', `${lado * (18 + Math.random() * 22)}px`);
+      p.style.left = `${lado < 0 ? 34 : 56}%`;
+      p.style.animationDelay = `${(i % 2) * 0.05}s`;
+      this.el.appendChild(p);
+      setTimeout(() => p.remove(), 650);
+    });
   },
 
   // Golpe fuerte: queda mareada con estrellitas girando.
@@ -711,7 +761,7 @@ const Mascota = {
     this.vel = null;
     this.superficie = null;
     this.movimiento = null;
-    this.el.classList.remove('mascota--en-aire', 'mascota--caminando', 'mascota--saltando', 'mascota--pared-izq', 'mascota--pared-der');
+    this.el.classList.remove('mascota--en-aire', 'mascota--volteretas', 'mascota--caminando', 'mascota--saltando', 'mascota--pared-izq', 'mascota--pared-der');
     this.el.classList.add('mascota--en-pared', `mascota--pared-${lado}`);
     const lim = this.limitesPared();
     this.x = lado === 'izq' ? lim.xIzq : lim.xDer;
@@ -786,9 +836,10 @@ const Mascota = {
     const distancia = Math.hypot(destino - this.x, this.alturaSuperficie(hacia) - this.y);
     this.el.classList.toggle('mascota--izq', destino < this.x);
     this.el.classList.remove('mascota--caminando');
-    this.el.classList.add('mascota--saltando');
+    this.el.classList.add('mascota--agacha');
     this.movimiento = {
       tipo: 'saltar',
+      espera: 0.14,
       hacia,
       desdeX: this.x,
       desdeY: this.y,
@@ -803,7 +854,7 @@ const Mascota = {
   terminarMovimiento(completado = true) {
     const m = this.movimiento;
     this.movimiento = null;
-    this.el.classList.remove('mascota--caminando', 'mascota--saltando', 'mascota--trepando');
+    this.el.classList.remove('mascota--caminando', 'mascota--saltando', 'mascota--trepando', 'mascota--agacha');
     this.guardarPosicion();
     if (completado && m?.despues) {
       m.despues();
@@ -909,7 +960,7 @@ const Mascota = {
       this.pared = null;
       this.vel = null;
       this.modo = 'suelo';
-      this.el.classList.remove('mascota--caminando', 'mascota--saltando', 'mascota--trepando', 'mascota--en-aire', 'mascota--en-pared', 'mascota--pared-izq', 'mascota--pared-der');
+      this.el.classList.remove('mascota--caminando', 'mascota--saltando', 'mascota--agacha', 'mascota--trepando', 'mascota--en-aire', 'mascota--volteretas', 'mascota--en-pared', 'mascota--pared-izq', 'mascota--pared-der');
       a.origenX = this.x;
       a.origenY = this.y;
       this.ocultarBurbuja();
@@ -945,14 +996,16 @@ const Mascota = {
     let vy = 0;
     const primera = a.muestras[0];
     const ultima = a.muestras[a.muestras.length - 1];
-    if (primera && ultima && ultima.t - primera.t > 10) {
-      const segundos = (ultima.t - primera.t) / 1000;
+    if (primera && ultima && ultima !== primera) {
+      // Minimo un cuadro (16 ms) para que un gesto rapidisimo no de 0 ni infinito.
+      const segundos = Math.max((ultima.t - primera.t) / 1000, 0.016);
       vx = Math.max(Math.min((ultima.x - primera.x) / segundos, 2600), -2600);
       vy = Math.max(Math.min((ultima.y - primera.y) / segundos, 2600), -2600);
     }
     // Al soltarla vuela con el impulso que traia y cae con gravedad.
     this.soltarEnAire(vx, vy);
     const rapida = Math.hypot(vx, vy) > 900;
+    if (Math.hypot(vx, vy) > 1500 && !sinMovimiento()) this.el.classList.add('mascota--volteretas');
     if (rapida) this.mostrarMensaje(elegirAlAzar(MASCOTA_LANZADA), 2200);
     else if (Math.random() < 0.5) this.mostrarMensaje(elegirAlAzar(MASCOTA_AL_SOLTAR), 3000);
   },

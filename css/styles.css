@@ -1778,12 +1778,16 @@ html.bloqueado .mascota { display: none; }
 .mascota-btn:hover svg { transform: rotate(var(--mascota-rot, 0deg)) scaleX(var(--mascota-giro, 1)) scale(1.05); }
 
 /* Caminando: pasitos cortos */
-.mascota--caminando .mascota-btn { animation: mascota-pasito 0.36s ease-in-out infinite; }
+.mascota--caminando .mascota-btn {
+  transform-origin: center bottom;
+  animation: mascota-pasito 0.5s ease-in-out infinite;
+}
 
+/* Un ciclo = dos pasos: baja (se aplasta un poco) y sube (se estira) */
 @keyframes mascota-pasito {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  25% { transform: translateY(-5px) rotate(-3deg); }
-  75% { transform: translateY(-5px) rotate(3deg); }
+  0%, 50%, 100% { transform: translateY(0) rotate(0deg) scale(1.03, 0.97); }
+  25% { transform: translateY(-5px) rotate(-3deg) scale(0.98, 1.03); }
+  75% { transform: translateY(-5px) rotate(3deg) scale(0.98, 1.03); }
 }
 
 /* Arrastrando: la levantas y patalea */
@@ -2115,8 +2119,8 @@ html.bloqueado .mascota { display: none; }
 }
 
 /* Caminando: balancea los brazos */
-.mascota--caminando .mascota-brazo-izq { animation: brazo-izq-camina 0.36s ease-in-out infinite alternate; }
-.mascota--caminando .mascota-brazo-der { animation: brazo-der-camina 0.36s ease-in-out infinite alternate; }
+.mascota--caminando .mascota-brazo-izq { animation: brazo-izq-camina 0.25s ease-in-out infinite alternate; }
+.mascota--caminando .mascota-brazo-der { animation: brazo-der-camina 0.25s ease-in-out infinite alternate; }
 
 @keyframes brazo-izq-camina {
   from { transform: rotate(-22deg); }
@@ -2164,7 +2168,10 @@ html.bloqueado .mascota { display: none; }
 }
 
 /* Cayendo o volando se inclina un poco */
-.mascota--en-aire .mascota-btn { transform: rotate(-6deg); }
+/* Inclinacion y estiramiento los calcula js/mascota.js segun la velocidad */
+.mascota--en-aire .mascota-btn {
+  transform: rotate(var(--inclinacion, -6deg)) scale(calc(2 - var(--estiramiento, 1)), var(--estiramiento, 1));
+}
 
 /* La estas cargando: agita los brazos */
 .mascota--arrastrando .mascota-brazo-izq { animation: brazo-izq-agita 0.14s ease-in-out infinite alternate; }
@@ -2245,6 +2252,100 @@ html.bloqueado .mascota { display: none; }
   50% { transform: translate(24px, 0) scale(0.8); }
   75% { transform: translate(0, -7px) scale(0.55); opacity: 0.6; }
   100% { transform: translate(-24px, 0) scale(0.8); }
+}
+
+/* ---- Patitas de Brote ---- */
+.mascota-pata {
+  transform-box: fill-box;
+  transform-origin: center top;
+  transition: transform 0.25s ease;
+}
+
+/* Caminando: levanta una patita y luego la otra (mismo ritmo que el cuerpo) */
+.mascota--caminando .mascota-pata-izq { animation: pata-paso 0.5s ease-in-out infinite; }
+.mascota--caminando .mascota-pata-der { animation: pata-paso 0.5s ease-in-out infinite -0.25s; }
+
+@keyframes pata-paso {
+  0%, 50%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-3px) rotate(-14deg); }
+}
+
+/* Trepando: empuja con las patitas contra la pared */
+.mascota--trepando .mascota-pata-izq { animation: pata-paso 0.42s ease-in-out infinite; }
+.mascota--trepando .mascota-pata-der { animation: pata-paso 0.42s ease-in-out infinite -0.21s; }
+
+/* En el aire: patitas colgando y moviendose */
+.mascota--saltando .mascota-pata,
+.mascota--en-aire .mascota-pata { animation: pata-cuelga 0.3s ease-in-out infinite alternate; }
+.mascota--saltando .mascota-pata-der,
+.mascota--en-aire .mascota-pata-der { animation-delay: -0.15s; }
+
+@keyframes pata-cuelga {
+  from { transform: translateY(1.5px) rotate(-10deg); }
+  to { transform: translateY(2.5px) rotate(10deg); }
+}
+
+/* La estas cargando: patalea */
+.mascota--arrastrando .mascota-pata { animation: pata-patalea 0.16s ease-in-out infinite alternate; }
+.mascota--arrastrando .mascota-pata-der { animation-direction: alternate-reverse; }
+
+@keyframes pata-patalea {
+  from { transform: translateY(1px) rotate(-22deg); }
+  to { transform: translateY(3px) rotate(22deg); }
+}
+
+/* Celebrando: zapatea de alegria */
+.mascota--celebrando .mascota-pata-izq { animation: pata-paso 0.3s ease-in-out infinite; }
+.mascota--celebrando .mascota-pata-der { animation: pata-paso 0.3s ease-in-out infinite -0.15s; }
+
+/* Gesto suelto: tamborilea con una patita */
+.mascota--tap .mascota-pata-der { animation: pata-tap 0.22s ease-in-out 4 alternate; }
+
+@keyframes pata-tap {
+  from { transform: rotate(0deg); }
+  to { transform: translateY(-2px) rotate(-20deg); }
+}
+
+/* Mareada: se balancea sin equilibrio */
+.mascota--mareada .mascota-cuerpo { animation: mareo-balanceo 0.9s ease-in-out infinite; }
+
+@keyframes mareo-balanceo {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+
+/* Se agacha justo antes de saltar */
+.mascota--agacha .mascota-btn {
+  transform-origin: center bottom;
+  transform: scale(1.12, 0.84);
+  transition: transform 0.12s ease-out;
+}
+
+.mascota--agacha .mascota-brazo-izq { animation: none; transform: rotate(-35deg); }
+.mascota--agacha .mascota-brazo-der { animation: none; transform: rotate(35deg); }
+
+/* Lanzada muy fuerte: da volteretas */
+.mascota--volteretas .mascota-btn { animation: mascota-voltereta 0.45s linear infinite; }
+
+@keyframes mascota-voltereta {
+  to { transform: rotate(360deg); }
+}
+
+/* Polvito al aterrizar */
+.mascota-polvo {
+  position: absolute;
+  bottom: -4px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(205, 214, 228, 0.9);
+  pointer-events: none;
+  animation: mascota-polvo 0.55s ease-out forwards;
+}
+
+@keyframes mascota-polvo {
+  0% { opacity: 0.9; transform: translate(0, 0) scale(0.6); }
+  100% { opacity: 0; transform: translate(var(--dx), -10px) scale(1.8); }
 }
 
 .mascota-burbuja {
