@@ -1,29 +1,83 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const monthKey = currentMonthKey();
+// El dashboard muestra un mes a la vez (por defecto el actual). Se cambia con
+// las flechas ‹ ›, tocando una barra del grafico "Ingresos vs gastos" o con
+// ?mes=YYYY-MM en la URL (por ejemplo desde la paleta de comandos /mes).
+// "Dinero disponible", "Ahorro total" y los objetivos son globales: no
+// dependen del mes elegido.
 
-  renderSaludo();
-  renderKpis(monthKey);
+// Verbos que se muestran mientras "cuentan" las cifras, como los de Claude Code.
+const VERBOS_CARGA = ['Contando monedas…', 'Cuadrando cuentas…', 'Sumando centavos…', 'Revisando el bolsillo…', 'Haciendo cuentas…'];
+
+let mesSeleccionado = currentMonthKey();
+
+document.addEventListener('DOMContentLoaded', () => {
+  const mesUrl = new URLSearchParams(window.location.search).get('mes');
+  if (/^\d{4}-\d{2}$/.test(mesUrl || '') && mesUrl <= currentMonthKey()) mesSeleccionado = mesUrl;
+
+  renderGlobales();
   renderObjetivosResumen();
-  renderGastosPorCategoria(monthKey);
-  renderIngresosVsGastos();
-  renderEvolucionAhorro();
+  renderMes();
+
+  document.getElementById('mes-anterior').addEventListener('click', () => cambiarMes(sumarMeses(mesSeleccionado, -1)));
+  document.getElementById('mes-siguiente').addEventListener('click', () => cambiarMes(sumarMeses(mesSeleccionado, 1)));
+  document.getElementById('mes-hoy').addEventListener('click', () => cambiarMes(currentMonthKey()));
+  document.getElementById('chart-ingresos-gastos').addEventListener('click', (e) => {
+    const barra = e.target.closest('[data-mes]');
+    if (barra) cambiarMes(barra.dataset.mes);
+  });
 });
 
-function renderSaludo() {
+function cambiarMes(monthKey) {
+  if (monthKey > currentMonthKey() || monthKey === mesSeleccionado) return;
+  mesSeleccionado = monthKey;
+  const url = new URL(window.location.href);
+  if (monthKey === currentMonthKey()) url.searchParams.delete('mes');
+  else url.searchParams.set('mes', monthKey);
+  history.replaceState(null, '', url);
+  renderMes();
+}
+
+function renderMes() {
+  const monthKey = mesSeleccionado;
+  const esActual = monthKey === currentMonthKey();
+  const nombreMes = MESES_LARGOS[Number(monthKey.split('-')[1]) - 1];
+
+  renderSaludo(monthKey);
+  document.getElementById('mes-label').textContent = monthLabelLargo(monthKey);
+  document.getElementById('mes-siguiente').disabled = esActual;
+  document.getElementById('mes-hoy').hidden = esActual;
+  document.getElementById('mes-ver-movimientos').href = `movimientos.html?mes=${monthKey}`;
+  document.querySelectorAll('.kpi-mes').forEach((el) => {
+    el.textContent = esActual ? 'del mes' : `de ${nombreMes}`;
+  });
+  document.getElementById('titulo-categorias').textContent = `(${esActual ? 'este mes' : monthLabelLargo(monthKey)})`;
+  document.getElementById('titulo-ingresos-gastos').textContent = `(6 meses hasta ${monthLabel(monthKey).toLowerCase()})`;
+  document.getElementById('titulo-ahorro').textContent = `(6 meses hasta ${monthLabel(monthKey).toLowerCase()})`;
+
+  renderKpisMes(monthKey);
+  renderGastosPorCategoria(monthKey);
+  renderIngresosVsGastos(monthKey);
+  renderEvolucionAhorro(monthKey);
+}
+
+function renderSaludo(monthKey) {
   const ahora = new Date();
   const hora = ahora.getHours();
   let saludo = 'Buenas noches';
   if (hora >= 5 && hora < 12) saludo = 'Buenos días';
   else if (hora >= 12 && hora < 19) saludo = 'Buenas tardes';
 
-  const mes = ahora.toLocaleDateString('es-CO', { month: 'long' });
   document.getElementById('saludo').textContent = saludo;
-  document.getElementById('saludo-sub').textContent = `Así va tu plata en ${mes}`;
+  document.getElementById('saludo-sub').textContent =
+    monthKey === currentMonthKey()
+      ? `Así va tu plata en ${MESES_LARGOS[ahora.getMonth()]}`
+      : `Así te fue en ${monthLabelLargo(monthKey)}`;
 }
 
-// Hace que la cifra "cuente" desde 0 hasta el valor final al cargar.
+// Hace que la cifra "cuente" desde el valor que tenia hasta el nuevo.
 function animarMonto(el, valor) {
-  if (!valor || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const desde = Number(el.dataset.valor) || 0;
+  el.dataset.valor = valor;
+  if (desde === valor || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     el.textContent = formatCurrency(valor);
     return;
   }
@@ -32,31 +86,43 @@ function animarMonto(el, valor) {
   function paso(ahora) {
     const t = Math.min((ahora - inicio) / duracion, 1);
     const suavizado = 1 - Math.pow(1 - t, 3);
-    el.textContent = formatCurrency(valor * suavizado);
+    el.textContent = formatCurrency(desde + (valor - desde) * suavizado);
     if (t < 1) requestAnimationFrame(paso);
   }
   requestAnimationFrame(paso);
 }
 
-function renderKpis(monthKey) {
-  const resumenMes = getResumenMes(monthKey);
-  const balanceTotal = getBalanceTotal();
-  const ahorroTotal = getAhorradoTotal();
-  const limiteObligaciones = Storage.getLimitePorCategoria('Obligaciones');
-  const gastosCategoria = getGastosPorCategoria(monthKey);
-  const gastadoObligaciones = gastosCategoria.find((g) => g.categoria === 'Obligaciones')?.total || 0;
+function renderGlobales() {
+  const etiqueta = document.getElementById('hero-label-texto');
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    etiqueta.textContent = VERBOS_CARGA[Math.floor(Math.random() * VERBOS_CARGA.length)];
+    setTimeout(() => {
+      etiqueta.textContent = 'Dinero disponible';
+    }, 1100);
+  }
+  animarMonto(document.getElementById('kpi-disponible'), getBalanceTotal());
+  animarMonto(document.getElementById('kpi-ahorro'), getAhorradoTotal());
+}
 
-  animarMonto(document.getElementById('kpi-disponible'), balanceTotal);
+function renderKpisMes(monthKey) {
+  const esActual = monthKey === currentMonthKey();
+  const resumenMes = getResumenMes(monthKey);
+  const limiteObligaciones = Storage.getLimitePorCategoria('Obligaciones');
+  const gastadoObligaciones = getGastosPorCategoria(monthKey).find((g) => g.categoria === 'Obligaciones')?.total || 0;
+
   animarMonto(document.getElementById('kpi-ingresos'), resumenMes.ingresos);
   animarMonto(document.getElementById('kpi-gastos'), resumenMes.gastos);
-  animarMonto(document.getElementById('kpi-ahorro'), ahorroTotal);
 
   const chipMes = document.getElementById('hero-balance-mes');
+  chipMes.classList.remove('hero-chip-positivo', 'hero-chip-negativo');
   if (resumenMes.ingresos > 0 || resumenMes.gastos > 0) {
     const positivo = resumenMes.balance >= 0;
-    chipMes.textContent = `${positivo ? '+' : '−'}${formatCurrency(Math.abs(resumenMes.balance))} este mes`;
+    const cuando = esActual ? 'este mes' : `en ${monthLabelLargo(monthKey)}`;
+    chipMes.textContent = `${positivo ? '+' : '−'}${formatCurrency(Math.abs(resumenMes.balance))} ${cuando}`;
     chipMes.classList.add(positivo ? 'hero-chip-positivo' : 'hero-chip-negativo');
     chipMes.hidden = false;
+  } else {
+    chipMes.hidden = true;
   }
 
   const tasaAhorro = getTasaAhorro(monthKey);
@@ -64,7 +130,7 @@ function renderKpis(monthKey) {
   const kpiTasaSub = document.getElementById('kpi-tasa-ahorro-sub');
   if (tasaAhorro === null) {
     kpiTasa.textContent = '—';
-    kpiTasaSub.textContent = 'Sin ingresos registrados este mes';
+    kpiTasaSub.textContent = esActual ? 'Sin ingresos registrados este mes' : 'Sin ingresos registrados ese mes';
   } else {
     kpiTasa.textContent = `${tasaAhorro.porcentaje}%`;
     kpiTasaSub.textContent = `${formatCurrency(tasaAhorro.aportes)} de ${formatCurrency(tasaAhorro.ingresos)}`;
@@ -80,6 +146,7 @@ function renderKpis(monthKey) {
         ? '¡Presupuesto de Obligaciones cubierto!'
         : `de ${formatCurrency(limiteObligaciones)} presupuestados`;
   } else {
+    delete kpiObligaciones.dataset.valor;
     kpiObligaciones.textContent = '—';
     kpiObligacionesSub.innerHTML = 'Define un límite en <a href="presupuestos.html">Presupuestos</a>';
   }
@@ -117,7 +184,7 @@ function renderGastosPorCategoria(monthKey) {
   const container = document.getElementById('chart-gastos-categoria');
 
   if (datos.length === 0) {
-    container.innerHTML = '<p class="empty-state-inline">Sin gastos registrados este mes.</p>';
+    container.innerHTML = `<p class="empty-state-inline">Sin gastos registrados en ${monthLabelLargo(monthKey)}.</p>`;
     return;
   }
 
@@ -143,11 +210,14 @@ function renderGastosPorCategoria(monthKey) {
     .join('');
 }
 
-function renderIngresosVsGastos() {
-  const serie = getSerieIngresosGastos(6);
+function renderIngresosVsGastos(monthKey) {
+  const serie = getSerieIngresosGastos(6, monthKey);
   const container = document.getElementById('chart-ingresos-gastos');
 
-  if (serie.every((s) => s.ingresos === 0 && s.gastos === 0)) {
+  // Solo se muestra el mensaje vacio si no hay ningun movimiento; si hay
+  // datos en otros meses se dibujan las barras (aunque esten en cero) para
+  // poder seguir navegando tocandolas.
+  if (Storage.getMovimientos().length === 0) {
     container.innerHTML = '<p class="empty-state-inline">Aún no hay movimientos para mostrar la tendencia.</p>';
     return;
   }
@@ -156,22 +226,24 @@ function renderIngresosVsGastos() {
   container.innerHTML = serie
     .map(
       (s) => `
-    <a class="chart-bar-group" href="movimientos.html?mes=${s.mes}" title="Ver movimientos de ${monthLabel(s.mes)} en detalle">
+    <button type="button" class="chart-bar-group${s.mes === monthKey ? ' chart-bar-group-activo' : ''}" data-mes="${s.mes}"
+      aria-pressed="${s.mes === monthKey}"
+      title="${monthLabelLargo(s.mes)} · ingresos ${formatCurrency(s.ingresos)} · gastos ${formatCurrency(s.gastos)}">
       <div class="chart-bar-pair">
-        <div class="chart-bar chart-bar-ingreso" style="height:${(s.ingresos / max) * 100}%" title="Ingresos: ${formatCurrency(s.ingresos)}"></div>
-        <div class="chart-bar chart-bar-gasto" style="height:${(s.gastos / max) * 100}%" title="Gastos: ${formatCurrency(s.gastos)}"></div>
+        <div class="chart-bar chart-bar-ingreso" style="height:${(s.ingresos / max) * 100}%"></div>
+        <div class="chart-bar chart-bar-gasto" style="height:${(s.gastos / max) * 100}%"></div>
       </div>
       <span class="chart-bar-label">${monthLabel(s.mes)}</span>
-    </a>`
+    </button>`
     )
     .join('');
 }
 
-function renderEvolucionAhorro() {
-  const serie = getSerieAhorro(6);
+function renderEvolucionAhorro(monthKey) {
+  const serie = getSerieAhorro(6, monthKey);
   const container = document.getElementById('chart-ahorro');
 
-  if (serie.every((s) => s.acumulado === 0)) {
+  if (getAhorradoTotal() === 0) {
     container.innerHTML = '<p class="empty-state-inline">Aún no tienes aportes de ahorro registrados.</p>';
     return;
   }
@@ -180,7 +252,7 @@ function renderEvolucionAhorro() {
   container.innerHTML = serie
     .map(
       (s) => `
-    <div class="chart-bar-group">
+    <div class="chart-bar-group${s.mes === monthKey ? ' chart-bar-group-activo' : ''}">
       <div class="chart-bar-pair">
         <div class="chart-bar chart-bar-ahorro" style="height:${(s.acumulado / max) * 100}%" title="${formatCurrency(s.acumulado)}"></div>
       </div>

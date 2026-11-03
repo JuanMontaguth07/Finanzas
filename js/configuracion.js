@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('btn-exportar-excel').addEventListener('click', exportarExcel);
   document.getElementById('btn-exportar-respaldo').addEventListener('click', exportarRespaldoJson);
+  // ?accion=exportar viene del comando /exportar de la paleta
+  if (new URLSearchParams(window.location.search).get('accion') === 'exportar') exportarExcel();
 
   const inputImportar = document.getElementById('input-importar-respaldo');
   let modoImportacion = 'combinar';

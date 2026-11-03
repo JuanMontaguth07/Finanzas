@@ -32,18 +32,18 @@ function getGastosPorCategoria(monthKey, hastaDia = null) {
     .sort((a, b) => b.total - a.total);
 }
 
-function getUltimosMeses(n) {
+// Los n meses que terminan en "hasta" (por defecto el mes actual).
+function getUltimosMeses(n, hasta = currentMonthKey()) {
+  const [year, month] = hasta.split('-').map(Number);
   const meses = [];
-  const base = new Date();
   for (let i = n - 1; i >= 0; i--) {
-    const d = new Date(base.getFullYear(), base.getMonth() - i, 1);
-    meses.push(currentMonthKey(d));
+    meses.push(currentMonthKey(new Date(year, month - 1 - i, 1)));
   }
   return meses;
 }
 
-function getSerieIngresosGastos(n) {
-  return getUltimosMeses(n).map((mes) => ({ mes, ...getResumenMes(mes) }));
+function getSerieIngresosGastos(n, hasta) {
+  return getUltimosMeses(n, hasta).map((mes) => ({ mes, ...getResumenMes(mes) }));
 }
 
 function getAportesDelMes(monthKey) {
@@ -95,8 +95,8 @@ function getAhorradoTotal() {
   return Storage.getObjetivos().reduce((sum, o) => sum + Storage.getAhorradoObjetivo(o), 0);
 }
 
-function getSerieAhorro(n) {
-  const meses = getUltimosMeses(n);
+function getSerieAhorro(n, hasta) {
+  const meses = getUltimosMeses(n, hasta);
   const todosAportes = Storage.getObjetivos().flatMap((o) => o.aportes);
   const primerMes = meses[0];
 

@@ -549,8 +549,8 @@ html.bloqueado .theme-toggle-btn {
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  /* espacio para el boton de tema fijo en la esquina */
-  padding-right: 52px;
+  /* espacio para los botones fijos de comandos y tema en la esquina */
+  padding-right: 104px;
 }
 
 .page-header h1 {
@@ -1267,13 +1267,25 @@ html.bloqueado .theme-toggle-btn {
   align-items: center;
   gap: 8px;
   height: 100%;
+  padding: 0;
+  border: 1px solid transparent;
+  background: none;
   border-radius: var(--radius-sm);
-  transition: background 0.15s ease;
-  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
-.chart-bar-group:hover {
-  background: var(--surface-alt);
+/* Las barras de Ingresos vs gastos son botones: tocarlas selecciona ese mes */
+button.chart-bar-group { cursor: pointer; }
+button.chart-bar-group:hover { background: var(--surface-alt); }
+
+.chart-bar-group-activo {
+  background: var(--primary-soft);
+  border-color: rgba(var(--primary-rgb), 0.35);
+}
+
+.chart-bar-group-activo .chart-bar-label {
+  color: var(--primary);
+  font-weight: 700;
 }
 
 .chart-bar-pair {
@@ -2008,6 +2020,282 @@ html.bloqueado .mascota { display: none; }
   .mascota *,
   .mascota-btn,
   .mascota-burbuja { animation: none !important; }
+}
+
+/* ============ Selector de mes (dashboard y filtro de movimientos) ============ */
+.selector-mes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 10px;
+  background: var(--surface);
+  -webkit-backdrop-filter: var(--vidrio);
+  backdrop-filter: var(--vidrio);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  align-self: center;
+  flex-wrap: wrap;
+}
+
+.selector-mes-btn {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 7px;
+  background: none;
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.selector-mes-btn:hover:not(:disabled) { background: var(--surface-alt); }
+.selector-mes-btn:disabled { opacity: 0.3; cursor: default; }
+
+.selector-mes-label {
+  min-width: 132px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.selector-mes-hoy {
+  border: 1px solid var(--border);
+  background: var(--primary-soft);
+  color: var(--primary);
+  border-radius: 7px;
+  padding: 4px 10px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.selector-mes-hoy[hidden] { display: none; }
+
+.selector-mes-link {
+  padding: 4px 10px;
+  color: var(--primary);
+  font-size: 12px;
+}
+
+.selector-mes-link:hover { text-decoration: underline; }
+
+.titulo-mes {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.filtro-mes-grupo {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.filtro-mes-grupo .selector-mes-btn {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  height: 38px;
+}
+
+/* ============ Resumen de movimientos filtrados (estilo terminal) ============ */
+.resumen-filtro {
+  background: var(--terminal-bg);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  color: var(--terminal-text);
+  border: 1px solid rgba(140, 176, 224, 0.35);
+  border-radius: var(--radius);
+  padding: 14px 20px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.resumen-filtro-cabecera {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: var(--terminal-muted);
+}
+
+.resumen-prompt { color: var(--terminal-acento); }
+
+.resumen-link { color: var(--terminal-acento); }
+.resumen-link:hover { text-decoration: underline; }
+
+.resumen-filtro-datos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px 20px;
+}
+
+.resumen-filtro-datos > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.resumen-etiqueta {
+  font-size: 11px;
+  color: var(--terminal-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.resumen-valor {
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.resumen-ingreso { color: #9fd4ae; }
+.resumen-gasto { color: #f2a59d; }
+
+/* ============ Paleta de comandos (js/comandos.js) ============ */
+.comandos-btn {
+  position: fixed;
+  top: 16px;
+  right: 64px;
+  z-index: 40;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  -webkit-backdrop-filter: var(--vidrio);
+  backdrop-filter: var(--vidrio);
+  box-shadow: var(--shadow-md);
+  color: var(--primary);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.comandos-btn:hover { background: var(--surface-alt); }
+
+html.bloqueado .comandos-btn { display: none; }
+
+.comandos-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  background: rgba(8, 14, 24, 0.35);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 14vh 16px 16px;
+  animation: overlay-entra 0.12s ease both;
+}
+
+.comandos-overlay[hidden] { display: none; }
+
+.comandos-caja {
+  width: 100%;
+  max-width: 560px;
+  background: var(--terminal-bg);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  color: var(--terminal-text);
+  border: 1px solid rgba(140, 176, 224, 0.45);
+  border-radius: var(--radius);
+  box-shadow: 0 24px 60px rgba(5, 10, 20, 0.45);
+  font-family: var(--font-mono);
+  overflow: hidden;
+  animation: modal-entra 0.18s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.comandos-entrada {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(232, 238, 246, 0.08);
+}
+
+.comandos-prompt {
+  color: var(--terminal-acento);
+  font-weight: 700;
+}
+
+.comandos-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: none;
+  color: var(--terminal-text);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  caret-color: var(--terminal-acento);
+}
+
+.comandos-input::placeholder { color: var(--terminal-muted); }
+.comandos-input:focus-visible { outline: none; }
+
+.comandos-lista {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.comando {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.comando-activo { background: rgba(140, 176, 224, 0.16); }
+.comando-activo .comando-nombre { color: var(--terminal-acento); }
+
+.comando-nombre {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.comando-arg {
+  color: var(--terminal-muted);
+  font-weight: 400;
+}
+
+.comando-desc {
+  color: var(--terminal-muted);
+  text-align: right;
+  font-size: 12px;
+}
+
+.comando-vacio {
+  padding: 12px;
+  color: var(--terminal-muted);
+  font-size: 13px;
+}
+
+.comandos-pie {
+  display: flex;
+  gap: 18px;
+  padding: 9px 18px;
+  border-top: 1px solid rgba(232, 238, 246, 0.08);
+  color: var(--terminal-muted);
+  font-size: 11px;
+}
+
+@media (max-width: 480px) {
+  .comando { flex-direction: column; gap: 2px; }
+  .comando-desc { text-align: left; }
+  .selector-mes { width: 100%; justify-content: center; }
 }
 
 /* ============ Responsive ============ */

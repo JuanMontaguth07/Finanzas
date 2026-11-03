@@ -34,6 +34,20 @@ function monthLabel(monthKey) {
   return MESES_CORTOS[month - 1];
 }
 
+const MESES_LARGOS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+// "2026-11" -> "noviembre 2026"
+function monthLabelLargo(monthKey) {
+  const [year, month] = monthKey.split('-').map(Number);
+  return `${MESES_LARGOS[month - 1]} ${year}`;
+}
+
+// Suma (o resta) meses a una llave "YYYY-MM".
+function sumarMeses(monthKey, delta) {
+  const [year, month] = monthKey.split('-').map(Number);
+  return currentMonthKey(new Date(year, month - 1 + delta, 1));
+}
+
 function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str;

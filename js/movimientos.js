@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
     filtroCategoria: document.getElementById('filtro-categoria'),
     filtroTipo: document.getElementById('filtro-tipo'),
     filtroBusqueda: document.getElementById('filtro-busqueda'),
+    filtroMesAnterior: document.getElementById('filtro-mes-anterior'),
+    filtroMesSiguiente: document.getElementById('filtro-mes-siguiente'),
+    resumen: document.getElementById('resumen-filtro'),
     btnLimpiar: document.getElementById('btn-limpiar-filtros'),
     btnNuevo: document.getElementById('btn-nuevo-movimiento'),
     modalOverlay: document.getElementById('modal-overlay'),
@@ -77,8 +80,35 @@ document.addEventListener('DOMContentLoaded', () => {
       .sort((a, b) => b.fecha.localeCompare(a.fecha));
   }
 
+  // Resumen tipo terminal de lo que muestra la tabla: se recalcula con cada
+  // filtro, asi al elegir un mes se ven sus ingresos, gastos y balance.
+  function renderResumen(movimientos) {
+    const { mes, categoria, tipo, busqueda } = state.filtros;
+    const partes = [mes ? monthLabelLargo(mes) : 'todos los meses'];
+    if (categoria) partes.push(categoria);
+    if (tipo) partes.push(tipo === 'ingreso' ? 'solo ingresos' : 'solo gastos');
+    if (busqueda) partes.push(`"${busqueda}"`);
+
+    const ingresos = movimientos.filter((m) => m.tipo === 'ingreso').reduce((s, m) => s + m.valor, 0);
+    const gastos = movimientos.filter((m) => m.tipo === 'gasto').reduce((s, m) => s + m.valor, 0);
+    const balance = ingresos - gastos;
+
+    els.resumen.innerHTML = `
+      <div class="resumen-filtro-cabecera">
+        <span><span class="resumen-prompt">&gt;</span> ${escapeHtml(partes.join(' · '))}</span>
+        ${mes ? `<a class="resumen-link" href="index.html?mes=${mes}">ver estadísticas del mes →</a>` : ''}
+      </div>
+      <div class="resumen-filtro-datos">
+        <div><span class="resumen-etiqueta">ingresos</span><span class="resumen-valor resumen-ingreso">+${formatCurrency(ingresos)}</span></div>
+        <div><span class="resumen-etiqueta">gastos</span><span class="resumen-valor resumen-gasto">−${formatCurrency(gastos)}</span></div>
+        <div><span class="resumen-etiqueta">balance</span><span class="resumen-valor ${balance >= 0 ? 'resumen-ingreso' : 'resumen-gasto'}">${balance >= 0 ? '+' : '−'}${formatCurrency(Math.abs(balance))}</span></div>
+        <div><span class="resumen-etiqueta">movimientos</span><span class="resumen-valor">${movimientos.length}</span></div>
+      </div>`;
+  }
+
   function renderTabla() {
     const movimientos = obtenerMovimientosFiltrados();
+    renderResumen(movimientos);
     els.empty.hidden = movimientos.length > 0;
     els.tbody.innerHTML = movimientos
       .map((m) => {
@@ -104,6 +134,15 @@ document.addEventListener('DOMContentLoaded', () => {
     state.filtros.mes = e.target.value;
     renderTabla();
   });
+  // Flechas para ir mes a mes; sin mes elegido, cualquiera salta al mes actual.
+  function moverMes(delta) {
+    const mes = state.filtros.mes ? sumarMeses(state.filtros.mes, delta) : currentMonthKey();
+    state.filtros.mes = mes;
+    els.filtroMes.value = mes;
+    renderTabla();
+  }
+  els.filtroMesAnterior.addEventListener('click', () => moverMes(-1));
+  els.filtroMesSiguiente.addEventListener('click', () => moverMes(1));
   els.filtroCategoria.addEventListener('change', (e) => {
     state.filtros.categoria = e.target.value;
     renderTabla();
@@ -198,7 +237,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Si llegamos desde un enlace del dashboard (ej. clic en una barra del
   // gráfico de un mes), pre-aplicamos ese filtro de mes.
-  const mesDesdeUrl = new URLSearchParams(window.location.search).get('mes');
+  const params = new URLSearchParams(window.location.search);
+  const mesDesdeUrl = params.get('mes');
   if (mesDesdeUrl) {
     state.filtros.mes = mesDesdeUrl;
     els.filtroMes.value = mesDesdeUrl;
@@ -206,6 +246,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   poblarCategorias();
   renderTabla();
+
+  // ?nuevo=1 abre el formulario de una vez (lo usa el comando /nuevo).
+  if (params.get('nuevo')) abrirModal();
 
   window.renderTablaMovimientos = renderTabla;
 });

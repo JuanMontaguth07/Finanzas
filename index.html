@@ -44,22 +44,29 @@
           <h1><span id="saludo">¡Hola!</span></h1>
           <p class="page-subtitle" id="saludo-sub">Así va tu plata este mes</p>
         </div>
+        <div class="selector-mes" role="group" aria-label="Mes que se está viendo">
+          <button type="button" class="selector-mes-btn" id="mes-anterior" aria-label="Mes anterior">‹</button>
+          <span class="selector-mes-label" id="mes-label" aria-live="polite"></span>
+          <button type="button" class="selector-mes-btn" id="mes-siguiente" aria-label="Mes siguiente">›</button>
+          <button type="button" class="selector-mes-hoy" id="mes-hoy" hidden>hoy</button>
+          <a class="selector-mes-link" id="mes-ver-movimientos" href="movimientos.html">ver movimientos →</a>
+        </div>
       </header>
 
       <section class="hero-balance">
         <div class="hero-terminal-barra" aria-hidden="true"><i></i><i></i><i></i><span>~/finanzas — saldo</span></div>
-        <span class="hero-balance-label"><span class="glifo-spinner" aria-hidden="true">✻</span>Dinero disponible</span>
+        <span class="hero-balance-label"><span class="glifo-spinner" aria-hidden="true">✻</span><span id="hero-label-texto">Dinero disponible</span></span>
         <span class="hero-balance-value"><span id="kpi-disponible">$ 0</span><span class="hero-cursor" aria-hidden="true"></span></span>
         <span class="hero-chip" id="hero-balance-mes" hidden></span>
       </section>
 
       <section class="kpi-grid">
         <div class="card kpi-card kpi-green">
-          <span class="kpi-label">📈 Ingresos del mes</span>
+          <span class="kpi-label">📈 Ingresos <span class="kpi-mes"></span></span>
           <span class="kpi-value" id="kpi-ingresos">$ 0</span>
         </div>
         <div class="card kpi-card kpi-rose">
-          <span class="kpi-label">📉 Gastos del mes</span>
+          <span class="kpi-label">📉 Gastos <span class="kpi-mes"></span></span>
           <span class="kpi-value" id="kpi-gastos">$ 0</span>
         </div>
         <div class="card kpi-card kpi-amber">
@@ -72,7 +79,7 @@
           <span class="kpi-value" id="kpi-ahorro">$ 0</span>
         </div>
         <div class="card kpi-card kpi-cyan">
-          <span class="kpi-label">✨ Tasa de ahorro (mes)</span>
+          <span class="kpi-label">✨ Tasa de ahorro <span class="kpi-mes"></span></span>
           <span class="kpi-value" id="kpi-tasa-ahorro">—</span>
           <span class="kpi-sub" id="kpi-tasa-ahorro-sub"></span>
         </div>
@@ -85,12 +92,13 @@
 
       <section class="charts-grid">
         <div class="card">
-          <h2 class="section-title">Gastos por categoría (este mes)</h2>
+          <h2 class="section-title">Gastos por categoría <span class="titulo-mes" id="titulo-categorias"></span></h2>
           <p class="settings-hint">La variación compara con los mismos días del mes anterior.</p>
           <div id="chart-gastos-categoria" class="hbar-chart"></div>
         </div>
         <div class="card">
-          <h2 class="section-title">Ingresos vs gastos (últimos 6 meses)</h2>
+          <h2 class="section-title">Ingresos vs gastos <span class="titulo-mes" id="titulo-ingresos-gastos"></span></h2>
+          <p class="settings-hint">Toca un mes para ver sus estadísticas.</p>
           <div id="chart-ingresos-gastos" class="chart-bars"></div>
           <div class="chart-legend">
             <span class="legend-item"><span class="legend-dot legend-dot-ingreso"></span>Ingresos</span>
@@ -98,7 +106,7 @@
           </div>
         </div>
         <div class="card">
-          <h2 class="section-title">Evolución del ahorro (últimos 6 meses)</h2>
+          <h2 class="section-title">Evolución del ahorro <span class="titulo-mes" id="titulo-ahorro"></span></h2>
           <div id="chart-ahorro" class="chart-bars"></div>
         </div>
       </section>
@@ -113,6 +121,7 @@
   <script src="js/pin.js"></script>
   <script src="js/fondo.js"></script>
   <script src="js/mascota.js"></script>
+  <script src="js/comandos.js"></script>
   <script src="js/dashboard.js"></script>
   <script src="js/pwa.js"></script>
 </body>

@@ -54,7 +54,11 @@
       <section class="card filters-bar">
         <div class="filter-field">
           <label for="filtro-mes">Mes</label>
-          <input type="month" id="filtro-mes">
+          <div class="filtro-mes-grupo">
+            <button type="button" class="selector-mes-btn" id="filtro-mes-anterior" aria-label="Mes anterior">‹</button>
+            <input type="month" id="filtro-mes">
+            <button type="button" class="selector-mes-btn" id="filtro-mes-siguiente" aria-label="Mes siguiente">›</button>
+          </div>
         </div>
         <div class="filter-field">
           <label for="filtro-categoria">Categoría</label>
@@ -74,6 +78,8 @@
         </div>
         <button class="btn btn-ghost" id="btn-limpiar-filtros">Limpiar filtros</button>
       </section>
+
+      <section class="resumen-filtro" id="resumen-filtro" aria-live="polite"></section>
 
       <section class="card">
         <div class="table-wrapper">
@@ -173,6 +179,7 @@
   <script src="js/pin.js"></script>
   <script src="js/fondo.js"></script>
   <script src="js/mascota.js"></script>
+  <script src="js/comandos.js"></script>
   <script src="js/pwa.js"></script>
 </body>
 </html>
