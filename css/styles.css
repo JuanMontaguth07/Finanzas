@@ -1553,6 +1553,13 @@ button.chart-bar-group:hover { background: var(--surface-alt); }
   flex-shrink: 0;
 }
 
+.version-app {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-align: center;
+  margin: 0 auto;
+}
+
 .danger-zone {
   border-color: var(--danger-soft);
 }

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mis-finanzas-v12';
+const CACHE_NAME = 'mis-finanzas-v13';
 
 // El "app shell" (HTML/JS/CSS/manifest) se sirve siempre de red primero,
 // para que las actualizaciones se vean de inmediato mientras haya internet.
@@ -73,8 +73,15 @@ self.addEventListener('fetch', (event) => {
     // cache: 'no-cache' obliga a confirmar con el servidor: GitHub Pages deja
     // los archivos 10 min en la cache HTTP y se podia mezclar un index.html
     // viejo con un dashboard.js nuevo (y el dashboard dejaba de cargar).
+    // Las navegaciones (abrir una pagina) no se pueden copiar con opciones
+    // nuevas (Chrome lanza un error y terminabamos sirviendo siempre el HTML
+    // guardado), asi que para ellas se arma una peticion nueva desde la URL.
+    const peticion =
+      event.request.mode === 'navigate'
+        ? new Request(event.request.url, { cache: 'no-cache', credentials: 'same-origin' })
+        : new Request(event.request, { cache: 'no-cache' });
     event.respondWith(
-      fetch(event.request, { cache: 'no-cache' })
+      fetch(peticion)
         .then((response) => {
           if (response.ok) {
             const clone = response.clone();
