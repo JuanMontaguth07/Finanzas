@@ -1764,14 +1764,18 @@ html.bloqueado .mascota { display: none; }
   width: 100%;
   height: 100%;
   overflow: visible;
-  transform: scaleX(var(--mascota-giro, 1));
+  transform: rotate(var(--mascota-rot, 0deg)) scaleX(var(--mascota-giro, 1));
   transition: transform 0.25s ease;
 }
 
 /* Mirando hacia la izquierda mientras camina en esa direccion */
 .mascota--izq { --mascota-giro: -1; }
 
-.mascota-btn:hover svg { transform: scaleX(var(--mascota-giro, 1)) scale(1.05); }
+/* Agarrada a una pared: gira 90° con la base contra la pared */
+.mascota--pared-izq { --mascota-rot: 90deg; }
+.mascota--pared-der { --mascota-rot: -90deg; }
+
+.mascota-btn:hover svg { transform: rotate(var(--mascota-rot, 0deg)) scaleX(var(--mascota-giro, 1)) scale(1.05); }
 
 /* Caminando: pasitos cortos */
 .mascota--caminando .mascota-btn { animation: mascota-pasito 0.36s ease-in-out infinite; }
@@ -1878,10 +1882,13 @@ html.bloqueado .mascota { display: none; }
 .mascota--dormida .mascota-zzz,
 .mascota--dormida .mascota-ojos-cerrados,
 .mascota--tapada .mascota-ojos-cerrados,
-.mascota--tapada .mascota-boca-feliz { display: inline; }
+.mascota--tapada .mascota-boca-feliz,
+.mascota--mareada .mascota-ojos-x,
+.mascota--mareada .mascota-boca-preocupada { display: inline; }
 
 .mascota--dormida .mascota-ojos,
-.mascota--tapada .mascota-ojos { display: none; }
+.mascota--tapada .mascota-ojos,
+.mascota--mareada .mascota-ojos { display: none; }
 .mascota--dormida .mascota-cuerpo,
 .mascota--dormida .mascota-hojas { animation-duration: 6s; }
 
@@ -2077,6 +2084,167 @@ html.bloqueado .mascota { display: none; }
   0% { opacity: 0; transform: translateY(0); }
   20% { opacity: 1; }
   100% { opacity: 0; transform: translateY(42px); }
+}
+
+/* ---- Bracitos de Brote ---- */
+/* Cada brazo gira desde el hombro. Las reglas de mas abajo tienen prioridad
+   (estan despues en el archivo), de lo mas tranquilo a lo mas importante. */
+.mascota-brazo {
+  transform-box: fill-box;
+  transition: transform 0.3s ease;
+}
+
+.mascota-brazo-izq {
+  transform-origin: right top;
+  animation: brazo-izq-reposo 3.2s ease-in-out infinite alternate;
+}
+
+.mascota-brazo-der {
+  transform-origin: left top;
+  animation: brazo-der-reposo 3.2s ease-in-out infinite alternate;
+}
+
+@keyframes brazo-izq-reposo {
+  from { transform: rotate(-4deg); }
+  to { transform: rotate(9deg); }
+}
+
+@keyframes brazo-der-reposo {
+  from { transform: rotate(4deg); }
+  to { transform: rotate(-9deg); }
+}
+
+/* Caminando: balancea los brazos */
+.mascota--caminando .mascota-brazo-izq { animation: brazo-izq-camina 0.36s ease-in-out infinite alternate; }
+.mascota--caminando .mascota-brazo-der { animation: brazo-der-camina 0.36s ease-in-out infinite alternate; }
+
+@keyframes brazo-izq-camina {
+  from { transform: rotate(-22deg); }
+  to { transform: rotate(32deg); }
+}
+
+@keyframes brazo-der-camina {
+  from { transform: rotate(-32deg); }
+  to { transform: rotate(22deg); }
+}
+
+/* Agarrada a la pared: brazos estirados sujetandose */
+.mascota--en-pared .mascota-brazo-izq { animation: none; transform: rotate(95deg); }
+.mascota--en-pared .mascota-brazo-der { animation: none; transform: rotate(-95deg); }
+
+/* Trepando: un brazo y luego el otro */
+.mascota--trepando .mascota-brazo-izq { animation: brazo-izq-trepa 0.42s ease-in-out infinite alternate; }
+.mascota--trepando .mascota-brazo-der { animation: brazo-der-trepa 0.42s ease-in-out infinite alternate-reverse; }
+.mascota--trepando .mascota-btn { animation: mascota-pasito 0.42s ease-in-out infinite; }
+
+@keyframes brazo-izq-trepa {
+  from { transform: rotate(50deg); }
+  to { transform: rotate(140deg); }
+}
+
+@keyframes brazo-der-trepa {
+  from { transform: rotate(-50deg); }
+  to { transform: rotate(-140deg); }
+}
+
+/* En el aire (saltando, lanzada o cayendo): brazos arriba */
+.mascota--saltando .mascota-brazo-izq,
+.mascota--en-aire .mascota-brazo-izq { animation: brazo-izq-aire 0.18s ease-in-out infinite alternate; }
+.mascota--saltando .mascota-brazo-der,
+.mascota--en-aire .mascota-brazo-der { animation: brazo-der-aire 0.18s ease-in-out infinite alternate; }
+
+@keyframes brazo-izq-aire {
+  from { transform: rotate(105deg); }
+  to { transform: rotate(135deg); }
+}
+
+@keyframes brazo-der-aire {
+  from { transform: rotate(-105deg); }
+  to { transform: rotate(-135deg); }
+}
+
+/* Cayendo o volando se inclina un poco */
+.mascota--en-aire .mascota-btn { transform: rotate(-6deg); }
+
+/* La estas cargando: agita los brazos */
+.mascota--arrastrando .mascota-brazo-izq { animation: brazo-izq-agita 0.14s ease-in-out infinite alternate; }
+.mascota--arrastrando .mascota-brazo-der { animation: brazo-der-agita 0.14s ease-in-out infinite alternate-reverse; }
+
+@keyframes brazo-izq-agita {
+  from { transform: rotate(30deg); }
+  to { transform: rotate(130deg); }
+}
+
+@keyframes brazo-der-agita {
+  from { transform: rotate(-30deg); }
+  to { transform: rotate(-130deg); }
+}
+
+/* Celebrando: brazos arriba */
+.mascota--celebrando .mascota-brazo-izq { animation: brazo-izq-aire 0.3s ease-in-out infinite alternate; }
+.mascota--celebrando .mascota-brazo-der { animation: brazo-der-aire 0.3s ease-in-out infinite alternate; }
+
+/* Saluda con el brazo derecho */
+.mascota--saluda .mascota-brazo-der { animation: brazo-saluda 0.28s ease-in-out 4 alternate; }
+
+@keyframes brazo-saluda {
+  from { transform: rotate(-110deg); }
+  to { transform: rotate(-155deg); }
+}
+
+/* Mareada: brazos colgando y hojas caidas */
+.mascota--mareada .mascota-brazo-izq { animation: none; transform: rotate(-28deg); }
+.mascota--mareada .mascota-brazo-der { animation: none; transform: rotate(28deg); }
+.mascota--mareada .mascota-hoja-izq { transform: rotate(-38deg); }
+.mascota--mareada .mascota-hoja-der { transform: rotate(38deg); }
+.mascota--mareada .mascota-hoja-top { transform: rotate(25deg); }
+
+/* Pantalla de PIN: se tapa los ojos con las manitos */
+.mascota--tapada .mascota-brazo-izq { animation: none; transform: rotate(-120deg); }
+.mascota--tapada .mascota-brazo-der { animation: none; transform: rotate(120deg); }
+
+/* ---- Golpe ---- */
+.mascota--golpe .mascota-btn {
+  transform-origin: center bottom;
+  animation: mascota-golpe 0.6s ease-out;
+}
+
+@keyframes mascota-golpe {
+  0% { transform: scale(1.35, 0.6); }
+  25% { transform: scale(0.85, 1.15) rotate(-8deg); }
+  45% { transform: scale(1.05, 0.95) rotate(6deg); }
+  65% { transform: rotate(-4deg); }
+  100% { transform: scale(1, 1) rotate(0deg); }
+}
+
+/* Estrellitas girando sobre la cabeza */
+.mascota-mareo {
+  position: absolute;
+  left: 50%;
+  top: 2px;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.mascota-mareo span {
+  position: absolute;
+  font-size: 12px;
+  line-height: 1;
+  margin: -6px 0 0 -6px;
+  animation: mascota-mareo-orbita 0.9s linear infinite;
+}
+
+.mascota-mareo span:nth-child(2) { animation-delay: -0.3s; }
+.mascota-mareo span:nth-child(3) { animation-delay: -0.6s; }
+
+@keyframes mascota-mareo-orbita {
+  0% { transform: translate(-24px, 0) scale(0.8); }
+  25% { transform: translate(0, 7px) scale(1.1); }
+  50% { transform: translate(24px, 0) scale(0.8); }
+  75% { transform: translate(0, -7px) scale(0.55); opacity: 0.6; }
+  100% { transform: translate(-24px, 0) scale(0.8); }
 }
 
 .mascota-burbuja {

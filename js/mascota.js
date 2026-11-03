@@ -5,7 +5,7 @@
 const MASCOTA_KEY = 'financeAppMascota';
 const MASCOTA_SALUDO_KEY = 'financeAppMascotaSaludo';
 const MASCOTA_POS_KEY = 'financeAppMascotaPos';
-const MASCOTA_ESTADOS = ['neutral', 'feliz', 'preocupada', 'celebrando', 'dormida'];
+const MASCOTA_ESTADOS = ['neutral', 'feliz', 'preocupada', 'celebrando', 'dormida', 'mareada'];
 
 const MASCOTA_TIPS = [
   'Tip: anota también los gastos pequeños, son los que más se escapan. ☕',
@@ -98,6 +98,23 @@ function mascotaSvg(sufijo = '') {
       <g transform="translate(12 30)"><path class="mascota-brillo" d="M0 -7 L1.8 -1.8 L7 0 L1.8 1.8 L0 7 L-1.8 1.8 L-7 0 L-1.8 -1.8 Z"/></g>
       <g transform="translate(108 44)"><path class="mascota-brillo" d="M0 -6 L1.5 -1.5 L6 0 L1.5 1.5 L0 6 L-1.5 1.5 L-6 0 L-1.5 -1.5 Z"/></g>
       <g transform="translate(14 86)"><path class="mascota-brillo" d="M0 -5 L1.2 -1.2 L5 0 L1.2 1.2 L0 5 L-1.2 1.2 L-5 0 L-1.2 -1.2 Z"/></g>
+    </g>
+
+    <g class="mascota-extra mascota-ojos-x" fill="none" stroke="#1f1e1d" stroke-width="2.2" stroke-linecap="round">
+      <path d="M45.5 70.5 l7 7 M52.5 70.5 l-7 7"/>
+      <path d="M67.5 70.5 l7 7 M74.5 70.5 l-7 7"/>
+    </g>
+
+    <!-- Bracitos: van al final para quedar delante de la cara (en el PIN se tapa los ojos) -->
+    <g class="mascota-brazo mascota-brazo-izq">
+      <path d="M30 70 Q22 73 19 81" fill="none" stroke="#b8c4d3" stroke-width="6.5" stroke-linecap="round"/>
+      <path d="M30 70 Q22 73 19 81" fill="none" stroke="#f1f4f8" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="19" cy="82" r="3.6" fill="#f8fafc" stroke="#b8c4d3" stroke-width="1.3"/>
+    </g>
+    <g class="mascota-brazo mascota-brazo-der">
+      <path d="M90 70 Q98 73 101 81" fill="none" stroke="#b8c4d3" stroke-width="6.5" stroke-linecap="round"/>
+      <path d="M90 70 Q98 73 101 81" fill="none" stroke="#f1f4f8" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="101" cy="82" r="3.6" fill="#f8fafc" stroke="#b8c4d3" stroke-width="1.3"/>
     </g>
   </g>
 </svg>`;
@@ -243,10 +260,13 @@ const MASCOTA_PENSAMIENTOS = [
 ];
 
 const MASCOTA_AL_SOLTAR = ['¡Wiii! 🌿', '¡Qué vista desde aquí!', 'Aquí me quedo un ratito.', '¡Me mareé un poquito! 😵'];
+const MASCOTA_LANZADA = ['¡Wiiiiii! 🚀', '¡Estoy volandooo! 🌿', '¡Aaaah! 😆'];
 const MASCOTA_COSQUILLAS = ['¡Jiji, cosquillas! 💚', '¡Ay, para, para! 😆', 'Me encanta que me consientas 🥰'];
 const MASCOTA_REGAR = ['¡Gracias por el agua! 💧', 'Ahhh, qué rico. Crezco como tus ahorros 🌱', '¡Glu glu! Justo lo que necesitaba 💧'];
 const MASCOTA_DESPIERTA = ['¡Ah! Me quedé dormida 😳', '¿Eh? Ya estoy despierta… casi 🥱'];
 const MASCOTA_SALUDOS = ['¡Hola! 👋', '¡Ey, por aquí! 🌿', 'Hola de nuevo 😊'];
+const MASCOTA_GOLPES = ['¡Auch! 😵', 'Eso dolió… 🤕', 'Veo estrellitas ✨', '¡Ay, mi maceta!'];
+const MASCOTA_PARED = ['¡Mírame, soy escaladora! 🧗', 'Desde aquí vigilo tus gastos 👀', '¡Me agarré! 💪'];
 // Gestos que hace sola cuando esta quieta
 const MASCOTA_GESTOS = ['mascota--mira', 'mascota--saluda', 'mascota--estira'];
 // Elementos sobre los que se puede parar
@@ -257,6 +277,7 @@ const MASCOTA_ANIMACIONES = {
   'mascota-salto': 'mascota--salto',
   'mascota-sacudida': 'mascota--sacudida',
   'mascota-aterriza': 'mascota--aterriza',
+  'mascota-golpe': 'mascota--golpe',
   'mascota-giro': 'mascota--giro',
   'mascota-tambalea': 'mascota--tambalea',
   'mascota-risa': 'mascota--risa',
@@ -266,6 +287,11 @@ const MASCOTA_ANIMACIONES = {
   'mascota-crece-izq': 'mascota--regada',
   'mascota-moneda': 'mascota--moneda',
 };
+
+// Fisica (pixeles y segundos)
+const MASCOTA_GRAVEDAD = 2300;
+const MASCOTA_GOLPE_PARED = 650; // velocidad contra una pared/techo que la marea
+const MASCOTA_GOLPE_CAIDA = 1700; // velocidad de caida que la marea al aterrizar (~65% de la pantalla)
 
 function elegirAlAzar(lista) {
   return lista[Math.floor(Math.random() * lista.length)];
@@ -325,15 +351,22 @@ const Mascota = {
   ultimoTick: 0,
   oyentes: [],
 
-  // Posicion: x = distancia al borde izquierdo; y = altura de los pies sobre
-  // el borde inferior. "superficie" es el elemento donde esta parada (null =
-  // el piso). Si esta sobre una tarjeta, se mueve con ella al hacer scroll.
+  // Posicion: x = distancia al borde izquierdo; y = altura de la base sobre
+  // el borde inferior. "modo" puede ser:
+  //   'suelo' -> parada en el piso o sobre una tarjeta (this.superficie)
+  //   'pared' -> agarrada a la pared izquierda o derecha (this.pared)
+  //   'aire'  -> volando/cayendo con gravedad (this.vel)
   x: 0,
   y: 0,
+  modo: 'suelo',
   superficie: null,
+  pared: null,
+  vel: null,
   movimiento: null,
   arrastre: null,
   suprimirClick: false,
+  ultimoGolpe: 0,
+  saltoVoluntario: false,
 
   // Interacciones
   caricias: [],
@@ -342,6 +375,7 @@ const Mascota = {
   finPausaCaricia: 0,
   ultimoSaludo: 0,
   punteroLejos: true,
+  scrollPrevio: null,
   ultimoScroll: 0,
   ultimoTambaleo: 0,
   comentadas: new Set(),
@@ -356,7 +390,7 @@ const Mascota = {
         <span class="mascota-burbuja-texto"></span>
         <button type="button" class="mascota-burbuja-cerrar" aria-label="Cerrar mensaje">&times;</button>
       </div>
-      <button type="button" class="mascota-btn" aria-label="Brote, tu planta financiera. Tócala para un consejo, arrástrala, acaríciala o mantenla presionada para regarla" title="¡Hola! Soy Brote. Tócame, arrástrame, acaríciame o mantenme presionada para regarme">${mascotaSvg()}</button>`;
+      <button type="button" class="mascota-btn" aria-label="Brote, tu planta financiera. Tócala para un consejo, arrástrala o lánzala, acaríciala o mantenla presionada para regarla" title="¡Hola! Soy Brote. Tócame, arrástrame (¡o lánzame!), acaríciame o mantenme presionada para regarme">${mascotaSvg()}</button>`;
     document.body.appendChild(el);
 
     this.el = el;
@@ -437,11 +471,13 @@ const Mascota = {
     this.movimiento = null;
     this.arrastre = null;
     this.superficie = null;
+    this.pared = null;
+    this.modo = 'suelo';
     this.el.remove();
     this.el = null;
   },
 
-  // ---- Superficies (piso y tarjetas) ----
+  // ---- Superficies (piso, tarjetas y paredes) ----
   esMovil() {
     return window.matchMedia('(max-width: 768px)').matches;
   },
@@ -469,6 +505,15 @@ const Mascota = {
     return { min: r.left + 6, max: Math.max(r.left + 6, r.right - this.ancho() - 6) };
   },
 
+  limitesPared() {
+    return {
+      xIzq: 0,
+      xDer: window.innerWidth - this.ancho(),
+      minY: this.alturaPiso() + 6,
+      maxY: Math.max(this.alturaPiso() + 6, window.innerHeight - this.alto() - 12),
+    };
+  },
+
   // Una tarjeta sirve de plataforma si se ve en pantalla, cabe Brote encima
   // y no esta dentro de un modal o de la paleta de comandos.
   esPlataformaValida(el) {
@@ -482,16 +527,15 @@ const Mascota = {
     return Array.from(document.querySelectorAll(MASCOTA_PLATAFORMAS)).filter((p) => p !== this.superficie && this.esPlataformaValida(p));
   },
 
-  // La superficie mas cercana justo debajo de Brote (para caer sobre ella).
-  superficieDebajo() {
+  // Tarjeta cuyo borde superior cruzaron los pies en este cuadro (cayendo).
+  superficieCruzada(pieAntes, pieAhora) {
     const centro = this.x + this.ancho() / 2;
-    const pies = window.innerHeight - this.y;
     let mejor = null;
     let mejorTop = Infinity;
     document.querySelectorAll(MASCOTA_PLATAFORMAS).forEach((p) => {
       if (!this.esPlataformaValida(p)) return;
       const r = p.getBoundingClientRect();
-      if (centro > r.left && centro < r.right && r.top >= pies - 4 && r.top < mejorTop) {
+      if (centro > r.left && centro < r.right && r.top >= pieAntes - 3 && r.top <= pieAhora + 3 && r.top < mejorTop) {
         mejor = p;
         mejorTop = r.top;
       }
@@ -519,58 +563,56 @@ const Mascota = {
     }
   },
 
-  // ---- Bucle de animacion: camina, salta, cae y sigue a su tarjeta ----
+  // ---- Bucle de animacion ----
   tick(ahora) {
     this.loop = requestAnimationFrame((t) => this.tick(t));
     const dt = Math.min((ahora - this.ultimoTick) / 1000, 0.05);
     this.ultimoTick = ahora;
     if (this.arrastre?.activo) return;
 
-    // Si su tarjeta desaparece o sale de la pantalla, se cae.
-    if (this.superficie && !this.movimiento && !this.esPlataformaValida(this.superficie)) {
-      this.superficie = null;
-      this.caer();
-    }
-
-    const m = this.movimiento;
-    if (m) {
-      this.avanzar(m, dt);
+    if (this.modo === 'aire') {
+      this.fisica(dt);
+    } else if (this.modo === 'pared') {
+      this.enPared(dt);
     } else {
-      this.y = this.alturaSuperficie(this.superficie);
-      const rango = this.rangoX(this.superficie);
-      this.x = Math.min(Math.max(this.x, rango.min), rango.max);
+      // Si su tarjeta desaparece o sale de la pantalla, se cae.
+      if (this.superficie && this.movimiento?.tipo !== 'saltar' && !this.esPlataformaValida(this.superficie)) {
+        this.soltarEnAire(0, 0);
+        this.aplicarPosicion();
+        return;
+      }
+      if (this.movimiento) {
+        this.avanzar(this.movimiento, dt);
+      } else {
+        this.y = this.alturaSuperficie(this.superficie);
+        const rango = this.rangoX(this.superficie);
+        this.x = Math.min(Math.max(this.x, rango.min), rango.max);
+      }
     }
     this.aplicarPosicion();
   },
 
+  // Caminar sobre el piso/tarjeta o el salto dirigido a una tarjeta.
   avanzar(m, dt) {
     if (m.tipo === 'caminar') {
       const paso = 70 * dt;
       const falta = m.destinoX - this.x;
       this.x += Math.abs(falta) <= paso ? falta : Math.sign(falta) * paso;
       this.y = this.alturaSuperficie(this.superficie);
-      if (this.superficie && !this.esPlataformaValida(this.superficie)) {
-        this.superficie = null;
-        this.caer();
-        return;
-      }
       if (Math.abs(m.destinoX - this.x) < 0.5) this.terminarMovimiento();
       return;
     }
 
-    // Saltar o caer: el destino se recalcula en cada cuadro por si hay scroll.
+    // Saltar: el destino se recalcula en cada cuadro por si hay scroll.
     if (m.hacia && !this.esPlataformaValida(m.hacia)) {
       m.hacia = null;
-      m.destinoX = Math.min(Math.max(m.destinoX, this.rangoX(null).min), this.rangoX(null).max);
+      const piso = this.rangoX(null);
+      m.destinoX = Math.min(Math.max(m.destinoX, piso.min), piso.max);
     }
     m.t = Math.min(m.t + dt / m.duracion, 1);
     const yFin = this.alturaSuperficie(m.hacia);
     this.x = m.desdeX + (m.destinoX - m.desdeX) * m.t;
-    if (m.tipo === 'caer') {
-      this.y = m.desdeY + (yFin - m.desdeY) * m.t * m.t;
-    } else {
-      this.y = m.desdeY + (yFin - m.desdeY) * m.t + m.altura * 4 * m.t * (1 - m.t);
-    }
+    this.y = m.desdeY + (yFin - m.desdeY) * m.t + m.altura * 4 * m.t * (1 - m.t);
     if (m.t >= 1) {
       this.superficie = m.hacia;
       this.y = yFin;
@@ -579,13 +621,162 @@ const Mascota = {
     }
   },
 
-  caminarA(destinoX) {
+  // Volando o cayendo: gravedad, rebotes, golpes y aterrizaje.
+  fisica(dt) {
+    const pieAntes = window.innerHeight - this.y;
+    this.vel.y -= MASCOTA_GRAVEDAD * dt;
+    this.x += this.vel.x * dt;
+    this.y += this.vel.y * dt;
+
+    // Paredes: si choca fuerte se marea y rebota; si no, a veces se agarra.
+    const maxX = window.innerWidth - this.ancho();
+    if (this.x < 0 || this.x > maxX) {
+      const lado = this.x < 0 ? 'izq' : 'der';
+      this.x = lado === 'izq' ? 0 : maxX;
+      const impacto = Math.abs(this.vel.x);
+      if (impacto > MASCOTA_GOLPE_PARED) {
+        this.vel.x *= -0.4;
+        this.golpe();
+      } else if (impacto > 120 && Math.random() < 0.6) {
+        this.agarrarPared(lado);
+        return;
+      } else {
+        this.vel.x *= -0.4;
+      }
+    }
+
+    // Techo
+    const maxY = window.innerHeight - this.alto();
+    if (this.y > maxY) {
+      this.y = maxY;
+      if (this.vel.y > MASCOTA_GOLPE_PARED) this.golpe();
+      this.vel.y = -Math.abs(this.vel.y) * 0.3;
+    }
+
+    // Aterrizar sobre una tarjeta o el piso
+    if (this.vel.y <= 0) {
+      const sup = this.superficieCruzada(pieAntes, window.innerHeight - this.y);
+      if (sup || this.y <= this.alturaPiso()) {
+        const velocidad = -this.vel.y;
+        this.superficie = sup;
+        this.y = this.alturaSuperficie(sup);
+        this.aterrizar(velocidad);
+      }
+    }
+  },
+
+  // voluntario = true cuando salta ella misma (de una pared): asi no se marea
+  // al caer, solo cuando la sueltas o la lanzas desde muy alto.
+  soltarEnAire(vx, vy, voluntario = false) {
+    this.modo = 'aire';
+    this.saltoVoluntario = voluntario;
+    this.vel = { x: vx, y: vy };
+    this.superficie = null;
+    this.pared = null;
+    this.movimiento = null;
+    this.el.classList.remove('mascota--caminando', 'mascota--saltando', 'mascota--trepando', 'mascota--en-pared', 'mascota--pared-izq', 'mascota--pared-der');
+    this.el.classList.add('mascota--en-aire');
+    if (Math.abs(vx) > 30) this.el.classList.toggle('mascota--izq', vx < 0);
+  },
+
+  aterrizar(velocidad) {
+    this.modo = 'suelo';
+    this.vel = null;
+    this.el.classList.remove('mascota--en-aire');
+    if (velocidad > MASCOTA_GOLPE_CAIDA && !this.saltoVoluntario) this.golpe();
+    else if (velocidad > 350) this.animar('mascota--aterriza');
+    this.guardarPosicion();
+    this.programarPaseo();
+  },
+
+  // Golpe fuerte: queda mareada con estrellitas girando.
+  golpe() {
+    const ahora = performance.now();
+    if (ahora - this.ultimoGolpe < 700) return;
+    this.ultimoGolpe = ahora;
+    this.estadoTemporal('mareada', 2600);
+    this.animar('mascota--golpe');
+    const mareo = document.createElement('span');
+    mareo.className = 'mascota-mareo';
+    mareo.innerHTML = '<span>⭐</span><span>✨</span><span>⭐</span>';
+    this.el.appendChild(mareo);
+    setTimeout(() => mareo.remove(), 2600);
+    this.mostrarMensaje(elegirAlAzar(MASCOTA_GOLPES), 2600);
+  },
+
+  // ---- Paredes ----
+  agarrarPared(lado) {
+    this.modo = 'pared';
+    this.pared = lado;
+    this.vel = null;
+    this.superficie = null;
+    this.movimiento = null;
+    this.el.classList.remove('mascota--en-aire', 'mascota--caminando', 'mascota--saltando', 'mascota--pared-izq', 'mascota--pared-der');
+    this.el.classList.add('mascota--en-pared', `mascota--pared-${lado}`);
+    const lim = this.limitesPared();
+    this.x = lado === 'izq' ? lim.xIzq : lim.xDer;
+    this.y = Math.min(Math.max(this.y, lim.minY), lim.maxY);
+    if (this.burbuja.hidden && Math.random() < 0.35) this.mostrarMensaje(elegirAlAzar(MASCOTA_PARED), 3000);
+    this.programarPaseo(2500, 6000);
+  },
+
+  enPared(dt) {
+    const lim = this.limitesPared();
+    this.x = this.pared === 'izq' ? lim.xIzq : lim.xDer;
+    const m = this.movimiento;
+    if (m?.tipo === 'trepar') {
+      const destino = Math.min(Math.max(m.destinoY, lim.minY), lim.maxY);
+      const paso = 55 * dt;
+      const falta = destino - this.y;
+      this.y += Math.abs(falta) <= paso ? falta : Math.sign(falta) * paso;
+      if (Math.abs(destino - this.y) < 0.5) this.terminarMovimiento();
+    }
+    this.y = Math.min(Math.max(this.y, lim.minY), lim.maxY);
+  },
+
+  trepar(destinoY, despues) {
+    this.el.classList.add('mascota--trepando');
+    this.movimiento = { tipo: 'trepar', destinoY, despues };
+  },
+
+  // Camina hasta la pared mas cercana, se agarra y sube.
+  irAPared() {
+    const lado = this.x + this.ancho() / 2 < window.innerWidth / 2 ? 'izq' : 'der';
+    const rango = this.rangoX(null);
+    const subir = () => {
+      this.agarrarPared(lado);
+      const lim = this.limitesPared();
+      this.trepar(lim.minY + (lim.maxY - lim.minY) * (0.3 + Math.random() * 0.5));
+    };
+    if (!this.caminarA(lado === 'izq' ? rango.min : rango.max, subir)) subir();
+  },
+
+  saltarDePared() {
+    const direccion = this.pared === 'izq' ? 1 : -1;
+    this.soltarEnAire(direccion * (260 + Math.random() * 240), 380 + Math.random() * 260, true);
+    if (this.burbuja.hidden && Math.random() < 0.4) this.mostrarMensaje('¡Allá voy! 🌿', 2000);
+  },
+
+  bajarDePared() {
+    this.modo = 'suelo';
+    this.pared = null;
+    this.superficie = null;
+    this.el.classList.remove('mascota--en-pared', 'mascota--pared-izq', 'mascota--pared-der', 'mascota--trepando');
+    const rango = this.rangoX(null);
+    this.x = Math.min(Math.max(this.x, rango.min), rango.max);
+    this.y = this.alturaPiso();
+    this.animar('mascota--aterriza');
+    this.programarPaseo();
+  },
+
+  // ---- Movimientos dirigidos ----
+  caminarA(destinoX, despues) {
     const rango = this.rangoX(this.superficie);
     const destino = Math.min(Math.max(destinoX, rango.min), rango.max);
     if (Math.abs(destino - this.x) < 2) return false;
     this.el.classList.toggle('mascota--izq', destino < this.x);
     this.el.classList.add('mascota--caminando');
-    this.movimiento = { tipo: 'caminar', destinoX: destino };
+    this.movimiento = { tipo: 'caminar', destinoX: destino, despues };
     return true;
   },
 
@@ -608,40 +799,29 @@ const Mascota = {
     };
   },
 
-  // Cae con gravedad sobre lo que haya debajo (una tarjeta o el piso).
-  caer() {
-    const hacia = this.superficieDebajo();
-    const caida = Math.abs(this.y - this.alturaSuperficie(hacia));
-    this.el.classList.remove('mascota--caminando');
-    this.el.classList.add('mascota--saltando');
-    this.movimiento = {
-      tipo: 'caer',
-      hacia,
-      desdeX: this.x,
-      desdeY: this.y,
-      destinoX: this.x,
-      t: 0,
-      duracion: Math.min(Math.max(Math.sqrt(caida) / 24, 0.2), 0.8),
-    };
-  },
-
-  terminarMovimiento() {
+  // completado = false cuando se interrumpe (por un toque, por ejemplo).
+  terminarMovimiento(completado = true) {
+    const m = this.movimiento;
     this.movimiento = null;
-    this.el.classList.remove('mascota--caminando', 'mascota--saltando');
+    this.el.classList.remove('mascota--caminando', 'mascota--saltando', 'mascota--trepando');
     this.guardarPosicion();
-    if (Math.random() < 0.25 && this.burbuja.hidden) this.mostrarMensaje(elegirAlAzar(MASCOTA_PENSAMIENTOS), 3500);
+    if (completado && m?.despues) {
+      m.despues();
+      return;
+    }
+    if (completado && Math.random() < 0.25 && this.burbuja.hidden) this.mostrarMensaje(elegirAlAzar(MASCOTA_PENSAMIENTOS), 3500);
     this.programarPaseo();
   },
 
   detenerse() {
-    if (this.movimiento?.tipo === 'caminar') this.terminarMovimiento();
+    if (this.movimiento?.tipo === 'caminar' || this.movimiento?.tipo === 'trepar') this.terminarMovimiento(false);
   },
 
-  // ---- Paseos: cada cierto tiempo camina o salta a otra tarjeta ----
-  programarPaseo() {
+  // ---- Paseos: camina, salta a tarjetas, trepa paredes ----
+  programarPaseo(min = 7000, max = 18000) {
     clearTimeout(this.timerPaseo);
     if (!this.el || sinMovimiento()) return;
-    this.timerPaseo = setTimeout(() => this.pasear(), 7000 + Math.random() * 11000);
+    this.timerPaseo = setTimeout(() => this.pasear(), min + Math.random() * (max - min));
   },
 
   pasear() {
@@ -649,9 +829,11 @@ const Mascota = {
     const ocupada =
       this.movimiento ||
       this.arrastre ||
+      this.modo === 'aire' ||
       !this.burbuja.hidden ||
       document.hidden ||
       this.el.classList.contains('mascota--dormida') ||
+      this.el.classList.contains('mascota--mareada') ||
       document.documentElement.classList.contains('bloqueado');
     if (ocupada) {
       this.programarPaseo();
@@ -659,14 +841,25 @@ const Mascota = {
     }
 
     const azar = Math.random();
+
+    if (this.modo === 'pared') {
+      const lim = this.limitesPared();
+      if (azar < 0.35) this.trepar(lim.minY + Math.random() * (lim.maxY - lim.minY));
+      else if (azar < 0.75) this.saltarDePared();
+      else this.trepar(lim.minY, () => this.bajarDePared());
+      return;
+    }
+
     const plataformas = this.plataformasVisibles();
     if (this.superficie && azar < 0.3) {
       // bajarse de la tarjeta al piso
       this.saltarA(null, this.x + (Math.random() - 0.5) * 240);
-    } else if (plataformas.length && azar < 0.65) {
+    } else if (plataformas.length && azar < 0.6) {
       const destino = elegirAlAzar(plataformas);
       const rango = this.rangoX(destino);
       this.saltarA(destino, rango.min + Math.random() * (rango.max - rango.min));
+    } else if (!this.superficie && azar < 0.8) {
+      this.irAPared();
     } else {
       const rango = this.rangoX(this.superficie);
       let destino = rango.min + Math.random() * (rango.max - rango.min);
@@ -675,23 +868,24 @@ const Mascota = {
     }
   },
 
-  // ---- Gestos sueltos (mirar alrededor, saludar con una hoja, estirarse) ----
+  // ---- Gestos sueltos (mirar alrededor, saludar, estirarse) ----
   programarGesto() {
     clearTimeout(this.timerGesto);
     if (!this.el || sinMovimiento()) return;
     this.timerGesto = setTimeout(() => {
-      if (this.el && !this.movimiento && !this.arrastre && !this.el.classList.contains('mascota--dormida')) {
+      const libre = this.el && !this.movimiento && !this.arrastre && this.modo !== 'aire';
+      if (libre && !this.el.classList.contains('mascota--dormida') && !this.el.classList.contains('mascota--mareada')) {
         this.animar(elegirAlAzar(MASCOTA_GESTOS));
       }
       this.programarGesto();
     }, 5000 + Math.random() * 7000);
   },
 
-  // ---- Arrastrar, mantener presionado (regar) ----
+  // ---- Arrastrar / lanzar, mantener presionado (regar) ----
   iniciarArrastre(e) {
     if (e.button !== 0) return;
     this.btn.setPointerCapture(e.pointerId);
-    this.arrastre = { id: e.pointerId, inicioX: e.clientX, inicioY: e.clientY, origenX: this.x, origenY: this.y, activo: false, regando: false };
+    this.arrastre = { id: e.pointerId, inicioX: e.clientX, inicioY: e.clientY, origenX: this.x, origenY: this.y, activo: false, regando: false, muestras: [] };
     clearTimeout(this.timerPresion);
     this.timerPresion = setTimeout(() => {
       if (this.arrastre && !this.arrastre.activo) {
@@ -712,7 +906,10 @@ const Mascota = {
       clearTimeout(this.timerPresion);
       this.movimiento = null;
       this.superficie = null;
-      this.el.classList.remove('mascota--caminando', 'mascota--saltando');
+      this.pared = null;
+      this.vel = null;
+      this.modo = 'suelo';
+      this.el.classList.remove('mascota--caminando', 'mascota--saltando', 'mascota--trepando', 'mascota--en-aire', 'mascota--en-pared', 'mascota--pared-izq', 'mascota--pared-der');
       a.origenX = this.x;
       a.origenY = this.y;
       this.ocultarBurbuja();
@@ -722,6 +919,11 @@ const Mascota = {
     this.x = Math.min(Math.max(a.origenX + dx, 0), window.innerWidth - this.ancho());
     this.y = Math.min(Math.max(a.origenY - dy, this.alturaPiso()), window.innerHeight - this.alto());
     this.aplicarPosicion();
+
+    // Ultimas posiciones para calcular con que velocidad la lanzas
+    const ahora = performance.now();
+    a.muestras.push({ t: ahora, x: this.x, y: this.y });
+    a.muestras = a.muestras.filter((m) => ahora - m.t < 90);
   },
 
   soltarArrastre(e) {
@@ -739,9 +941,20 @@ const Mascota = {
     if (a.regando) return;
 
     this.el.classList.remove('mascota--arrastrando');
-    // Al soltarla cae sobre la tarjeta (o el piso) que tenga debajo.
-    this.caer();
-    if (Math.random() < 0.5) this.mostrarMensaje(elegirAlAzar(MASCOTA_AL_SOLTAR), 3000);
+    let vx = 0;
+    let vy = 0;
+    const primera = a.muestras[0];
+    const ultima = a.muestras[a.muestras.length - 1];
+    if (primera && ultima && ultima.t - primera.t > 10) {
+      const segundos = (ultima.t - primera.t) / 1000;
+      vx = Math.max(Math.min((ultima.x - primera.x) / segundos, 2600), -2600);
+      vy = Math.max(Math.min((ultima.y - primera.y) / segundos, 2600), -2600);
+    }
+    // Al soltarla vuela con el impulso que traia y cae con gravedad.
+    this.soltarEnAire(vx, vy);
+    const rapida = Math.hypot(vx, vy) > 900;
+    if (rapida) this.mostrarMensaje(elegirAlAzar(MASCOTA_LANZADA), 2200);
+    else if (Math.random() < 0.5) this.mostrarMensaje(elegirAlAzar(MASCOTA_AL_SOLTAR), 3000);
   },
 
   // ---- Interacciones ----
@@ -828,7 +1041,7 @@ const Mascota = {
     this.scrollPrevio = window.scrollY;
     const rapido = delta > 90 && ahora - this.ultimoScroll < 120;
     this.ultimoScroll = ahora;
-    if (rapido && !this.movimiento && ahora - this.ultimoTambaleo > 800) {
+    if (rapido && !this.movimiento && this.modo === 'suelo' && ahora - this.ultimoTambaleo > 800) {
       this.ultimoTambaleo = ahora;
       this.animar('mascota--tambalea');
     }
@@ -841,7 +1054,7 @@ const Mascota = {
     if (!card || this.comentadas.has(card)) return;
     clearTimeout(this.timerTarjeta);
     this.timerTarjeta = setTimeout(() => {
-      if (!this.el || this.arrastre || this.movimiento || !this.burbuja.hidden) return;
+      if (!this.el || this.arrastre || this.movimiento || this.modo !== 'suelo' || !this.burbuja.hidden) return;
       const texto = comentarioDeTarjeta(card);
       if (!texto) return;
       this.comentadas.add(card);
@@ -913,23 +1126,26 @@ const Mascota = {
     this.raf = requestAnimationFrame(() => {
       this.raf = null;
       if (!this.el) return;
-      // Si esta mirando a la izquierda el SVG esta espejado, asi que el eje X va al reves.
+      // El SVG puede estar espejado (mirando a la izquierda) y girado 90° si
+      // esta en una pared: se deshace eso para que los ojos miren al cursor.
       const giro = this.el.classList.contains('mascota--izq') ? -1 : 1;
       this.el.querySelectorAll('.mascota-pupila').forEach((pupila) => {
         const r = pupila.getBoundingClientRect();
-        const dx = (e.clientX - (r.left + r.width / 2)) * giro;
-        const dy = e.clientY - (r.top + r.height / 2);
+        let dx = e.clientX - (r.left + r.width / 2);
+        let dy = e.clientY - (r.top + r.height / 2);
+        if (this.modo === 'pared') [dx, dy] = this.pared === 'izq' ? [dy, -dx] : [-dy, dx];
+        dx *= giro;
         const distancia = Math.hypot(dx, dy) || 1;
         const k = Math.min(distancia / 120, 1) * 2.6;
         pupila.setAttribute('transform', `translate(${((dx / distancia) * k).toFixed(2)} ${((dy / distancia) * k).toFixed(2)})`);
       });
 
-      // Saluda con una hoja cuando acercas el cursor despues de un rato lejos.
+      // Saluda cuando acercas el cursor despues de un rato lejos.
       const r = this.btn.getBoundingClientRect();
       const cerca = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2));
       if (cerca > 350) this.punteroLejos = true;
       const ahora = performance.now();
-      if (cerca < 160 && this.punteroLejos && ahora - this.ultimoSaludo > 25000 && !this.movimiento && !this.arrastre) {
+      if (cerca < 160 && this.punteroLejos && ahora - this.ultimoSaludo > 25000 && !this.movimiento && !this.arrastre && this.modo !== 'aire') {
         this.punteroLejos = false;
         this.ultimoSaludo = ahora;
         this.animar('mascota--saluda');
