@@ -12,9 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
 function renderSaludo() {
   const ahora = new Date();
   const hora = ahora.getHours();
-  let saludo = '¡Buenas noches! 🌙';
-  if (hora >= 5 && hora < 12) saludo = '¡Buenos días! ☀️';
-  else if (hora >= 12 && hora < 19) saludo = '¡Buenas tardes! 🌤️';
+  let saludo = 'Buenas noches';
+  if (hora >= 5 && hora < 12) saludo = 'Buenos días';
+  else if (hora >= 12 && hora < 19) saludo = 'Buenas tardes';
 
   const mes = ahora.toLocaleDateString('es-CO', { month: 'long' });
   document.getElementById('saludo').textContent = saludo;
@@ -54,7 +54,8 @@ function renderKpis(monthKey) {
   const chipMes = document.getElementById('hero-balance-mes');
   if (resumenMes.ingresos > 0 || resumenMes.gastos > 0) {
     const positivo = resumenMes.balance >= 0;
-    chipMes.textContent = `${positivo ? '▲ +' : '▼ −'}${formatCurrency(Math.abs(resumenMes.balance))} este mes`;
+    chipMes.textContent = `${positivo ? '+' : '−'}${formatCurrency(Math.abs(resumenMes.balance))} este mes`;
+    chipMes.classList.add(positivo ? 'hero-chip-positivo' : 'hero-chip-negativo');
     chipMes.hidden = false;
   }
 

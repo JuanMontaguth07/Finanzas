@@ -57,16 +57,28 @@ async function verificarPin(pin) {
   return hash === config.hash;
 }
 
+// Brote (js/mascota.js) acompaña la pantalla de PIN si la mascota esta activa:
+// cierra los ojos mientras escribes, se preocupa si fallas y florece al acertar.
+function conMascotaEnBloqueo() {
+  return typeof mascotaSvg === 'function' && typeof mascotaVisible === 'function' && mascotaVisible();
+}
+
 function mostrarPantallaBloqueo() {
+  const conMascota = conMascotaEnBloqueo();
   const overlay = document.createElement('div');
   overlay.id = 'pin-lock-overlay';
   overlay.className = 'pin-lock-overlay';
   overlay.innerHTML = `
     <div class="pin-lock-card">
-      <span class="logo-mark pin-lock-logo">💸</span>
+      ${
+        conMascota
+          ? `<div class="pin-mascota mascota--feliz" id="pin-mascota"><div class="mascota-btn">${mascotaSvg('-pin')}</div></div>
+             <p class="pin-mascota-dice" id="pin-mascota-dice" aria-live="polite">¡Hola de nuevo! Te estaba esperando.</p>`
+          : '<span class="logo-mark pin-lock-logo">$<span class="logo-cursor">_</span></span>'
+      }
       <h2>Ingresa tu PIN</h2>
       <p class="settings-hint">Para proteger tus datos financieros.</p>
-      <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" id="pin-lock-input" class="pin-lock-input" autocomplete="off">
+      <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" id="pin-lock-input" class="pin-lock-input" autocomplete="off" aria-label="PIN">
       <p class="pin-lock-error" id="pin-lock-error" hidden>PIN incorrecto, intenta de nuevo.</p>
       <button class="btn btn-primary pin-lock-btn" id="pin-lock-btn">Desbloquear</button>
     </div>
@@ -76,6 +88,28 @@ function mostrarPantallaBloqueo() {
   const input = document.getElementById('pin-lock-input');
   const btn = document.getElementById('pin-lock-btn');
   const error = document.getElementById('pin-lock-error');
+  const mascota = document.getElementById('pin-mascota');
+  const dice = document.getElementById('pin-mascota-dice');
+
+  function ponerMascota(estado, texto) {
+    if (!mascota) return;
+    mascota.className = `pin-mascota mascota--${estado}`;
+    if (texto) dice.textContent = texto;
+  }
+
+  function animarMascota(clase) {
+    if (!mascota) return;
+    mascota.classList.remove(clase);
+    void mascota.offsetWidth;
+    mascota.classList.add(clase);
+  }
+
+  // Mientras hay digitos escritos Brote se tapa los ojos para no ver el PIN.
+  input.addEventListener('input', () => {
+    error.hidden = true;
+    if (input.value) ponerMascota('tapada', 'No estoy mirando… 🙈');
+    else ponerMascota('feliz', '¡Hola de nuevo! Te estaba esperando.');
+  });
 
   async function intentar() {
     const ok = await verificarPin(input.value);
@@ -85,11 +119,23 @@ function mostrarPantallaBloqueo() {
       } catch {
         // si sessionStorage no esta disponible, igual desbloqueamos esta carga
       }
-      document.documentElement.classList.remove('bloqueado');
-      overlay.remove();
+      const desbloquear = () => {
+        document.documentElement.classList.remove('bloqueado');
+        overlay.remove();
+      };
+      if (mascota) {
+        ponerMascota('celebrando', '¡Bienvenido! 🌸');
+        animarMascota('mascota--salto');
+        btn.disabled = true;
+        setTimeout(desbloquear, 750);
+      } else {
+        desbloquear();
+      }
     } else {
       error.hidden = false;
       input.value = '';
+      ponerMascota('preocupada', 'Mmm… ese no es. Intenta otra vez.');
+      animarMascota('mascota--sacudida');
       input.focus();
     }
   }

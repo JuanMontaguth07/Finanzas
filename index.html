@@ -20,7 +20,7 @@
     })();
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#34588c">
+  <meta name="theme-color" content="#c96442">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icons/icon-192.png">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
@@ -32,7 +32,7 @@
   <div class="app-shell">
     <aside class="sidebar">
       <div class="sidebar-header">
-        <span class="logo-mark">💸</span>
+        <span class="logo-mark" aria-hidden="true">$<span class="logo-cursor">_</span></span>
         <span class="logo-text">Finanzas</span>
       </div>
       <nav id="sidebar-nav" class="sidebar-nav"></nav>
@@ -41,28 +41,15 @@
     <main class="main-content">
       <header class="page-header">
         <div>
-          <h1 id="saludo">¡Hola! 👋</h1>
+          <h1><span id="saludo">¡Hola!</span></h1>
           <p class="page-subtitle" id="saludo-sub">Así va tu plata este mes</p>
         </div>
       </header>
 
       <section class="hero-balance">
-        <svg class="hero-plantas" viewBox="0 0 200 170" aria-hidden="true">
-          <g fill="none" stroke="#9fd4ae" stroke-opacity="0.5" stroke-width="3" stroke-linecap="round">
-            <path d="M165 172 Q156 146 150 120"/>
-            <path d="M165 172 Q160 130 160 95"/>
-            <path d="M165 172 Q172 140 175 115"/>
-            <path d="M165 172 Q145 155 130 140"/>
-            <path d="M165 172 Q178 158 185 140"/>
-          </g>
-          <g transform="translate(130 140) rotate(-155) scale(1.2)"><path class="hero-hoja" style="animation-delay:-1s" d="M0 0 C12 -14 34 -16 52 0 C34 16 12 14 0 0 Z M3 0 H48" fill="#6fbf8a" fill-opacity="0.5" stroke="#fff" stroke-opacity="0.25"/></g>
-          <g transform="translate(150 120) rotate(-120) scale(1.3)"><path class="hero-hoja" style="animation-delay:-3s" d="M0 0 C12 -14 34 -16 52 0 C34 16 12 14 0 0 Z M3 0 H48" fill="#9fd4ae" fill-opacity="0.55" stroke="#fff" stroke-opacity="0.25"/></g>
-          <g transform="translate(160 95) rotate(-85) scale(1.4)"><path class="hero-hoja" d="M0 0 C12 -14 34 -16 52 0 C34 16 12 14 0 0 Z M3 0 H48" fill="#6fbf8a" fill-opacity="0.5" stroke="#fff" stroke-opacity="0.25"/></g>
-          <g transform="translate(175 115) rotate(-50) scale(1.2)"><path class="hero-hoja" style="animation-delay:-2s" d="M0 0 C12 -14 34 -16 52 0 C34 16 12 14 0 0 Z M3 0 H48" fill="#9fd4ae" fill-opacity="0.55" stroke="#fff" stroke-opacity="0.25"/></g>
-          <g transform="translate(185 140) rotate(-20) scale(1)"><path class="hero-hoja" style="animation-delay:-4s" d="M0 0 C12 -14 34 -16 52 0 C34 16 12 14 0 0 Z M3 0 H48" fill="#6fbf8a" fill-opacity="0.5" stroke="#fff" stroke-opacity="0.25"/></g>
-        </svg>
-        <span class="hero-balance-label">Dinero disponible</span>
-        <span class="hero-balance-value" id="kpi-disponible">$ 0</span>
+        <div class="hero-terminal-barra" aria-hidden="true"><i></i><i></i><i></i><span>~/finanzas — saldo</span></div>
+        <span class="hero-balance-label"><span class="glifo-spinner" aria-hidden="true">✻</span>Dinero disponible</span>
+        <span class="hero-balance-value"><span id="kpi-disponible">$ 0</span><span class="hero-cursor" aria-hidden="true"></span></span>
         <span class="hero-chip" id="hero-balance-mes" hidden></span>
       </section>
 
@@ -124,6 +111,7 @@
   <script src="js/nav.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/pin.js"></script>
+  <script src="js/fondo.js"></script>
   <script src="js/mascota.js"></script>
   <script src="js/dashboard.js"></script>
   <script src="js/pwa.js"></script>

@@ -43,4 +43,29 @@ function renderNav() {
   `).join('');
 }
 
-document.addEventListener('DOMContentLoaded', renderNav);
+// Simbolo que va cambiando (· ✢ ✳ ✶ ✻ ✽) como el indicador de "pensando" de
+// Claude Code. Se pone delante del titulo de cada pagina y en cualquier
+// elemento con la clase .glifo-spinner.
+const GLIFOS_SPINNER = ['·', '✢', '✳', '✶', '✻', '✽', '✻', '✶', '✳', '✢'];
+
+function animarSpinners() {
+  document.querySelectorAll('.page-header h1').forEach((h1) => {
+    if (h1.querySelector('.glifo-spinner')) return;
+    h1.insertAdjacentHTML('afterbegin', '<span class="glifo-spinner" aria-hidden="true">✻</span>');
+  });
+
+  const spinners = document.querySelectorAll('.glifo-spinner');
+  if (spinners.length === 0 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let i = 0;
+  setInterval(() => {
+    i = (i + 1) % GLIFOS_SPINNER.length;
+    spinners.forEach((s) => {
+      s.textContent = GLIFOS_SPINNER[i];
+    });
+  }, 150);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderNav();
+  animarSpinners();
+});

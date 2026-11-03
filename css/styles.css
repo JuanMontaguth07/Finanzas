@@ -32,74 +32,91 @@
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 
+/* Paleta estilo Claude Code: crema calido, terracota, verde oliva para las plantas */
 :root {
-  --bg: #f3f5f8;
+  --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', serif;
+  --font-mono: ui-monospace, 'Cascadia Code', 'Cascadia Mono', 'SF Mono', Consolas, Menlo, monospace;
+  --bg: #faf9f5;
   --surface: #ffffff;
-  --surface-alt: #eef2f6;
-  --border: #dfe5ec;
-  --text: #1d2b3e;
-  --text-muted: #66758a;
-  --primary: #34588c;
-  --primary-dark: #26446f;
-  --primary-rgb: 52, 88, 140;
-  --accent: #6f93c6;
-  --accent-soft: #e8eef7;
-  --primary-soft: #e4ebf5;
-  --grad-main: linear-gradient(135deg, #2b4a78, #5a80b8);
-  --grad-hero: linear-gradient(135deg, #22395e 0%, #34588c 55%, #5f86bd 100%);
-  --plant: #4f9e6b;
-  --plant-dark: #2f7a4b;
-  --plant-light: #9fd4ae;
-  --success: #3f9a63;
-  --success-soft: #e4f3e9;
-  --danger: #cf564d;
-  --danger-soft: #fbecea;
-  --warning: #c08417;
-  --warning-soft: #fbf3e1;
-  --cyan: #2e8797;
-  --cyan-soft: #e3f1f3;
-  --grid-dot: rgba(52, 88, 140, 0.09);
-  --toast-bg: #1f3350;
-  --toast-text: #ffffff;
-  --toast-border: transparent;
-  --radius: 18px;
-  --radius-sm: 12px;
-  --shadow: 0 1px 2px rgba(29, 43, 62, 0.05), 0 1px 3px rgba(29, 43, 62, 0.07);
-  --shadow-md: 0 10px 28px rgba(29, 43, 62, 0.12);
+  --surface-alt: #f2f0e8;
+  --border: #e6e2d6;
+  --text: #1f1e1d;
+  --text-muted: #73716a;
+  --primary: #c96442;
+  --primary-dark: #a9502f;
+  --primary-rgb: 201, 100, 66;
+  --accent: #d97757;
+  --accent-soft: #f7ebe3;
+  --primary-soft: #f6e6dc;
+  --grad-main: linear-gradient(135deg, #c4603e, #d97757);
+  --terminal-bg: #262624;
+  --terminal-text: #f5f4ee;
+  --terminal-muted: #a6a39a;
+  --plant: #788c5d;
+  --plant-dark: #5c6f45;
+  --plant-light: #a9bc8e;
+  --success: #5f8a4f;
+  --success-soft: #edf2e6;
+  --danger: #b5483d;
+  --danger-soft: #f8e9e6;
+  --warning: #b07d1f;
+  --warning-soft: #f8f0dd;
+  --cyan: #4f7fa8;
+  --cyan-soft: #e8eff5;
+  --grid-dot: rgba(31, 30, 29, 0.07);
+  --fondo-mancha-1: 217, 119, 87;
+  --fondo-mancha-2: 120, 140, 93;
+  --fondo-mancha-3: 212, 162, 127;
+  --fondo-glifo: 201, 100, 66;
+  --fondo-intensidad: 0.26;
+  --toast-bg: #262624;
+  --toast-text: #f5f4ee;
+  --toast-border: #3a3936;
+  --radius: 14px;
+  --radius-sm: 9px;
+  --shadow: 0 1px 2px rgba(31, 30, 29, 0.04), 0 1px 3px rgba(31, 30, 29, 0.06);
+  --shadow-md: 0 10px 28px rgba(31, 30, 29, 0.1);
   --sidebar-width: 240px;
   color-scheme: light;
 }
 
 :root[data-theme="oscuro"] {
-  --bg: #0f1722;
-  --surface: #16212f;
-  --surface-alt: #1d2a3b;
-  --border: #2a394d;
-  --text: #e6edf5;
-  --text-muted: #94a3b8;
-  --primary: #7ea3d4;
-  --primary-dark: #4a6fa3;
-  --primary-rgb: 126, 163, 212;
-  --accent: #a9c3e6;
-  --accent-soft: #1c2a3e;
-  --primary-soft: #1f3048;
-  --grad-main: linear-gradient(135deg, #34557f, #5b82ba);
-  --grad-hero: linear-gradient(135deg, #1a2d4a 0%, #2b4a76 55%, #44699e 100%);
-  --plant: #6cc28c;
-  --plant-dark: #3f9a63;
-  --plant-light: #a7dcb7;
-  --success: #6cc28c;
-  --success-soft: #15301f;
-  --danger: #ee8a80;
-  --danger-soft: #3a1c1b;
-  --warning: #e3b55a;
-  --warning-soft: #33280f;
-  --cyan: #6cc1cf;
-  --cyan-soft: #12303a;
-  --grid-dot: rgba(148, 163, 184, 0.07);
-  --toast-bg: #24364f;
-  --toast-text: #e6edf5;
-  --toast-border: #33496a;
+  --bg: #1f1e1d;
+  --surface: #262624;
+  --surface-alt: #30302e;
+  --border: #3d3c38;
+  --text: #f5f4ee;
+  --text-muted: #a6a39a;
+  --primary: #d97757;
+  --primary-dark: #c96442;
+  --primary-rgb: 217, 119, 87;
+  --accent: #e8957a;
+  --accent-soft: #3a2a23;
+  --primary-soft: #3d2c24;
+  --grad-main: linear-gradient(135deg, #c96442, #d97757);
+  --terminal-bg: #141413;
+  --terminal-text: #f5f4ee;
+  --terminal-muted: #a6a39a;
+  --plant: #9cb07f;
+  --plant-dark: #788c5d;
+  --plant-light: #bccca5;
+  --success: #94b37f;
+  --success-soft: #26301f;
+  --danger: #e5826f;
+  --danger-soft: #3d221d;
+  --warning: #dcae58;
+  --warning-soft: #362b14;
+  --cyan: #8ab4d8;
+  --cyan-soft: #1f2c37;
+  --grid-dot: rgba(245, 244, 238, 0.05);
+  --fondo-mancha-1: 217, 119, 87;
+  --fondo-mancha-2: 120, 140, 93;
+  --fondo-mancha-3: 160, 110, 80;
+  --fondo-glifo: 232, 149, 122;
+  --fondo-intensidad: 0.14;
+  --toast-bg: #141413;
+  --toast-text: #f5f4ee;
+  --toast-border: #3d3c38;
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.45);
   color-scheme: dark;
@@ -107,35 +124,42 @@ html, body { margin: 0; padding: 0; }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="claro"]) {
-    --bg: #0f1722;
-    --surface: #16212f;
-    --surface-alt: #1d2a3b;
-    --border: #2a394d;
-    --text: #e6edf5;
-    --text-muted: #94a3b8;
-    --primary: #7ea3d4;
-    --primary-dark: #4a6fa3;
-    --primary-rgb: 126, 163, 212;
-    --accent: #a9c3e6;
-    --accent-soft: #1c2a3e;
-    --primary-soft: #1f3048;
-    --grad-main: linear-gradient(135deg, #34557f, #5b82ba);
-    --grad-hero: linear-gradient(135deg, #1a2d4a 0%, #2b4a76 55%, #44699e 100%);
-    --plant: #6cc28c;
-    --plant-dark: #3f9a63;
-    --plant-light: #a7dcb7;
-    --success: #6cc28c;
-    --success-soft: #15301f;
-    --danger: #ee8a80;
-    --danger-soft: #3a1c1b;
-    --warning: #e3b55a;
-    --warning-soft: #33280f;
-    --cyan: #6cc1cf;
-    --cyan-soft: #12303a;
-    --grid-dot: rgba(148, 163, 184, 0.07);
-    --toast-bg: #24364f;
-    --toast-text: #e6edf5;
-    --toast-border: #33496a;
+    --bg: #1f1e1d;
+    --surface: #262624;
+    --surface-alt: #30302e;
+    --border: #3d3c38;
+    --text: #f5f4ee;
+    --text-muted: #a6a39a;
+    --primary: #d97757;
+    --primary-dark: #c96442;
+    --primary-rgb: 217, 119, 87;
+    --accent: #e8957a;
+    --accent-soft: #3a2a23;
+    --primary-soft: #3d2c24;
+    --grad-main: linear-gradient(135deg, #c96442, #d97757);
+    --terminal-bg: #141413;
+    --terminal-text: #f5f4ee;
+    --terminal-muted: #a6a39a;
+    --plant: #9cb07f;
+    --plant-dark: #788c5d;
+    --plant-light: #bccca5;
+    --success: #94b37f;
+    --success-soft: #26301f;
+    --danger: #e5826f;
+    --danger-soft: #3d221d;
+    --warning: #dcae58;
+    --warning-soft: #362b14;
+    --cyan: #8ab4d8;
+    --cyan-soft: #1f2c37;
+    --grid-dot: rgba(245, 244, 238, 0.05);
+    --fondo-mancha-1: 217, 119, 87;
+    --fondo-mancha-2: 120, 140, 93;
+    --fondo-mancha-3: 160, 110, 80;
+    --fondo-glifo: 232, 149, 122;
+    --fondo-intensidad: 0.14;
+    --toast-bg: #141413;
+    --toast-text: #f5f4ee;
+    --toast-border: #3d3c38;
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.45);
     color-scheme: dark;
@@ -145,7 +169,6 @@ html, body { margin: 0; padding: 0; }
 body {
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background-color: var(--bg);
-  /* Cuadricula de puntos tenue, como papel de libreta de oficina */
   background-image: radial-gradient(var(--grid-dot) 1px, transparent 1.4px);
   background-size: 22px 22px;
   color: var(--text);
@@ -154,38 +177,14 @@ body {
   overflow-x: hidden;
 }
 
-body::before,
-body::after {
-  content: '';
+/* Canvas del fondo animado (js/fondo.js) */
+.fondo-dinamico {
   position: fixed;
-  border-radius: 50%;
-  filter: blur(90px);
+  inset: 0;
+  width: 100%;
+  height: 100%;
   z-index: 0;
-  opacity: 0.18;
   pointer-events: none;
-}
-
-body::before {
-  width: 420px;
-  height: 420px;
-  background: var(--accent);
-  top: -140px;
-  right: -140px;
-  animation: blob-flota 18s ease-in-out infinite alternate;
-}
-
-body::after {
-  width: 380px;
-  height: 380px;
-  background: var(--plant);
-  bottom: -160px;
-  left: -120px;
-  animation: blob-flota 22s ease-in-out infinite alternate-reverse;
-}
-
-@keyframes blob-flota {
-  from { transform: translate(0, 0) scale(1); }
-  to { transform: translate(-70px, 60px) scale(1.15); }
 }
 
 ::selection {
@@ -257,7 +256,7 @@ a:focus-visible {
   z-index: 40;
   width: 40px;
   height: 40px;
-  border-radius: 999px;
+  border-radius: 10px;
   border: 1px solid var(--border);
   background: var(--surface);
   box-shadow: var(--shadow-md);
@@ -282,7 +281,8 @@ html.bloqueado .theme-toggle-btn {
 .pin-lock-overlay {
   position: fixed;
   inset: 0;
-  background: var(--bg);
+  /* transparente para que se vea el fondo animado detras */
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -308,24 +308,58 @@ html.bloqueado .theme-toggle-btn {
 .pin-lock-logo {
   width: 56px;
   height: 56px;
-  font-size: 26px;
+  font-size: 22px;
   margin: 0 auto 8px;
 }
 
 .pin-lock-card h2 {
-  font-size: 18px;
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 24px;
+}
+
+/* Brote en la pantalla de PIN */
+.pin-mascota {
+  margin: -6px auto 0;
+}
+
+.pin-mascota .mascota-btn {
+  display: block;
+  width: 132px;
+  height: 124px;
+  cursor: default;
+}
+
+.pin-mascota-dice {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--text-muted);
+  min-height: 1.5em;
+}
+
+.pin-mascota-dice::before {
+  content: '> ';
+  color: var(--primary);
 }
 
 .pin-lock-input {
-  margin-top: 14px;
+  margin-top: 10px;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 12px;
+  font-family: var(--font-mono);
   font-size: 22px;
   letter-spacing: 10px;
   text-align: center;
   background: var(--bg);
   color: var(--text);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pin-lock-input:focus-visible {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
 }
 
 .pin-lock-error {
@@ -340,22 +374,31 @@ html.bloqueado .theme-toggle-btn {
   margin-top: 8px;
 }
 
+/* Logo tipo prompt de terminal: "$_" con el cursor parpadeando */
 .logo-mark {
   width: 34px;
   height: 34px;
   border-radius: var(--radius-sm);
-  background: var(--grad-main);
-  color: #fff;
+  background: var(--terminal-bg);
+  color: var(--accent);
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 17px;
+  font-size: 15px;
+}
+
+.logo-cursor { animation: cursor-parpadea 1.1s steps(1) infinite; }
+
+@keyframes cursor-parpadea {
+  50% { opacity: 0; }
 }
 
 .logo-text {
-  font-weight: 700;
-  font-size: 16px;
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 20px;
   letter-spacing: -0.01em;
 }
 
@@ -370,7 +413,7 @@ html.bloqueado .theme-toggle-btn {
   align-items: center;
   gap: 12px;
   padding: 10px 14px;
-  border-radius: 999px;
+  border-radius: 10px;
   color: var(--text-muted);
   font-size: 14px;
   font-weight: 600;
@@ -383,9 +426,8 @@ html.bloqueado .theme-toggle-btn {
 }
 
 .nav-link.active {
-  background: var(--grad-main);
-  color: #fff;
-  box-shadow: 0 6px 16px rgba(var(--primary-rgb), 0.3);
+  background: var(--primary-soft);
+  color: var(--primary);
 }
 
 .nav-link:hover .nav-icon {
@@ -439,10 +481,9 @@ html.bloqueado .theme-toggle-btn {
 
 @media (prefers-reduced-motion: reduce) {
   .main-content > *,
-  body::before,
-  body::after,
-  .hero-balance::before,
-  .hero-balance::after,
+  .logo-cursor,
+  .hero-cursor,
+  .glifo-spinner,
   .hbar-fill,
   .progress-fill,
   .chart-bar,
@@ -463,9 +504,23 @@ html.bloqueado .theme-toggle-btn {
 }
 
 .page-header h1 {
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-family: var(--font-serif);
+  font-size: 30px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Simbolo que gira entre · ✢ ✳ ✶ ✻ ✽ como el spinner de Claude Code (js/nav.js) */
+.glifo-spinner {
+  display: inline-block;
+  width: 1em;
+  text-align: center;
+  color: var(--primary);
+  font-family: var(--font-mono);
+  font-weight: 400;
 }
 
 .page-subtitle {
@@ -507,22 +562,22 @@ html.bloqueado .theme-toggle-btn {
   justify-content: center;
   gap: 6px;
   border: none;
-  border-radius: 999px;
+  border-radius: 10px;
   padding: 10px 18px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: filter 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  transition: filter 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
 .btn:active { transform: scale(0.97); }
 
 .btn-primary {
-  background: var(--grad-main);
+  background: var(--primary);
   color: #fff;
-  box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.35);
+  box-shadow: 0 1px 2px rgba(var(--primary-rgb), 0.3);
 }
-.btn-primary:hover { filter: brightness(1.06); box-shadow: 0 6px 18px rgba(var(--primary-rgb), 0.42); }
+.btn-primary:hover { background: var(--primary-dark); box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3); }
 
 .btn-ghost {
   background: var(--surface);
@@ -850,101 +905,98 @@ html.bloqueado .theme-toggle-btn {
   margin-bottom: 14px;
 }
 
-/* ============ Hero balance ============ */
+/* ============ Hero balance (caja tipo terminal) ============ */
 .hero-balance {
   position: relative;
   overflow: hidden;
-  border-radius: 28px;
-  padding: 30px 36px;
-  background: var(--grad-hero);
-  color: #fff;
-  box-shadow: 0 14px 34px rgba(var(--primary-rgb), 0.22);
+  border-radius: var(--radius);
+  padding: 0 0 26px;
+  background: var(--terminal-bg);
+  color: var(--terminal-text);
+  border: 1px solid rgba(var(--primary-rgb), 0.55);
+  box-shadow: 0 14px 34px rgba(31, 30, 29, 0.18);
   display: flex;
   flex-direction: column;
   gap: 6px;
+  font-family: var(--font-mono);
+}
+
+.hero-terminal-barra {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 11px 16px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid rgba(245, 244, 238, 0.08);
+  font-size: 12px;
+  color: var(--terminal-muted);
+}
+
+.hero-terminal-barra i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #4a4945;
+}
+
+.hero-terminal-barra i:first-child { background: var(--accent); }
+
+.hero-terminal-barra span { margin-left: 8px; }
+
+.hero-balance-label,
+.hero-balance-value,
+.hero-chip {
+  margin-left: 30px;
+  margin-right: 30px;
 }
 
 .hero-balance-label {
-  font-size: 14px;
-  font-weight: 600;
-  opacity: 0.9;
-  position: relative;
+  font-size: 13px;
+  color: var(--terminal-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
+
+.hero-balance-label .glifo-spinner { color: var(--accent); font-size: 16px; }
 
 .hero-balance-value {
   font-size: 40px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  position: relative;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: center;
 }
 
-.hero-balance::before,
-.hero-balance::after {
-  content: '';
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.14);
-}
-
-.hero-balance::before {
-  width: 220px;
-  height: 220px;
-  top: -110px;
-  right: -50px;
-  animation: burbuja-hero 9s ease-in-out infinite alternate;
-}
-
-.hero-balance::after {
-  width: 130px;
-  height: 130px;
-  bottom: -80px;
-  right: 130px;
-  background: rgba(255, 255, 255, 0.1);
-  animation: burbuja-hero 7s ease-in-out infinite alternate-reverse;
-}
-
-@keyframes burbuja-hero {
-  from { transform: translate(0, 0); }
-  to { transform: translate(-24px, 14px); }
+.hero-cursor {
+  display: inline-block;
+  width: 0.5em;
+  height: 0.9em;
+  margin-left: 8px;
+  background: var(--accent);
+  animation: cursor-parpadea 1.1s steps(1) infinite;
 }
 
 .hero-chip {
-  position: relative;
   align-self: flex-start;
-  margin-top: 6px;
-  padding: 5px 12px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(6px);
+  margin-top: 4px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(245, 244, 238, 0.08);
   font-size: 12px;
-  font-weight: 600;
 }
+
+.hero-chip-positivo { color: #a9c98f; }
+.hero-chip-negativo { color: #f0a08f; }
 
 .hero-chip[hidden] { display: none; }
 
-/* Planta de oficina asomando en la esquina del hero */
-.hero-plantas {
-  position: absolute;
-  right: 10px;
-  bottom: -6px;
-  height: 115%;
-  pointer-events: none;
-}
-
-.hero-hoja {
-  transform-box: fill-box;
-  transform-origin: left center;
-  animation: hoja-mece 5s ease-in-out infinite alternate;
-}
-
-@keyframes hoja-mece {
-  from { transform: rotate(-3deg); }
-  to { transform: rotate(4deg); }
-}
-
 @media (max-width: 480px) {
-  .hero-balance-value { font-size: 32px; }
-  .hero-plantas { height: 90%; opacity: 0.6; }
+  .hero-balance-value { font-size: 30px; }
+  .hero-balance-label,
+  .hero-balance-value,
+  .hero-chip { margin-left: 20px; margin-right: 20px; }
 }
 
 /* ============ KPI cards ============ */
@@ -966,8 +1018,16 @@ html.bloqueado .theme-toggle-btn {
   box-shadow: var(--shadow-md);
 }
 
-.kpi-value {
+/* Cifras en monoespaciada, como en la terminal */
+.kpi-value,
+.hbar-value,
+.goal-card-ahorrado,
+.valor-ingreso,
+.valor-gasto,
+.import-row-valor {
+  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
 }
 
 .kpi-label {
@@ -1555,15 +1615,22 @@ html.bloqueado .theme-toggle-btn {
   color: var(--toast-text);
   padding: 12px 16px;
   border-radius: var(--radius-sm);
-  font-size: 13px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
   font-weight: 500;
   box-shadow: var(--shadow-md);
   border: 1px solid var(--toast-border);
   opacity: 0;
   transform: translateY(8px);
   transition: opacity 0.2s ease, transform 0.2s ease;
-  max-width: 320px;
+  max-width: 340px;
   pointer-events: auto;
+}
+
+/* Viñeta "⏺" como los resultados de herramientas en Claude Code */
+.toast::before {
+  content: '⏺ ';
+  color: #94b37f;
 }
 
 .toast-visible {
@@ -1571,11 +1638,7 @@ html.bloqueado .theme-toggle-btn {
   transform: translateY(0);
 }
 
-.toast-error {
-  background: var(--danger);
-  color: #fff;
-  border-color: transparent;
-}
+.toast-error::before { color: #e5826f; }
 
 @media (max-width: 768px) {
   .toast-container {
@@ -1587,30 +1650,28 @@ html.bloqueado .theme-toggle-btn {
 }
 
 /* ============ Mascota (Brote) ============ */
+/* La posicion la maneja js/mascota.js con transform (camina y se puede
+   arrastrar); left/bottom fijos son solo el punto de referencia. */
 .mascota {
   position: fixed;
-  left: 28px;
-  bottom: 18px;
+  left: 0;
+  bottom: 0;
   z-index: 35;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-  pointer-events: none;
+  will-change: transform;
 }
-
-.mascota > * { pointer-events: auto; }
 
 html.bloqueado .mascota { display: none; }
 
 .mascota-btn {
+  display: block;
   width: 92px;
   height: 86px;
   padding: 0;
   border: none;
   background: none;
-  cursor: pointer;
+  cursor: grab;
   border-radius: var(--radius);
+  touch-action: none;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -1618,10 +1679,34 @@ html.bloqueado .mascota { display: none; }
   width: 100%;
   height: 100%;
   overflow: visible;
-  transition: transform 0.2s ease;
+  transform: scaleX(var(--mascota-giro, 1));
+  transition: transform 0.25s ease;
 }
 
-.mascota-btn:hover svg { transform: rotate(-6deg) scale(1.05); }
+/* Mirando hacia la izquierda mientras camina en esa direccion */
+.mascota--izq { --mascota-giro: -1; }
+
+.mascota-btn:hover svg { transform: scaleX(var(--mascota-giro, 1)) scale(1.05); }
+
+/* Caminando: pasitos cortos */
+.mascota--caminando .mascota-btn { animation: mascota-pasito 0.36s ease-in-out infinite; }
+
+@keyframes mascota-pasito {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-5px) rotate(-3deg); }
+  75% { transform: translateY(-5px) rotate(3deg); }
+}
+
+/* Arrastrando: la levantas y patalea */
+.mascota--arrastrando .mascota-btn {
+  cursor: grabbing;
+  animation: mascota-patalea 0.3s ease-in-out infinite;
+}
+
+@keyframes mascota-patalea {
+  0%, 100% { transform: rotate(-7deg) scale(1.08); }
+  50% { transform: rotate(7deg) scale(1.08); }
+}
 
 .mascota-sombra,
 .mascota-cuerpo,
@@ -1706,9 +1791,12 @@ html.bloqueado .mascota { display: none; }
 .mascota--celebrando .mascota-brillos,
 .mascota--celebrando .mascota-flor,
 .mascota--dormida .mascota-zzz,
-.mascota--dormida .mascota-ojos-cerrados { display: inline; }
+.mascota--dormida .mascota-ojos-cerrados,
+.mascota--tapada .mascota-ojos-cerrados,
+.mascota--tapada .mascota-boca-feliz { display: inline; }
 
-.mascota--dormida .mascota-ojos { display: none; }
+.mascota--dormida .mascota-ojos,
+.mascota--tapada .mascota-ojos { display: none; }
 .mascota--dormida .mascota-cuerpo,
 .mascota--dormida .mascota-hojas { animation-duration: 6s; }
 
@@ -1762,19 +1850,26 @@ html.bloqueado .mascota { display: none; }
 }
 
 .mascota-burbuja {
-  position: relative;
-  max-width: 220px;
-  margin-left: 10px;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 6px;
+  width: max-content;
+  max-width: min(230px, calc(100vw - 24px));
   padding: 10px 30px 10px 14px;
   background: var(--surface);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 12px;
   box-shadow: var(--shadow-md);
   font-size: 12.5px;
   line-height: 1.45;
   font-weight: 500;
 }
+
+/* Si Brote esta en la mitad derecha de la pantalla, el globo se abre hacia la izquierda */
+.mascota--lado-der .mascota-burbuja { left: auto; right: 6px; }
+.mascota--lado-der .mascota-burbuja::after { left: auto; right: 28px; }
+.mascota--lado-der .mascota-burbuja-pop { transform-origin: bottom right; }
 
 .mascota-burbuja[hidden] { display: none; }
 
@@ -1852,30 +1947,10 @@ html.bloqueado .mascota { display: none; }
 
 /* ============ Responsive ============ */
 @media (max-width: 768px) {
-  .mascota {
-    left: auto;
-    right: 10px;
-    bottom: 76px;
-    align-items: flex-end;
-  }
-
   .mascota-btn {
-    width: 60px;
-    height: 56px;
+    width: 62px;
+    height: 58px;
   }
-
-  .mascota-burbuja {
-    margin-left: 0;
-    margin-right: 6px;
-    max-width: min(240px, calc(100vw - 40px));
-  }
-
-  .mascota-burbuja::after {
-    left: auto;
-    right: 22px;
-  }
-
-  .mascota-burbuja-pop { transform-origin: bottom right; }
 
   .app-shell {
     flex-direction: column;

@@ -4,6 +4,7 @@
 // reacciona cuando se guarda algo (via showToast).
 const MASCOTA_KEY = 'financeAppMascota';
 const MASCOTA_SALUDO_KEY = 'financeAppMascotaSaludo';
+const MASCOTA_POS_KEY = 'financeAppMascotaPos';
 const MASCOTA_ESTADOS = ['neutral', 'feliz', 'preocupada', 'celebrando', 'dormida'];
 
 const MASCOTA_TIPS = [
@@ -16,33 +17,36 @@ const MASCOTA_TIPS = [
   'Tip: el ahorro es como una planta: poquito pero constante. 🌱',
 ];
 
-const MASCOTA_SVG = `
+// El SVG se genera con un sufijo para los ids de los degradados, asi puede
+// haber dos Brotes en la misma pagina (la flotante y la de la pantalla de PIN).
+function mascotaSvg(sufijo = '') {
+  return `
 <svg viewBox="0 0 120 112" aria-hidden="true">
   <defs>
-    <linearGradient id="mascota-maceta" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#ffffff"/>
-      <stop offset="1" stop-color="#d6deea"/>
+    <linearGradient id="mascota-maceta${sufijo}" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e48f6f"/>
+      <stop offset="1" stop-color="#b85a3b"/>
     </linearGradient>
-    <linearGradient id="mascota-borde" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#f1f4f8"/>
-      <stop offset="1" stop-color="#cdd6e2"/>
+    <linearGradient id="mascota-borde${sufijo}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#eb9d80"/>
+      <stop offset="1" stop-color="#c4603e"/>
     </linearGradient>
   </defs>
   <ellipse class="mascota-sombra" cx="60" cy="106" rx="28" ry="4"/>
   <g class="mascota-cuerpo">
     <g class="mascota-hojas">
-      <path d="M60 52 C60 42 59 34 60 24" fill="none" stroke="#2f7a4b" stroke-width="3" stroke-linecap="round"/>
+      <path d="M60 52 C60 42 59 34 60 24" fill="none" stroke="#5c6f45" stroke-width="3" stroke-linecap="round"/>
       <g class="mascota-hoja mascota-hoja-izq">
-        <path d="M58 44 C50 30 36 22 22 24 C26 38 42 46 58 44 Z" fill="#5fae7a"/>
-        <path d="M56 43 Q40 34 25 25" fill="none" stroke="#3f8f5c" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M58 44 C50 30 36 22 22 24 C26 38 42 46 58 44 Z" fill="#7f9a62"/>
+        <path d="M56 43 Q40 34 25 25" fill="none" stroke="#5c6f45" stroke-width="1.2" stroke-linecap="round"/>
       </g>
       <g class="mascota-hoja mascota-hoja-der">
-        <path d="M62 38 C70 24 84 16 98 18 C94 32 78 40 62 38 Z" fill="#7cc795"/>
-        <path d="M64 37 Q80 28 95 19" fill="none" stroke="#4f9e6b" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M62 38 C70 24 84 16 98 18 C94 32 78 40 62 38 Z" fill="#9cb47e"/>
+        <path d="M64 37 Q80 28 95 19" fill="none" stroke="#788c5d" stroke-width="1.2" stroke-linecap="round"/>
       </g>
       <g class="mascota-hoja mascota-hoja-top">
-        <path d="M60 26 C52 18 54 6 61 2 C68 8 68 18 60 26 Z" fill="#4f9e6b"/>
-        <path d="M60 24 Q61 14 61 5" fill="none" stroke="#2f7a4b" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M60 26 C52 18 54 6 61 2 C68 8 68 18 60 26 Z" fill="#6b8551"/>
+        <path d="M60 24 Q61 14 61 5" fill="none" stroke="#5c6f45" stroke-width="1.2" stroke-linecap="round"/>
       </g>
       <g class="mascota-extra mascota-flor">
         <circle cx="61" cy="-3" r="4.2" fill="#fff" stroke="#e8c4cc"/>
@@ -50,53 +54,54 @@ const MASCOTA_SVG = `
         <circle cx="64.5" cy="7.8" r="4.2" fill="#fff" stroke="#e8c4cc"/>
         <circle cx="57.5" cy="7.8" r="4.2" fill="#fff" stroke="#e8c4cc"/>
         <circle cx="55.3" cy="1.1" r="4.2" fill="#fff" stroke="#e8c4cc"/>
-        <circle cx="61" cy="2.8" r="3.2" fill="#f2c94c"/>
+        <circle cx="61" cy="2.8" r="3.2" fill="#e8b04a"/>
       </g>
     </g>
 
     <g class="mascota-moneda">
-      <circle cx="82" cy="14" r="7" fill="#f2c94c" stroke="#c99a1e" stroke-width="1.8"/>
-      <text x="82" y="17.3" text-anchor="middle" font-size="9" font-weight="800" fill="#7a5a0c">$</text>
+      <circle cx="82" cy="14" r="7" fill="#e8b04a" stroke="#b8862a" stroke-width="1.8"/>
+      <text x="82" y="17.3" text-anchor="middle" font-size="9" font-weight="800" fill="#6b4c0e">$</text>
     </g>
 
-    <path d="M28 62 H92 L85 99 Q84 103 79 103 H41 Q36 103 35 99 Z" fill="url(#mascota-maceta)" stroke="#c3cedb"/>
-    <path d="M33.7 92 H86.3 L85.4 97 H34.6 Z" fill="#34588c" opacity="0.85"/>
-    <path d="M34 67 Q36 79 38.5 89" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
-    <rect x="24" y="50" width="72" height="13" rx="5" fill="url(#mascota-borde)" stroke="#b8c4d3"/>
-    <ellipse cx="60" cy="51.5" rx="31" ry="3" fill="#6b5140"/>
+    <path d="M28 62 H92 L85 99 Q84 103 79 103 H41 Q36 103 35 99 Z" fill="url(#mascota-maceta${sufijo})" stroke="#a9502f"/>
+    <path d="M33.7 92 H86.3 L85.4 97 H34.6 Z" fill="#8f3f25" opacity="0.5"/>
+    <path d="M34 67 Q36 79 38.5 89" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+    <rect x="24" y="50" width="72" height="13" rx="5" fill="url(#mascota-borde${sufijo})" stroke="#a9502f"/>
+    <ellipse cx="60" cy="51.5" rx="31" ry="3" fill="#4a3628"/>
 
     <g class="mascota-ojos">
-      <g class="mascota-pupila"><circle cx="49" cy="74" r="4.2" fill="#1d2b3e"/><circle cx="50.4" cy="72.6" r="1.4" fill="#fff"/></g>
-      <g class="mascota-pupila"><circle cx="71" cy="74" r="4.2" fill="#1d2b3e"/><circle cx="72.4" cy="72.6" r="1.4" fill="#fff"/></g>
+      <g class="mascota-pupila"><circle cx="49" cy="74" r="4.2" fill="#1f1e1d"/><circle cx="50.4" cy="72.6" r="1.4" fill="#fff"/></g>
+      <g class="mascota-pupila"><circle cx="71" cy="74" r="4.2" fill="#1f1e1d"/><circle cx="72.4" cy="72.6" r="1.4" fill="#fff"/></g>
     </g>
-    <g class="mascota-extra mascota-ojos-cerrados" fill="none" stroke="#1d2b3e" stroke-width="2.4" stroke-linecap="round">
+    <g class="mascota-extra mascota-ojos-cerrados" fill="none" stroke="#1f1e1d" stroke-width="2.4" stroke-linecap="round">
       <path d="M44 75 q5 4 10 0"/>
       <path d="M66 75 q5 4 10 0"/>
     </g>
 
-    <ellipse cx="42" cy="82" rx="5" ry="3" fill="#f4a3a8" opacity="0.5"/>
-    <ellipse cx="78" cy="82" rx="5" ry="3" fill="#f4a3a8" opacity="0.5"/>
+    <ellipse cx="42" cy="82" rx="5" ry="3" fill="#ffd3c0" opacity="0.5"/>
+    <ellipse cx="78" cy="82" rx="5" ry="3" fill="#ffd3c0" opacity="0.5"/>
 
-    <g fill="none" stroke="#1d2b3e" stroke-width="2.4" stroke-linecap="round">
+    <g fill="none" stroke="#1f1e1d" stroke-width="2.4" stroke-linecap="round">
       <path class="mascota-boca mascota-boca-neutral" d="M56 85 h8"/>
       <path class="mascota-boca mascota-boca-feliz" d="M54 83 q6 5 12 0"/>
       <path class="mascota-boca mascota-boca-preocupada" d="M54 87 q6 -4 12 0"/>
     </g>
-    <path class="mascota-boca mascota-boca-celebrando" d="M53 82 q7 9 14 0 z" fill="#c2545c" stroke="#1d2b3e" stroke-width="2" stroke-linejoin="round"/>
+    <path class="mascota-boca mascota-boca-celebrando" d="M53 82 q7 9 14 0 z" fill="#6e2a17" stroke="#1f1e1d" stroke-width="2" stroke-linejoin="round"/>
 
-    <path class="mascota-extra mascota-gota" d="M100 54 q-4 7 0 9 q4 -2 0 -9 z" fill="#9cc7ec"/>
-    <g class="mascota-extra mascota-zzz" fill="#7ea3d4" font-weight="800">
+    <path class="mascota-extra mascota-gota" d="M100 54 q-4 7 0 9 q4 -2 0 -9 z" fill="#8ab4d8"/>
+    <g class="mascota-extra mascota-zzz" fill="#d97757" font-weight="800">
       <text x="94" y="34" font-size="12">z</text>
       <text x="103" y="24" font-size="9">z</text>
       <text x="110" y="16" font-size="7">z</text>
     </g>
-    <g class="mascota-extra mascota-brillos" fill="#f2c94c">
+    <g class="mascota-extra mascota-brillos" fill="#e8b04a">
       <g transform="translate(12 30)"><path class="mascota-brillo" d="M0 -7 L1.8 -1.8 L7 0 L1.8 1.8 L0 7 L-1.8 1.8 L-7 0 L-1.8 -1.8 Z"/></g>
       <g transform="translate(108 44)"><path class="mascota-brillo" d="M0 -6 L1.5 -1.5 L6 0 L1.5 1.5 L0 6 L-1.5 1.5 L-6 0 L-1.5 -1.5 Z"/></g>
       <g transform="translate(14 86)"><path class="mascota-brillo" d="M0 -5 L1.2 -1.2 L5 0 L1.2 1.2 L0 5 L-1.2 1.2 L-5 0 L-1.2 -1.2 Z"/></g>
     </g>
   </g>
 </svg>`;
+}
 
 function mascotaVisible() {
   try {
@@ -208,7 +213,7 @@ function analizarFinanzasMascota() {
 
 function lanzarConfeti() {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const colores = ['#34588c', '#7ea3d4', '#4f9e6b', '#9fd4ae', '#f2c94c', '#cbd5e1'];
+  const colores = ['#c96442', '#d97757', '#788c5d', '#a9bc8e', '#e8b04a', '#e6e2d6'];
   const capa = document.createElement('div');
   capa.className = 'confeti';
   for (let i = 0; i < 80; i++) {
@@ -226,8 +231,37 @@ function lanzarConfeti() {
   setTimeout(() => capa.remove(), 4200);
 }
 
+const MASCOTA_PENSAMIENTOS = [
+  '🎵 la la la…',
+  'Revisando tus cuentas… 🔍',
+  '¡Qué buena luz hay por aquí! ☀️',
+  'Un pasito más cerca de tus metas. 🌱',
+  '¿Ya anotaste los gastos de hoy?',
+  'Estirando las hojas un ratito. 🌿',
+];
+
+const MASCOTA_AL_SOLTAR = ['¡Wiii! 🌿', '¡Qué vista desde aquí!', 'Aquí me quedo un ratito.', '¡Me mareé un poquito! 😵'];
+
+function elegirAlAzar(lista) {
+  return lista[Math.floor(Math.random() * lista.length)];
+}
+
+function leerPosicionMascota() {
+  try {
+    const pos = JSON.parse(localStorage.getItem(MASCOTA_POS_KEY));
+    return pos && Number.isFinite(pos.x) && Number.isFinite(pos.y) ? pos : null;
+  } catch {
+    return null;
+  }
+}
+
+function sinMovimiento() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 const Mascota = {
   el: null,
+  btn: null,
   burbuja: null,
   texto: null,
   estadoBase: 'neutral',
@@ -235,8 +269,16 @@ const Mascota = {
   indice: 0,
   timerBurbuja: null,
   timerEstado: null,
+  timerPaseo: null,
   raf: null,
   onPointerMove: null,
+  onResize: null,
+  // Posicion: x = distancia al borde izquierdo, y = distancia al borde inferior.
+  x: 0,
+  y: 0,
+  caminando: false,
+  arrastre: null,
+  suprimirClick: false,
 
   montar() {
     if (this.el || !mascotaVisible()) return;
@@ -248,23 +290,41 @@ const Mascota = {
         <span class="mascota-burbuja-texto"></span>
         <button type="button" class="mascota-burbuja-cerrar" aria-label="Cerrar mensaje">&times;</button>
       </div>
-      <button type="button" class="mascota-btn" aria-label="Brote, tu planta financiera. Toca para recibir un consejo" title="¡Hola! Soy Brote">${MASCOTA_SVG}</button>`;
+      <button type="button" class="mascota-btn" aria-label="Brote, tu planta financiera. Tócala para un consejo o arrástrala para moverla" title="¡Hola! Soy Brote. Arrástrame a donde quieras">${mascotaSvg()}</button>`;
     document.body.appendChild(el);
 
     this.el = el;
+    this.btn = el.querySelector('.mascota-btn');
     this.burbuja = el.querySelector('.mascota-burbuja');
     this.texto = el.querySelector('.mascota-burbuja-texto');
 
-    el.querySelector('.mascota-btn').addEventListener('click', () => {
+    this.btn.addEventListener('click', () => {
+      if (this.suprimirClick) return;
+      this.detenerPaseo();
       this.animar('mascota--salto');
       this.siguienteMensaje();
+      this.programarPaseo();
     });
+    this.btn.addEventListener('pointerdown', (e) => this.iniciarArrastre(e));
+    this.btn.addEventListener('pointermove', (e) => this.moverArrastre(e));
+    this.btn.addEventListener('pointerup', (e) => this.soltarArrastre(e));
+    this.btn.addEventListener('pointercancel', (e) => this.soltarArrastre(e));
     el.querySelector('.mascota-burbuja-cerrar').addEventListener('click', () => this.ocultarBurbuja());
+    el.addEventListener('transitionend', (e) => {
+      if (e.target === el && e.propertyName === 'transform') this.terminarPaseo();
+    });
 
     this.onPointerMove = (e) => this.seguirPuntero(e);
     document.addEventListener('pointermove', this.onPointerMove);
+    this.onResize = () => this.colocar(this.x, this.y);
+    window.addEventListener('resize', this.onResize);
+
+    const guardada = leerPosicionMascota();
+    if (guardada) this.colocar(guardada.x, guardada.y);
+    else this.colocar(...this.posicionInicial());
 
     this.actualizar();
+    this.programarPaseo();
 
     // Saluda solo una vez por sesion (no en cada cambio de pagina), y no
     // mientras la pantalla de PIN esta tapando la app.
@@ -281,13 +341,153 @@ const Mascota = {
   desmontar() {
     if (!this.el) return;
     document.removeEventListener('pointermove', this.onPointerMove);
+    window.removeEventListener('resize', this.onResize);
     clearTimeout(this.timerBurbuja);
     clearTimeout(this.timerEstado);
+    clearTimeout(this.timerPaseo);
     this.timerEstado = null;
+    this.caminando = false;
+    this.arrastre = null;
     this.el.remove();
     this.el = null;
   },
 
+  // ---- Posicion ----
+  esMovil() {
+    return window.matchMedia('(max-width: 768px)').matches;
+  },
+
+  limites() {
+    // En movil no puede bajar hasta tapar la barra de navegacion inferior.
+    const suelo = this.esMovil() ? 74 : 12;
+    return {
+      minX: 8,
+      maxX: Math.max(8, window.innerWidth - this.btn.offsetWidth - 8),
+      minY: suelo,
+      maxY: Math.max(suelo, window.innerHeight - this.btn.offsetHeight - 8),
+    };
+  },
+
+  posicionInicial() {
+    return this.esMovil() ? [window.innerWidth - this.btn.offsetWidth - 10, 76] : [28, 18];
+  },
+
+  colocar(x, y) {
+    const l = this.limites();
+    this.x = Math.min(Math.max(x, l.minX), l.maxX);
+    this.y = Math.min(Math.max(y, l.minY), l.maxY);
+    this.el.style.transform = `translate3d(${this.x}px, ${-this.y}px, 0)`;
+    this.el.classList.toggle('mascota--lado-der', this.x + this.btn.offsetWidth / 2 > window.innerWidth / 2);
+  },
+
+  guardarPosicion() {
+    try {
+      localStorage.setItem(MASCOTA_POS_KEY, JSON.stringify({ x: Math.round(this.x), y: Math.round(this.y) }));
+    } catch {
+      // sin localStorage la posicion no persiste entre paginas
+    }
+  },
+
+  // ---- Paseos: cada cierto tiempo camina sola a otro punto de la pantalla ----
+  programarPaseo() {
+    clearTimeout(this.timerPaseo);
+    if (!this.el || sinMovimiento()) return;
+    this.timerPaseo = setTimeout(() => this.pasear(), 8000 + Math.random() * 12000);
+  },
+
+  pasear() {
+    if (!this.el) return;
+    const ocupada =
+      this.arrastre ||
+      !this.burbuja.hidden ||
+      document.hidden ||
+      this.el.classList.contains('mascota--dormida') ||
+      document.documentElement.classList.contains('bloqueado');
+    if (ocupada) {
+      this.programarPaseo();
+      return;
+    }
+
+    const l = this.limites();
+    let destino = l.minX + Math.random() * (l.maxX - l.minX);
+    if (Math.abs(destino - this.x) < 100) destino = this.x > (l.minX + l.maxX) / 2 ? this.x - 180 : this.x + 180;
+    destino = Math.min(Math.max(destino, l.minX), l.maxX);
+
+    const duracion = Math.max(Math.abs(destino - this.x) / 70, 0.8);
+    this.el.classList.toggle('mascota--izq', destino < this.x);
+    this.el.classList.add('mascota--caminando');
+    this.caminando = true;
+    this.el.style.transition = `transform ${duracion.toFixed(2)}s linear`;
+    this.colocar(destino, this.y);
+  },
+
+  terminarPaseo() {
+    if (!this.caminando) return;
+    this.caminando = false;
+    this.el.classList.remove('mascota--caminando');
+    this.el.style.transition = '';
+    this.guardarPosicion();
+    if (Math.random() < 0.3) this.mostrarMensaje(elegirAlAzar(MASCOTA_PENSAMIENTOS), 3500);
+    this.programarPaseo();
+  },
+
+  // Frena en seco donde vaya (por ejemplo si la tocan o la agarran caminando).
+  detenerPaseo() {
+    clearTimeout(this.timerPaseo);
+    if (!this.caminando) return;
+    const m = new DOMMatrixReadOnly(getComputedStyle(this.el).transform);
+    this.caminando = false;
+    this.el.classList.remove('mascota--caminando');
+    this.el.style.transition = '';
+    this.colocar(m.m41, -m.m42);
+    this.guardarPosicion();
+  },
+
+  // ---- Arrastrar ----
+  iniciarArrastre(e) {
+    if (e.button !== 0) return;
+    this.btn.setPointerCapture(e.pointerId);
+    this.arrastre = { id: e.pointerId, inicioX: e.clientX, inicioY: e.clientY, origenX: this.x, origenY: this.y, activo: false };
+  },
+
+  moverArrastre(e) {
+    const a = this.arrastre;
+    if (!a || e.pointerId !== a.id) return;
+    const dx = e.clientX - a.inicioX;
+    const dy = e.clientY - a.inicioY;
+    if (!a.activo) {
+      if (Math.hypot(dx, dy) < 6) return;
+      a.activo = true;
+      this.detenerPaseo();
+      a.origenX = this.x;
+      a.origenY = this.y;
+      this.ocultarBurbuja();
+      this.el.classList.add('mascota--arrastrando');
+    }
+    this.el.classList.toggle('mascota--izq', dx < 0);
+    this.colocar(a.origenX + dx, a.origenY - dy);
+  },
+
+  soltarArrastre(e) {
+    const a = this.arrastre;
+    if (!a || e.pointerId !== a.id) return;
+    this.arrastre = null;
+    if (!a.activo) return;
+
+    // El navegador dispara "click" justo despues de soltar: no debe contar como toque.
+    this.suprimirClick = true;
+    setTimeout(() => {
+      this.suprimirClick = false;
+    }, 0);
+
+    this.el.classList.remove('mascota--arrastrando');
+    this.animar('mascota--salto');
+    this.guardarPosicion();
+    if (Math.random() < 0.5) this.mostrarMensaje(elegirAlAzar(MASCOTA_AL_SOLTAR), 3000);
+    this.programarPaseo();
+  },
+
+  // ---- Animo y mensajes ----
   actualizar() {
     const { estado, mensajes } = analizarFinanzasMascota();
     this.estadoBase = estado;
@@ -347,9 +547,11 @@ const Mascota = {
     this.raf = requestAnimationFrame(() => {
       this.raf = null;
       if (!this.el) return;
+      // Si esta mirando a la izquierda el SVG esta espejado, asi que el eje X va al reves.
+      const giro = this.el.classList.contains('mascota--izq') ? -1 : 1;
       this.el.querySelectorAll('.mascota-pupila').forEach((pupila) => {
         const r = pupila.getBoundingClientRect();
-        const dx = e.clientX - (r.left + r.width / 2);
+        const dx = (e.clientX - (r.left + r.width / 2)) * giro;
         const dy = e.clientY - (r.top + r.height / 2);
         const distancia = Math.hypot(dx, dy) || 1;
         const k = Math.min(distancia / 120, 1) * 2.6;
@@ -375,10 +577,12 @@ const Mascota = {
   celebrar(mensaje) {
     lanzarConfeti();
     if (!this.el) return;
+    this.detenerPaseo();
     this.estadoTemporal('celebrando', 4500);
     this.animar('mascota--salto');
     this.animar('mascota--moneda');
     this.mostrarMensaje(mensaje, 6000);
+    this.programarPaseo();
   },
 };
 
