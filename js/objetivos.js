@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     els.list.innerHTML = objetivos
       .map((o) => {
         const ahorrado = Storage.getAhorradoObjetivo(o);
-        const pct = Math.min(Math.round((ahorrado / o.meta) * 100), 100);
+        const pct = porcentajeProgreso(ahorrado, o.meta);
         const esPrioritario = o.prioritario === true;
         return `
         <div class="card goal-card${esPrioritario ? ' goal-card-prioritario' : ''}">

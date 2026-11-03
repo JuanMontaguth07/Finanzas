@@ -173,13 +173,13 @@ function analizarFinanzasMascota() {
 
   cerca.forEach((p) => {
     const meta = getCategoryMeta(p.categoria);
-    const pct = Math.round((gastosPorCategoria[p.categoria] / p.limite) * 100);
+    const pct = porcentajeProgreso(gastosPorCategoria[p.categoria], p.limite);
     mensajes.push(`${meta.emoji} ${p.categoria} ya va en ${pct}% del presupuesto. ¡Con calma!`);
   });
 
   const objetivos = Storage.getObjetivos().map((o) => ({
     nombre: o.nombre,
-    pct: Math.min(Math.round((Storage.getAhorradoObjetivo(o) / o.meta) * 100), 100),
+    pct: porcentajeProgreso(Storage.getAhorradoObjetivo(o), o.meta),
   }));
   const completos = objetivos.filter((o) => o.pct >= 100);
   const enCurso = objetivos.filter((o) => o.pct < 100).sort((a, b) => b.pct - a.pct);
@@ -190,11 +190,12 @@ function analizarFinanzasMascota() {
     mensajes.push(`Ya cumpliste ${completos.length} objetivo${completos.length === 1 ? '' : 's'}. ¡Qué orgullo! 🏆`);
   }
 
-  const diasRestantes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate() - hoy.getDate();
+  // Contando hoy, igual que la pagina de Presupuestos (getDiasRestantesDelMes).
+  const diasRestantes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate() - hoy.getDate() + 1;
   mensajes.push(
-    diasRestantes === 0
+    diasRestantes === 1
       ? 'Hoy es el último día del mes. ¡Buen momento para revisar cómo te fue!'
-      : `Quedan ${diasRestantes} día${diasRestantes === 1 ? '' : 's'} para que termine el mes. 📅`
+      : `Quedan ${diasRestantes} días del mes, contando hoy. 📅`
   );
 
   mensajes.push(...mezclar(MASCOTA_TIPS).slice(0, 2));

@@ -18,8 +18,11 @@ function getBalanceTotal() {
   return sumPorTipo(movimientos, 'ingreso') - sumPorTipo(movimientos, 'gasto');
 }
 
-function getGastosPorCategoria(monthKey) {
-  const gastos = getMovimientosDelMes(monthKey).filter((m) => m.tipo === 'gasto');
+// hastaDia (opcional) limita a los gastos del dia 1 al hastaDia del mes.
+function getGastosPorCategoria(monthKey, hastaDia = null) {
+  const gastos = getMovimientosDelMes(monthKey).filter(
+    (m) => m.tipo === 'gasto' && (hastaDia === null || Number(m.fecha.slice(8, 10)) <= hastaDia)
+  );
   const porCategoria = {};
   gastos.forEach((m) => {
     porCategoria[m.categoria] = (porCategoria[m.categoria] || 0) + m.valor;
@@ -66,10 +69,14 @@ function mesAnterior(monthKey) {
   return currentMonthKey(new Date(year, month - 2, 1));
 }
 
+// Si el mes es el actual (todavia en curso) se compara contra los mismos
+// dias del mes anterior; comparar 3 dias de este mes contra el mes anterior
+// completo daba variaciones engañosas (hasta con el signo al reves).
 function getComparacionCategoria(monthKey) {
   const actual = getGastosPorCategoria(monthKey);
+  const hastaDia = monthKey === currentMonthKey() ? new Date().getDate() : null;
   const anteriorMap = Object.fromEntries(
-    getGastosPorCategoria(mesAnterior(monthKey)).map((g) => [g.categoria, g.total])
+    getGastosPorCategoria(mesAnterior(monthKey), hastaDia).map((g) => [g.categoria, g.total])
   );
   return actual.map((d) => {
     const anterior = anteriorMap[d.categoria] || 0;

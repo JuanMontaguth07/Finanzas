@@ -564,10 +564,17 @@ html.bloqueado .theme-toggle-btn {
 }
 
 /* Simbolo que gira entre · ✢ ✳ ✶ ✻ ✽ como el spinner de Claude Code (js/nav.js) */
+/* Caja de tamaño fijo: cada simbolo viene de una fuente de respaldo con
+   altura distinta, y sin esto el cambio movia 1px todo lo que esta debajo. */
 .glifo-spinner {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
   width: 1em;
-  text-align: center;
+  height: 1em;
+  line-height: 1;
+  overflow: hidden;
   color: var(--primary);
   font-family: var(--font-mono);
   font-weight: 400;

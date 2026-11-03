@@ -38,7 +38,7 @@ function construirLibroExcel() {
       Meta: o.meta,
       Ahorrado: ahorrado,
       Falta: Math.max(o.meta - ahorrado, 0),
-      'Progreso (%)': Math.min(Math.round((ahorrado / o.meta) * 100), 100),
+      'Progreso (%)': porcentajeProgreso(ahorrado, o.meta),
     };
   });
   const hojaObjetivos = XLSX.utils.json_to_sheet(objetivosRows);
@@ -124,12 +124,23 @@ function mergeState(actual, importado) {
     version: actual.version,
     config: {
       moneda: actual.config.moneda,
-      categorias: Array.from(new Set([...actual.config.categorias, ...(importado.config?.categorias || [])])),
+      categorias: mergeCategorias(actual.config.categorias, importado.config?.categorias || []),
     },
     movimientos: mergeMovimientos(actual.movimientos, importado.movimientos || []),
     presupuestos: mergePresupuestos(actual.presupuestos, importado.presupuestos || []),
     objetivos: mergeObjetivos(actual.objetivos, importado.objetivos || []),
   };
+}
+
+// Las categorias son objetos {nombre, emoji, color} (o strings en respaldos
+// viejos), asi que un Set no las deduplicaba: se unen por nombre y se
+// conserva el emoji/color de la que ya existia aqui.
+function mergeCategorias(actuales, importadas) {
+  const map = new Map();
+  [...migrarCategorias(actuales), ...migrarCategorias(importadas)].forEach((c) => {
+    if (!map.has(c.nombre)) map.set(c.nombre, c);
+  });
+  return Array.from(map.values());
 }
 
 function mergeMovimientos(actuales, importados) {

@@ -98,7 +98,7 @@ function renderObjetivosResumen() {
   container.innerHTML = objetivos
     .map((o) => {
       const ahorrado = Storage.getAhorradoObjetivo(o);
-      const pct = Math.min(Math.round((ahorrado / o.meta) * 100), 100);
+      const pct = porcentajeProgreso(ahorrado, o.meta);
       return `
       <div class="goal-mini">
         <div class="goal-mini-header">

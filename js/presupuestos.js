@@ -14,7 +14,7 @@ function render() {
       const limite = Storage.getLimitePorCategoria(categoria);
       const gastado = gastoMap[categoria] || 0;
       const superado = limite && gastado > limite;
-      const pct = limite ? Math.min(Math.round((gastado / limite) * 100), 100) : 0;
+      const pct = limite ? porcentajeProgreso(gastado, limite) : 0;
 
       let lineaDisponible = '';
       if (limite && !superado) {
