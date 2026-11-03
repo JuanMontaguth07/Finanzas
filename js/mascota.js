@@ -1,6 +1,7 @@
-// Moni: la mascota de la app. Una alcancia-cerdito que cambia de animo segun
-// como van las finanzas del mes, da consejos al tocarla y reacciona cuando se
-// guarda algo (via showToast) o se completa un objetivo.
+// Brote: la mascota de la app. Una planta de oficina en su maceta que cambia
+// de animo segun como van las finanzas del mes (se le caen las hojas si vas
+// mal, le sale una flor cuando cumples un objetivo), da consejos al tocarla y
+// reacciona cuando se guarda algo (via showToast).
 const MASCOTA_KEY = 'financeAppMascota';
 const MASCOTA_SALUDO_KEY = 'financeAppMascotaSaludo';
 const MASCOTA_ESTADOS = ['neutral', 'feliz', 'preocupada', 'celebrando', 'dormida'];
@@ -12,65 +13,87 @@ const MASCOTA_TIPS = [
   'Tip: revisa tus suscripciones, a veces pagamos cosas que ya no usamos.',
   'Tip: exporta un respaldo de vez en cuando desde Configuración. 💾',
   'Tip: ponle fecha a tus objetivos, así es más fácil cumplirlos. 🎯',
+  'Tip: el ahorro es como una planta: poquito pero constante. 🌱',
 ];
 
 const MASCOTA_SVG = `
 <svg viewBox="0 0 120 112" aria-hidden="true">
   <defs>
-    <linearGradient id="mascota-grad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#fbcfe8"/>
-      <stop offset="1" stop-color="#f472b6"/>
+    <linearGradient id="mascota-maceta" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#d6deea"/>
+    </linearGradient>
+    <linearGradient id="mascota-borde" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f1f4f8"/>
+      <stop offset="1" stop-color="#cdd6e2"/>
     </linearGradient>
   </defs>
-  <ellipse class="mascota-sombra" cx="60" cy="106" rx="30" ry="4"/>
+  <ellipse class="mascota-sombra" cx="60" cy="106" rx="28" ry="4"/>
   <g class="mascota-cuerpo">
-    <g class="mascota-moneda">
-      <circle cx="60" cy="12" r="8" fill="#fbbf24" stroke="#d97706" stroke-width="2"/>
-      <text x="60" y="15.5" text-anchor="middle" font-size="10" font-weight="800" fill="#92400e">$</text>
+    <g class="mascota-hojas">
+      <path d="M60 52 C60 42 59 34 60 24" fill="none" stroke="#2f7a4b" stroke-width="3" stroke-linecap="round"/>
+      <g class="mascota-hoja mascota-hoja-izq">
+        <path d="M58 44 C50 30 36 22 22 24 C26 38 42 46 58 44 Z" fill="#5fae7a"/>
+        <path d="M56 43 Q40 34 25 25" fill="none" stroke="#3f8f5c" stroke-width="1.2" stroke-linecap="round"/>
+      </g>
+      <g class="mascota-hoja mascota-hoja-der">
+        <path d="M62 38 C70 24 84 16 98 18 C94 32 78 40 62 38 Z" fill="#7cc795"/>
+        <path d="M64 37 Q80 28 95 19" fill="none" stroke="#4f9e6b" stroke-width="1.2" stroke-linecap="round"/>
+      </g>
+      <g class="mascota-hoja mascota-hoja-top">
+        <path d="M60 26 C52 18 54 6 61 2 C68 8 68 18 60 26 Z" fill="#4f9e6b"/>
+        <path d="M60 24 Q61 14 61 5" fill="none" stroke="#2f7a4b" stroke-width="1.2" stroke-linecap="round"/>
+      </g>
+      <g class="mascota-extra mascota-flor">
+        <circle cx="61" cy="-3" r="4.2" fill="#fff" stroke="#e8c4cc"/>
+        <circle cx="66.7" cy="1.1" r="4.2" fill="#fff" stroke="#e8c4cc"/>
+        <circle cx="64.5" cy="7.8" r="4.2" fill="#fff" stroke="#e8c4cc"/>
+        <circle cx="57.5" cy="7.8" r="4.2" fill="#fff" stroke="#e8c4cc"/>
+        <circle cx="55.3" cy="1.1" r="4.2" fill="#fff" stroke="#e8c4cc"/>
+        <circle cx="61" cy="2.8" r="3.2" fill="#f2c94c"/>
+      </g>
     </g>
-    <path d="M98 64 q10 -2 8 -10 q-2 -6 -7 -2 q-4 4 2 7" fill="none" stroke="#ec4899" stroke-width="3" stroke-linecap="round"/>
-    <rect x="34" y="84" width="13" height="16" rx="6" fill="#ec4899"/>
-    <rect x="73" y="84" width="13" height="16" rx="6" fill="#ec4899"/>
-    <path d="M34 40 L30 18 L52 31 Z" fill="#f9a8d4" stroke="#f9a8d4" stroke-width="6" stroke-linejoin="round"/>
-    <path d="M86 40 L90 18 L68 31 Z" fill="#f9a8d4" stroke="#f9a8d4" stroke-width="6" stroke-linejoin="round"/>
-    <ellipse cx="60" cy="62" rx="41" ry="35" fill="url(#mascota-grad)"/>
-    <ellipse cx="44" cy="40" rx="11" ry="5" fill="#fff" opacity="0.4" transform="rotate(-20 44 40)"/>
-    <rect x="49" y="29" width="22" height="4.5" rx="2.25" fill="#be185d" opacity="0.55"/>
+
+    <g class="mascota-moneda">
+      <circle cx="82" cy="14" r="7" fill="#f2c94c" stroke="#c99a1e" stroke-width="1.8"/>
+      <text x="82" y="17.3" text-anchor="middle" font-size="9" font-weight="800" fill="#7a5a0c">$</text>
+    </g>
+
+    <path d="M28 62 H92 L85 99 Q84 103 79 103 H41 Q36 103 35 99 Z" fill="url(#mascota-maceta)" stroke="#c3cedb"/>
+    <path d="M33.7 92 H86.3 L85.4 97 H34.6 Z" fill="#34588c" opacity="0.85"/>
+    <path d="M34 67 Q36 79 38.5 89" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+    <rect x="24" y="50" width="72" height="13" rx="5" fill="url(#mascota-borde)" stroke="#b8c4d3"/>
+    <ellipse cx="60" cy="51.5" rx="31" ry="3" fill="#6b5140"/>
 
     <g class="mascota-ojos">
-      <circle cx="44" cy="55" r="7.5" fill="#fff"/>
-      <circle cx="76" cy="55" r="7.5" fill="#fff"/>
-      <g class="mascota-pupila"><circle cx="44" cy="55" r="4" fill="#2e1065"/><circle cx="45.5" cy="53.5" r="1.4" fill="#fff"/></g>
-      <g class="mascota-pupila"><circle cx="76" cy="55" r="4" fill="#2e1065"/><circle cx="77.5" cy="53.5" r="1.4" fill="#fff"/></g>
+      <g class="mascota-pupila"><circle cx="49" cy="74" r="4.2" fill="#1d2b3e"/><circle cx="50.4" cy="72.6" r="1.4" fill="#fff"/></g>
+      <g class="mascota-pupila"><circle cx="71" cy="74" r="4.2" fill="#1d2b3e"/><circle cx="72.4" cy="72.6" r="1.4" fill="#fff"/></g>
     </g>
-    <g class="mascota-extra mascota-ojos-cerrados" fill="none" stroke="#2e1065" stroke-width="2.5" stroke-linecap="round">
-      <path d="M38 56 q6 5 12 0"/>
-      <path d="M70 56 q6 5 12 0"/>
+    <g class="mascota-extra mascota-ojos-cerrados" fill="none" stroke="#1d2b3e" stroke-width="2.4" stroke-linecap="round">
+      <path d="M44 75 q5 4 10 0"/>
+      <path d="M66 75 q5 4 10 0"/>
     </g>
 
-    <ellipse cx="33" cy="70" rx="6.5" ry="3.8" fill="#fb7185" opacity="0.5"/>
-    <ellipse cx="87" cy="70" rx="6.5" ry="3.8" fill="#fb7185" opacity="0.5"/>
-    <ellipse cx="60" cy="70" rx="13" ry="9" fill="#f9a8d4" stroke="#db2777" stroke-opacity="0.35" stroke-width="1.5"/>
-    <ellipse cx="55.5" cy="70" rx="2.2" ry="3.2" fill="#be185d"/>
-    <ellipse cx="64.5" cy="70" rx="2.2" ry="3.2" fill="#be185d"/>
+    <ellipse cx="42" cy="82" rx="5" ry="3" fill="#f4a3a8" opacity="0.5"/>
+    <ellipse cx="78" cy="82" rx="5" ry="3" fill="#f4a3a8" opacity="0.5"/>
 
-    <g fill="none" stroke="#2e1065" stroke-width="2.5" stroke-linecap="round">
-      <path class="mascota-boca mascota-boca-neutral" d="M55 84 h10"/>
-      <path class="mascota-boca mascota-boca-feliz" d="M53 83 q7 6 14 0"/>
-      <path class="mascota-boca mascota-boca-preocupada" d="M53 87 q7 -5 14 0"/>
+    <g fill="none" stroke="#1d2b3e" stroke-width="2.4" stroke-linecap="round">
+      <path class="mascota-boca mascota-boca-neutral" d="M56 85 h8"/>
+      <path class="mascota-boca mascota-boca-feliz" d="M54 83 q6 5 12 0"/>
+      <path class="mascota-boca mascota-boca-preocupada" d="M54 87 q6 -4 12 0"/>
     </g>
-    <path class="mascota-boca mascota-boca-celebrando" d="M52 82 q8 11 16 0 z" fill="#9f1239" stroke="#2e1065" stroke-width="2" stroke-linejoin="round"/>
+    <path class="mascota-boca mascota-boca-celebrando" d="M53 82 q7 9 14 0 z" fill="#c2545c" stroke="#1d2b3e" stroke-width="2" stroke-linejoin="round"/>
 
-    <path class="mascota-extra mascota-gota" d="M97 36 q-5 8 0 10 q5 -2 0 -10 z" fill="#7dd3fc"/>
-    <g class="mascota-extra mascota-zzz" fill="#a78bfa" font-weight="800">
-      <text x="94" y="32" font-size="12">z</text>
-      <text x="103" y="22" font-size="9">z</text>
-      <text x="110" y="14" font-size="7">z</text>
+    <path class="mascota-extra mascota-gota" d="M100 54 q-4 7 0 9 q4 -2 0 -9 z" fill="#9cc7ec"/>
+    <g class="mascota-extra mascota-zzz" fill="#7ea3d4" font-weight="800">
+      <text x="94" y="34" font-size="12">z</text>
+      <text x="103" y="24" font-size="9">z</text>
+      <text x="110" y="16" font-size="7">z</text>
     </g>
-    <g class="mascota-extra mascota-brillos" fill="#fbbf24">
-      <g transform="translate(12 34)"><path class="mascota-brillo" d="M0 -7 L1.8 -1.8 L7 0 L1.8 1.8 L0 7 L-1.8 1.8 L-7 0 L-1.8 -1.8 Z"/></g>
-      <g transform="translate(108 40)"><path class="mascota-brillo" d="M0 -6 L1.5 -1.5 L6 0 L1.5 1.5 L0 6 L-1.5 1.5 L-6 0 L-1.5 -1.5 Z"/></g>
-      <g transform="translate(16 86)"><path class="mascota-brillo" d="M0 -5 L1.2 -1.2 L5 0 L1.2 1.2 L0 5 L-1.2 1.2 L-5 0 L-1.2 -1.2 Z"/></g>
+    <g class="mascota-extra mascota-brillos" fill="#f2c94c">
+      <g transform="translate(12 30)"><path class="mascota-brillo" d="M0 -7 L1.8 -1.8 L7 0 L1.8 1.8 L0 7 L-1.8 1.8 L-7 0 L-1.8 -1.8 Z"/></g>
+      <g transform="translate(108 44)"><path class="mascota-brillo" d="M0 -6 L1.5 -1.5 L6 0 L1.5 1.5 L0 6 L-1.5 1.5 L-6 0 L-1.5 -1.5 Z"/></g>
+      <g transform="translate(14 86)"><path class="mascota-brillo" d="M0 -5 L1.2 -1.2 L5 0 L1.2 1.2 L0 5 L-1.2 1.2 L-5 0 L-1.2 -1.2 Z"/></g>
     </g>
   </g>
 </svg>`;
@@ -92,7 +115,7 @@ function mezclar(lista) {
   return copia;
 }
 
-// Calcula el animo de Moni y la lista de mensajes a partir de los datos del
+// Calcula el animo de Brote y la lista de mensajes a partir de los datos del
 // mes. Se hace aqui directamente con Storage (y no con analytics.js) porque
 // no todas las paginas cargan analytics.js.
 function analizarFinanzasMascota() {
@@ -123,7 +146,7 @@ function analizarFinanzasMascota() {
   const mensajes = [];
 
   if (movimientos.length === 0) {
-    mensajes.push('¡Hola! Soy Moni 🐷. Registra tu primer movimiento y te ayudo a cuidar tu plata.');
+    mensajes.push('¡Hola! Soy Brote 🌱. Registra tu primer movimiento y te ayudo a que tu plata crezca.');
   }
 
   if (gastos > ingresos && gastos > 0) {
@@ -185,7 +208,7 @@ function analizarFinanzasMascota() {
 
 function lanzarConfeti() {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const colores = ['#8b5cf6', '#ec4899', '#fbbf24', '#34d399', '#38bdf8', '#fb7185'];
+  const colores = ['#34588c', '#7ea3d4', '#4f9e6b', '#9fd4ae', '#f2c94c', '#cbd5e1'];
   const capa = document.createElement('div');
   capa.className = 'confeti';
   for (let i = 0; i < 80; i++) {
@@ -225,7 +248,7 @@ const Mascota = {
         <span class="mascota-burbuja-texto"></span>
         <button type="button" class="mascota-burbuja-cerrar" aria-label="Cerrar mensaje">&times;</button>
       </div>
-      <button type="button" class="mascota-btn" aria-label="Moni, tu mascota financiera. Toca para recibir un consejo" title="¡Hola! Soy Moni">${MASCOTA_SVG}</button>`;
+      <button type="button" class="mascota-btn" aria-label="Brote, tu planta financiera. Toca para recibir un consejo" title="¡Hola! Soy Brote">${MASCOTA_SVG}</button>`;
     document.body.appendChild(el);
 
     this.el = el;
@@ -335,8 +358,8 @@ const Mascota = {
     });
   },
 
-  // Llamado desde showToast: cada vez que se guarda algo Moni salta y le cae
-  // una moneda; si fue un error se sacude preocupada.
+  // Llamado desde showToast: cada vez que se guarda algo Brote salta y le cae
+  // una moneda en la maceta; si fue un error se sacude preocupada.
   reaccionar(tipo) {
     if (!this.el) return;
     if (tipo === 'error') {
@@ -385,7 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
       Mascota.desmontar();
     } else if (!Mascota.el) {
       Mascota.montar();
-      Mascota.mostrarMensaje('¡Volví! 🐷 Tócame cuando quieras un consejo.');
+      Mascota.mostrarMensaje('¡Volví! 🌱 Tócame cuando quieras un consejo.');
     }
     pintar();
   });

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mis-finanzas-v4';
+const CACHE_NAME = 'mis-finanzas-v5';
 
 // El "app shell" (HTML/JS/CSS/manifest) se sirve siempre de red primero,
 // para que las actualizaciones se vean de inmediato mientras haya internet.
