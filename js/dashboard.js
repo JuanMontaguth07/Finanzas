@@ -1,12 +1,42 @@
 document.addEventListener('DOMContentLoaded', () => {
   const monthKey = currentMonthKey();
 
+  renderSaludo();
   renderKpis(monthKey);
   renderObjetivosResumen();
   renderGastosPorCategoria(monthKey);
   renderIngresosVsGastos();
   renderEvolucionAhorro();
 });
+
+function renderSaludo() {
+  const ahora = new Date();
+  const hora = ahora.getHours();
+  let saludo = '¡Buenas noches! 🌙';
+  if (hora >= 5 && hora < 12) saludo = '¡Buenos días! ☀️';
+  else if (hora >= 12 && hora < 19) saludo = '¡Buenas tardes! 🌤️';
+
+  const mes = ahora.toLocaleDateString('es-CO', { month: 'long' });
+  document.getElementById('saludo').textContent = saludo;
+  document.getElementById('saludo-sub').textContent = `Así va tu plata en ${mes}`;
+}
+
+// Hace que la cifra "cuente" desde 0 hasta el valor final al cargar.
+function animarMonto(el, valor) {
+  if (!valor || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    el.textContent = formatCurrency(valor);
+    return;
+  }
+  const duracion = 900;
+  const inicio = performance.now();
+  function paso(ahora) {
+    const t = Math.min((ahora - inicio) / duracion, 1);
+    const suavizado = 1 - Math.pow(1 - t, 3);
+    el.textContent = formatCurrency(valor * suavizado);
+    if (t < 1) requestAnimationFrame(paso);
+  }
+  requestAnimationFrame(paso);
+}
 
 function renderKpis(monthKey) {
   const resumenMes = getResumenMes(monthKey);
@@ -16,10 +46,17 @@ function renderKpis(monthKey) {
   const gastosCategoria = getGastosPorCategoria(monthKey);
   const gastadoObligaciones = gastosCategoria.find((g) => g.categoria === 'Obligaciones')?.total || 0;
 
-  document.getElementById('kpi-disponible').textContent = formatCurrency(balanceTotal);
-  document.getElementById('kpi-ingresos').textContent = formatCurrency(resumenMes.ingresos);
-  document.getElementById('kpi-gastos').textContent = formatCurrency(resumenMes.gastos);
-  document.getElementById('kpi-ahorro').textContent = formatCurrency(ahorroTotal);
+  animarMonto(document.getElementById('kpi-disponible'), balanceTotal);
+  animarMonto(document.getElementById('kpi-ingresos'), resumenMes.ingresos);
+  animarMonto(document.getElementById('kpi-gastos'), resumenMes.gastos);
+  animarMonto(document.getElementById('kpi-ahorro'), ahorroTotal);
+
+  const chipMes = document.getElementById('hero-balance-mes');
+  if (resumenMes.ingresos > 0 || resumenMes.gastos > 0) {
+    const positivo = resumenMes.balance >= 0;
+    chipMes.textContent = `${positivo ? '▲ +' : '▼ −'}${formatCurrency(Math.abs(resumenMes.balance))} este mes`;
+    chipMes.hidden = false;
+  }
 
   const tasaAhorro = getTasaAhorro(monthKey);
   const kpiTasa = document.getElementById('kpi-tasa-ahorro');
@@ -36,7 +73,7 @@ function renderKpis(monthKey) {
   const kpiObligacionesSub = document.getElementById('kpi-obligaciones-sub');
   if (limiteObligaciones) {
     const pendiente = Math.max(limiteObligaciones - gastadoObligaciones, 0);
-    kpiObligaciones.textContent = formatCurrency(pendiente);
+    animarMonto(kpiObligaciones, pendiente);
     kpiObligacionesSub.textContent =
       pendiente === 0
         ? '¡Presupuesto de Obligaciones cubierto!'
@@ -67,7 +104,7 @@ function renderObjetivosResumen() {
           <span>${escapeHtml(o.nombre)}</span>
           <span>${pct}%</span>
         </div>
-        <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+        <div class="progress-track"><div class="progress-fill${pct === 100 ? ' progress-fill-completo' : ''}" style="width:${pct}%"></div></div>
         <div class="goal-mini-sub">${formatCurrency(ahorrado)} / ${formatCurrency(o.meta)}</div>
       </div>`;
     })

@@ -19,6 +19,8 @@ function showToast(message, type = 'success') {
 
   requestAnimationFrame(() => toast.classList.add('toast-visible'));
 
+  if (typeof Mascota !== 'undefined') Mascota.reaccionar(type);
+
   setTimeout(() => {
     toast.classList.remove('toast-visible');
     setTimeout(() => toast.remove(), 200);

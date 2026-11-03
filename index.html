@@ -41,14 +41,15 @@
     <main class="main-content">
       <header class="page-header">
         <div>
-          <h1>¡Hola! 👋</h1>
-          <p class="page-subtitle">Así va tu plata este mes</p>
+          <h1 id="saludo">¡Hola! 👋</h1>
+          <p class="page-subtitle" id="saludo-sub">Así va tu plata este mes</p>
         </div>
       </header>
 
       <section class="hero-balance">
         <span class="hero-balance-label">Dinero disponible</span>
         <span class="hero-balance-value" id="kpi-disponible">$ 0</span>
+        <span class="hero-chip" id="hero-balance-mes" hidden></span>
       </section>
 
       <section class="kpi-grid">
@@ -109,6 +110,7 @@
   <script src="js/nav.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/pin.js"></script>
+  <script src="js/mascota.js"></script>
   <script src="js/dashboard.js"></script>
   <script src="js/pwa.js"></script>
 </body>

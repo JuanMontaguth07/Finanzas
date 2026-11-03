@@ -54,14 +54,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return `
         <div class="card goal-card${esPrioritario ? ' goal-card-prioritario' : ''}">
           <div class="goal-card-header">
-            <h3>🎯 ${escapeHtml(o.nombre)}</h3>
+            <h3>${pct === 100 ? '🏆' : '🎯'} ${escapeHtml(o.nombre)}</h3>
             <div class="goal-card-actions">
               <button class="icon-btn${esPrioritario ? ' icon-btn-star-active' : ''}" data-action="prioridad" data-id="${o.id}" aria-label="${esPrioritario ? 'Quitar de prioritarios' : 'Marcar como prioritario'}" title="${esPrioritario ? 'Quitar de prioritarios' : 'Marcar como prioritario'}">${esPrioritario ? '⭐' : '☆'}</button>
               <button class="icon-btn" data-action="editar" data-id="${o.id}" aria-label="Editar">✎</button>
               <button class="icon-btn icon-btn-danger" data-action="eliminar" data-id="${o.id}" aria-label="Eliminar">🗑</button>
             </div>
           </div>
-          <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+          <div class="progress-track"><div class="progress-fill${pct === 100 ? ' progress-fill-completo' : ''}" style="width:${pct}%"></div></div>
           <div class="goal-card-amounts">
             <span class="goal-card-ahorrado">${formatCurrency(ahorrado)}</span>
             <span class="goal-card-meta">de ${formatCurrency(o.meta)} (${pct}%)</span>
@@ -173,10 +173,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (!valido) return;
 
-    Storage.addAporte(objetivoId, { valor, fecha });
+    const antes = Storage.getObjetivos().find((o) => o.id === objetivoId);
+    const yaEstabaCompleto = antes && Storage.getAhorradoObjetivo(antes) >= antes.meta;
+    const objetivo = Storage.addAporte(objetivoId, { valor, fecha });
     cerrarModalAporte();
     render();
-    showToast('Aporte agregado.');
+
+    if (objetivo && !yaEstabaCompleto && Storage.getAhorradoObjetivo(objetivo) >= objetivo.meta) {
+      showToast(`¡Completaste "${objetivo.nombre}"! 🎉`);
+      if (typeof Mascota !== 'undefined') Mascota.celebrar(`¡Lo lograste! "${objetivo.nombre}" está completo. 🏆`);
+    } else {
+      showToast('Aporte agregado.');
+    }
   });
 
   // ---- Acciones sobre tarjetas ----
