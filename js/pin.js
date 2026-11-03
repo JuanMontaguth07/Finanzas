@@ -65,6 +65,8 @@ function conMascotaEnBloqueo() {
 
 function mostrarPantallaBloqueo() {
   const conMascota = conMascotaEnBloqueo();
+  // Nivel de Brote (hojitas, flor...) segun js/mascota-vida.js
+  const vidaPin = typeof clasesVidaBrote === 'function' ? clasesVidaBrote() : '';
   const overlay = document.createElement('div');
   overlay.id = 'pin-lock-overlay';
   overlay.className = 'pin-lock-overlay';
@@ -72,7 +74,7 @@ function mostrarPantallaBloqueo() {
     <div class="pin-lock-card">
       ${
         conMascota
-          ? `<div class="pin-mascota mascota--feliz" id="pin-mascota"><div class="mascota-btn">${mascotaSvg('-pin')}</div></div>
+          ? `<div class="pin-mascota mascota--feliz ${vidaPin}" id="pin-mascota"><div class="mascota-btn">${mascotaSvg('-pin')}</div></div>
              <p class="pin-mascota-dice" id="pin-mascota-dice" aria-live="polite">¡Hola de nuevo! Te estaba esperando.</p>`
           : '<span class="logo-mark pin-lock-logo">$<span class="logo-cursor">_</span></span>'
       }
@@ -93,7 +95,7 @@ function mostrarPantallaBloqueo() {
 
   function ponerMascota(estado, texto) {
     if (!mascota) return;
-    mascota.className = `pin-mascota mascota--${estado}`;
+    mascota.className = `pin-mascota mascota--${estado} ${vidaPin}`;
     if (texto) dice.textContent = texto;
   }
 

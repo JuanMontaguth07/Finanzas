@@ -46,7 +46,7 @@
     { nombre: 'tema', descripcion: 'Cambiar entre modo día y noche', accion: () => {
       if (typeof establecerTema === 'function') establecerTema(esOscuroActivo() ? 'claro' : 'oscuro');
     } },
-    { nombre: 'brote', descripcion: 'Pedirle un consejo a Brote 🌱', accion: () => {
+    { nombre: 'brote', descripcion: 'Ver cómo está Brote: nivel, agua y XP 🌱', accion: () => {
       if (typeof Mascota === 'undefined') return;
       if (!Mascota.el) {
         try {
@@ -56,8 +56,11 @@
         }
         Mascota.montar();
       }
-      Mascota.animar('mascota--salto');
-      Mascota.siguienteMensaje();
+      if (typeof Mascota.mostrarEstado === 'function') Mascota.mostrarEstado();
+      else Mascota.siguienteMensaje();
+    } },
+    { nombre: 'monedas', descripcion: 'Que lluevan monedas para Brote 🪙', accion: () => {
+      if (typeof lluviaMonedas === 'function') lluviaMonedas(5);
     } },
     { nombre: 'bloquear', descripcion: 'Bloquear la app con tu PIN', disponible: () => typeof pinActivo === 'function' && pinActivo(), accion: () => {
       try {

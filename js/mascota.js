@@ -5,7 +5,7 @@
 const MASCOTA_KEY = 'financeAppMascota';
 const MASCOTA_SALUDO_KEY = 'financeAppMascotaSaludo';
 const MASCOTA_POS_KEY = 'financeAppMascotaPos';
-const MASCOTA_ESTADOS = ['neutral', 'feliz', 'preocupada', 'celebrando', 'dormida', 'mareada'];
+const MASCOTA_ESTADOS = ['neutral', 'feliz', 'preocupada', 'celebrando', 'dormida', 'mareada', 'sediento'];
 
 const MASCOTA_TIPS = [
   'Tip: anota también los gastos pequeños, son los que más se escapan. ☕',
@@ -48,6 +48,22 @@ function mascotaSvg(sufijo = '') {
         <path d="M60 26 C52 18 54 6 61 2 C68 8 68 18 60 26 Z" fill="#4f9e6b"/>
         <path d="M60 24 Q61 14 61 5" fill="none" stroke="#3f8f5c" stroke-width="1.2" stroke-linecap="round"/>
       </g>
+      <!-- Partes que aparecen al subir de nivel (js/mascota-vida.js) -->
+      <g class="mascota-nivel mascota-n2">
+        <path d="M60 50 C55 45 48 44 43 46 C47 51 54 52 60 50 Z" fill="#7cc795"/>
+        <path d="M60 49 C65 44 72 43 77 45 C73 50 66 51 60 49 Z" fill="#6fbf8a"/>
+      </g>
+      <g class="mascota-nivel mascota-n3 mascota-capullo">
+        <ellipse cx="61" cy="-1" rx="3.8" ry="5.4" fill="#f4a3b8"/>
+        <path d="M57.4 1.5 Q61 6 64.6 1.5 Q63 5.5 61 6.5 Q59 5.5 57.4 1.5 Z" fill="#4f9e6b"/>
+      </g>
+      <g class="mascota-nivel mascota-n5">
+        <path d="M96 20 V28 M24 26 V33" stroke="#2f7a4b" stroke-width="1.4" stroke-linecap="round"/>
+        <circle cx="96" cy="32" r="4.8" fill="#e8b04a" stroke="#b8862a" stroke-width="1.2"/>
+        <circle cx="24" cy="37" r="4.8" fill="#e8b04a" stroke="#b8862a" stroke-width="1.2"/>
+        <text x="96" y="34.6" text-anchor="middle" font-size="6.5" font-weight="800" fill="#6b4c0e">$</text>
+        <text x="24" y="39.6" text-anchor="middle" font-size="6.5" font-weight="800" fill="#6b4c0e">$</text>
+      </g>
       <g class="mascota-extra mascota-flor">
         <circle cx="61" cy="-3" r="4.2" fill="#fff" stroke="#e8c4cc"/>
         <circle cx="66.7" cy="1.1" r="4.2" fill="#fff" stroke="#e8c4cc"/>
@@ -78,6 +94,15 @@ function mascotaSvg(sufijo = '') {
     <path d="M34 67 Q36 79 38.5 89" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
     <rect x="24" y="50" width="72" height="13" rx="5" fill="url(#mascota-borde${sufijo})" stroke="#b8c4d3"/>
     <ellipse cx="60" cy="51.5" rx="31" ry="3" fill="#6b5140"/>
+
+    <!-- Gorro: de dormir en modo noche, navideño en diciembre -->
+    <g class="mascota-gorro">
+      <path class="mascota-gorro-tela" d="M25 52 C27 40 22 30 12 26 C24 26 36 36 47 50 Z"/>
+      <circle class="mascota-gorro-estrella" cx="28" cy="40" r="1.1"/>
+      <circle class="mascota-gorro-estrella" cx="35" cy="45" r="0.9"/>
+      <path class="mascota-gorro-borde" d="M23 53 Q36 47 49 51" fill="none" stroke-width="5" stroke-linecap="round"/>
+      <circle class="mascota-gorro-pompon" cx="12" cy="26" r="4.2"/>
+    </g>
 
     <g class="mascota-ojos">
       <g class="mascota-pupila"><circle cx="49" cy="74" r="4.2" fill="#1f1e1d"/><circle cx="50.4" cy="72.6" r="1.4" fill="#fff"/></g>
@@ -382,6 +407,9 @@ const Mascota = {
   arrastre: null,
   suprimirClick: false,
   ultimoGolpe: 0,
+  // true mientras persigue monedas (minijuego de js/mascota-vida.js)
+  enJuego: false,
+  timerEscritura: null,
   saltoVoluntario: false,
 
   // Interacciones
@@ -482,7 +510,7 @@ const Mascota = {
     this.oyentes.forEach((quitar) => quitar());
     this.oyentes = [];
     cancelAnimationFrame(this.loop);
-    [this.timerBurbuja, this.timerEstado, this.timerPaseo, this.timerGesto, this.timerClick, this.timerPresion, this.timerTarjeta].forEach(clearTimeout);
+    [this.timerBurbuja, this.timerEstado, this.timerPaseo, this.timerGesto, this.timerClick, this.timerPresion, this.timerTarjeta, this.timerEscritura].forEach(clearTimeout);
     this.timerEstado = null;
     this.movimiento = null;
     this.arrastre = null;
@@ -611,7 +639,7 @@ const Mascota = {
   // Caminar sobre el piso/tarjeta o el salto dirigido a una tarjeta.
   avanzar(m, dt) {
     if (m.tipo === 'caminar') {
-      const paso = 70 * dt;
+      const paso = (m.velocidad || 70) * dt;
       const falta = m.destinoX - this.x;
       this.x += Math.abs(falta) <= paso ? falta : Math.sign(falta) * paso;
       this.y = this.alturaSuperficie(this.superficie);
@@ -820,13 +848,15 @@ const Mascota = {
   },
 
   // ---- Movimientos dirigidos ----
-  caminarA(destinoX, despues) {
+  // velocidad en px/s: 70 caminando; mas de 120 ya es correr (otra animacion).
+  caminarA(destinoX, despues, velocidad = 70) {
     const rango = this.rangoX(this.superficie);
     const destino = Math.min(Math.max(destinoX, rango.min), rango.max);
     if (Math.abs(destino - this.x) < 2) return false;
     this.el.classList.toggle('mascota--izq', destino < this.x);
     this.el.classList.add('mascota--caminando');
-    this.movimiento = { tipo: 'caminar', destinoX: destino, despues };
+    this.el.classList.toggle('mascota--corriendo', velocidad > 120);
+    this.movimiento = { tipo: 'caminar', destinoX: destino, despues, velocidad };
     return true;
   },
 
@@ -854,13 +884,13 @@ const Mascota = {
   terminarMovimiento(completado = true) {
     const m = this.movimiento;
     this.movimiento = null;
-    this.el.classList.remove('mascota--caminando', 'mascota--saltando', 'mascota--trepando', 'mascota--agacha');
+    this.el.classList.remove('mascota--caminando', 'mascota--corriendo', 'mascota--saltando', 'mascota--trepando', 'mascota--agacha');
     this.guardarPosicion();
     if (completado && m?.despues) {
       m.despues();
       return;
     }
-    if (completado && Math.random() < 0.25 && this.burbuja.hidden) this.mostrarMensaje(elegirAlAzar(MASCOTA_PENSAMIENTOS), 3500);
+    if (completado && !this.enJuego && Math.random() < 0.25 && this.burbuja.hidden) this.mostrarMensaje(elegirAlAzar(MASCOTA_PENSAMIENTOS), 3500);
     this.programarPaseo();
   },
 
@@ -880,6 +910,7 @@ const Mascota = {
     const ocupada =
       this.movimiento ||
       this.arrastre ||
+      this.enJuego ||
       this.modo === 'aire' ||
       !this.burbuja.hidden ||
       document.hidden ||
@@ -1152,19 +1183,53 @@ const Mascota = {
     this.el.classList.add(clase);
   },
 
+  // Estilo Claude Code: primero un ✻ "pensando" y luego el texto se escribe
+  // letra por letra con un cursor. Un texto invisible reserva el tamaño final
+  // del globo para que no vaya creciendo mientras escribe.
   mostrarMensaje(texto, ms = 7000) {
     if (!this.el) return;
-    this.texto.textContent = texto;
+    clearTimeout(this.timerEscritura);
+    const letras = Array.from(texto);
+    this.texto.innerHTML = `
+      <span class="sr-solo"></span>
+      <span class="mascota-burbuja-fantasma" aria-hidden="true"></span>
+      <span class="mascota-burbuja-escrito" aria-hidden="true"></span>`;
+    this.texto.querySelector('.sr-solo').textContent = texto;
+    this.texto.querySelector('.mascota-burbuja-fantasma').textContent = texto;
+    const escrito = this.texto.querySelector('.mascota-burbuja-escrito');
+
     this.burbuja.hidden = false;
     this.burbuja.classList.remove('mascota-burbuja-pop');
     void this.burbuja.offsetWidth;
     this.burbuja.classList.add('mascota-burbuja-pop');
+
+    let duracionEscritura = 0;
+    if (sinMovimiento()) {
+      escrito.textContent = texto;
+    } else {
+      const pausa = 280;
+      const porLetra = Math.max(12, Math.min(30, 1100 / letras.length));
+      duracionEscritura = pausa + porLetra * letras.length;
+      escrito.innerHTML = '<span class="mascota-pensando">✻</span>';
+      let i = 0;
+      const escribir = () => {
+        i++;
+        escrito.textContent = letras.slice(0, i).join('');
+        if (i < letras.length) {
+          escrito.insertAdjacentHTML('beforeend', '<span class="mascota-cursor"></span>');
+          this.timerEscritura = setTimeout(escribir, porLetra);
+        }
+      };
+      this.timerEscritura = setTimeout(escribir, pausa);
+    }
+
     clearTimeout(this.timerBurbuja);
-    this.timerBurbuja = setTimeout(() => this.ocultarBurbuja(), ms);
+    this.timerBurbuja = setTimeout(() => this.ocultarBurbuja(), ms + duracionEscritura);
   },
 
   ocultarBurbuja() {
     clearTimeout(this.timerBurbuja);
+    clearTimeout(this.timerEscritura);
     if (this.burbuja) this.burbuja.hidden = true;
   },
 
