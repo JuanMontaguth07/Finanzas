@@ -1110,6 +1110,18 @@ html.bloqueado .theme-toggle-btn {
 
 .kpi-sub a { color: var(--primary); font-weight: 600; }
 
+.kpi-link {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: var(--primary);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.kpi-link:hover { text-decoration: underline; }
+
 .kpi-positive { color: var(--success); }
 .kpi-negative { color: var(--danger); }
 .kpi-accent { color: var(--primary); }
@@ -1922,6 +1934,151 @@ html.bloqueado .mascota { display: none; }
   40%, 80% { transform: translateX(6px) rotate(4deg); }
 }
 
+/* ---- Brote viva: saltos, gestos e interacciones (js/mascota.js) ---- */
+
+/* En el aire: se inclina hacia donde salta */
+.mascota--saltando .mascota-btn { transform: rotate(-8deg) scale(0.96, 1.06); }
+.mascota--saltando.mascota--izq .mascota-btn { transform: rotate(8deg) scale(0.96, 1.06); }
+
+/* Al caer: se aplasta un poquito */
+.mascota--aterriza .mascota-btn {
+  transform-origin: center bottom;
+  animation: mascota-aterriza 0.35s ease-out;
+}
+
+@keyframes mascota-aterriza {
+  0% { transform: scale(1.15, 0.82); }
+  60% { transform: scale(0.95, 1.05); }
+  100% { transform: scale(1, 1); }
+}
+
+/* Doble clic: giro con saltito */
+.mascota--giro .mascota-btn { animation: mascota-giro 0.7s cubic-bezier(0.3, 1.4, 0.5, 1); }
+
+@keyframes mascota-giro {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-22px) rotate(200deg); }
+  100% { transform: translateY(0) rotate(360deg); }
+}
+
+/* Scroll rapido: se tambalea */
+.mascota--tambalea .mascota-btn {
+  transform-origin: center bottom;
+  animation: mascota-tambalea 0.7s ease-out;
+}
+
+@keyframes mascota-tambalea {
+  20% { transform: rotate(-9deg); }
+  45% { transform: rotate(7deg); }
+  70% { transform: rotate(-4deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* Cosquillas: se rie moviendose rapido */
+.mascota--risa .mascota-btn { animation: mascota-risa 0.12s ease-in-out 6; }
+
+@keyframes mascota-risa {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  50% { transform: rotate(5deg) translateY(-3px); }
+}
+
+/* Se estira hacia arriba */
+.mascota--estira .mascota-btn {
+  transform-origin: center bottom;
+  animation: mascota-estira 1.3s ease-in-out;
+}
+
+@keyframes mascota-estira {
+  0%, 100% { transform: scale(1, 1); }
+  40%, 60% { transform: scale(0.94, 1.12); }
+}
+
+/* Mira a un lado y al otro */
+.mascota--mira .mascota-ojos { animation: mascota-mira 1.8s ease-in-out; }
+
+@keyframes mascota-mira {
+  0%, 100% { transform: translateX(0); }
+  25%, 40% { transform: translateX(-3px); }
+  60%, 80% { transform: translateX(3px); }
+}
+
+/* Saluda moviendo la hoja derecha */
+.mascota--saluda .mascota-hoja-der { animation: mascota-saluda 0.45s ease-in-out 3; }
+
+@keyframes mascota-saluda {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-28deg); }
+}
+
+/* Despues de regarla: las hojas crecen y se levantan */
+.mascota--regada .mascota-hoja-izq { animation: mascota-crece-izq 2.4s ease-out; }
+.mascota--regada .mascota-hoja-der { animation: mascota-crece-der 2.4s ease-out; }
+.mascota--regada .mascota-hoja-top { animation: mascota-crece-top 2.4s ease-out; }
+
+@keyframes mascota-crece-izq {
+  30%, 70% { transform: rotate(14deg) scale(1.18); }
+}
+
+@keyframes mascota-crece-der {
+  30%, 70% { transform: rotate(-14deg) scale(1.18); }
+}
+
+@keyframes mascota-crece-top {
+  30%, 70% { transform: scale(1.25); }
+}
+
+/* Corazones de las cosquillas y gotas del riego */
+.mascota-corazon,
+.mascota-agua {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.mascota-corazon {
+  bottom: 70%;
+  font-size: 16px;
+  opacity: 0;
+  animation: mascota-corazon-sube 1.2s ease-out forwards;
+}
+
+@keyframes mascota-corazon-sube {
+  0% { opacity: 0; transform: translate(0, 0) scale(0.5); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--dx), -60px) scale(1.1); }
+}
+
+.mascota-nube {
+  position: absolute;
+  left: 50%;
+  bottom: 96%;
+  font-size: 30px;
+  pointer-events: none;
+  animation: mascota-nube 1.9s ease-in-out forwards;
+}
+
+@keyframes mascota-nube {
+  0% { opacity: 0; transform: translate(-50%, -10px); }
+  15%, 80% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -6px); }
+}
+
+.mascota-agua {
+  bottom: 95%;
+  width: 4px;
+  height: 9px;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: #8cc8ef;
+  opacity: 0;
+  animation: mascota-agua-cae 0.6s ease-in 2;
+}
+
+@keyframes mascota-agua-cae {
+  0% { opacity: 0; transform: translateY(0); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(42px); }
+}
+
 .mascota-burbuja {
   position: absolute;
   bottom: calc(100% + 8px);
@@ -1945,6 +2102,12 @@ html.bloqueado .mascota { display: none; }
 .mascota--lado-der .mascota-burbuja { left: auto; right: 6px; }
 .mascota--lado-der .mascota-burbuja::after { left: auto; right: 28px; }
 .mascota--lado-der .mascota-burbuja-pop { transform-origin: bottom right; }
+
+/* Brote muy arriba (por ejemplo parada sobre el saldo): globo debajo */
+.mascota--burbuja-abajo .mascota-burbuja { bottom: auto; top: calc(100% + 8px); }
+.mascota--burbuja-abajo .mascota-burbuja::after { bottom: auto; top: -7px; transform: rotate(225deg); }
+.mascota--burbuja-abajo .mascota-burbuja-pop { transform-origin: top left; }
+.mascota--burbuja-abajo.mascota--lado-der .mascota-burbuja-pop { transform-origin: top right; }
 
 .mascota-burbuja[hidden] { display: none; }
 

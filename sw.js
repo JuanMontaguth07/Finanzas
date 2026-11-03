@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mis-finanzas-v8';
+const CACHE_NAME = 'mis-finanzas-v10';
 
 // El "app shell" (HTML/JS/CSS/manifest) se sirve siempre de red primero,
 // para que las actualizaciones se vean de inmediato mientras haya internet.
@@ -70,8 +70,11 @@ self.addEventListener('fetch', (event) => {
   if (esAppShell) {
     // Network-first: intenta traer la version mas reciente; si no hay
     // internet, cae al cache para seguir funcionando offline.
+    // cache: 'no-cache' obliga a confirmar con el servidor: GitHub Pages deja
+    // los archivos 10 min en la cache HTTP y se podia mezclar un index.html
+    // viejo con un dashboard.js nuevo (y el dashboard dejaba de cargar).
     event.respondWith(
-      fetch(event.request)
+      fetch(event.request, { cache: 'no-cache' })
         .then((response) => {
           if (response.ok) {
             const clone = response.clone();

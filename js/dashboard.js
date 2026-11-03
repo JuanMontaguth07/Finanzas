@@ -9,20 +9,43 @@ const VERBOS_CARGA = ['Contando monedas…', 'Cuadrando cuentas…', 'Sumando ce
 
 let mesSeleccionado = currentMonthKey();
 
+// Ejecuta cada parte del dashboard por separado: si una falla (por ejemplo
+// porque el navegador mezclo un index.html viejo con este archivo), las
+// demas igual se dibujan en vez de quedarse todas en "$ 0".
+function seguro(fn, ...args) {
+  try {
+    fn(...args);
+  } catch (err) {
+    console.error(`Dashboard: falló ${fn.name}`, err);
+  }
+}
+
+// Asigna una propiedad solo si el elemento existe.
+function fijar(id, prop, valor) {
+  const el = document.getElementById(id);
+  if (el) el[prop] = valor;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const mesUrl = new URLSearchParams(window.location.search).get('mes');
   if (/^\d{4}-\d{2}$/.test(mesUrl || '') && mesUrl <= currentMonthKey()) mesSeleccionado = mesUrl;
 
-  renderGlobales();
-  renderObjetivosResumen();
+  seguro(renderGlobales);
+  seguro(renderObjetivosResumen);
   renderMes();
 
-  document.getElementById('mes-anterior').addEventListener('click', () => cambiarMes(sumarMeses(mesSeleccionado, -1)));
-  document.getElementById('mes-siguiente').addEventListener('click', () => cambiarMes(sumarMeses(mesSeleccionado, 1)));
-  document.getElementById('mes-hoy').addEventListener('click', () => cambiarMes(currentMonthKey()));
-  document.getElementById('chart-ingresos-gastos').addEventListener('click', (e) => {
+  const enClic = (id, fn) => document.getElementById(id)?.addEventListener('click', fn);
+  enClic('mes-anterior', () => cambiarMes(sumarMeses(mesSeleccionado, -1)));
+  enClic('mes-siguiente', () => cambiarMes(sumarMeses(mesSeleccionado, 1)));
+  enClic('mes-hoy', () => cambiarMes(currentMonthKey()));
+  enClic('chart-ingresos-gastos', (e) => {
     const barra = e.target.closest('[data-mes]');
     if (barra) cambiarMes(barra.dataset.mes);
+  });
+  // Botones "ver octubre →" del aviso de mes sin movimientos
+  document.querySelector('.kpi-grid')?.addEventListener('click', (e) => {
+    const boton = e.target.closest('[data-ir-mes]');
+    if (boton) cambiarMes(boton.dataset.irMes);
   });
 });
 
@@ -41,22 +64,30 @@ function renderMes() {
   const esActual = monthKey === currentMonthKey();
   const nombreMes = MESES_LARGOS[Number(monthKey.split('-')[1]) - 1];
 
-  renderSaludo(monthKey);
-  document.getElementById('mes-label').textContent = monthLabelLargo(monthKey);
-  document.getElementById('mes-siguiente').disabled = esActual;
-  document.getElementById('mes-hoy').hidden = esActual;
-  document.getElementById('mes-ver-movimientos').href = `movimientos.html?mes=${monthKey}`;
+  seguro(renderSaludo, monthKey);
+  fijar('mes-label', 'textContent', monthLabelLargo(monthKey));
+  fijar('mes-siguiente', 'disabled', esActual);
+  fijar('mes-hoy', 'hidden', esActual);
+  fijar('mes-ver-movimientos', 'href', `movimientos.html?mes=${monthKey}`);
   document.querySelectorAll('.kpi-mes').forEach((el) => {
     el.textContent = esActual ? 'del mes' : `de ${nombreMes}`;
   });
-  document.getElementById('titulo-categorias').textContent = `(${esActual ? 'este mes' : monthLabelLargo(monthKey)})`;
-  document.getElementById('titulo-ingresos-gastos').textContent = `(6 meses hasta ${monthLabel(monthKey).toLowerCase()})`;
-  document.getElementById('titulo-ahorro').textContent = `(6 meses hasta ${monthLabel(monthKey).toLowerCase()})`;
+  fijar('titulo-categorias', 'textContent', `(${esActual ? 'este mes' : monthLabelLargo(monthKey)})`);
+  fijar('titulo-ingresos-gastos', 'textContent', `(6 meses hasta ${monthLabel(monthKey).toLowerCase()})`);
+  fijar('titulo-ahorro', 'textContent', `(6 meses hasta ${monthLabel(monthKey).toLowerCase()})`);
 
-  renderKpisMes(monthKey);
-  renderGastosPorCategoria(monthKey);
-  renderIngresosVsGastos(monthKey);
-  renderEvolucionAhorro(monthKey);
+  seguro(renderKpisMes, monthKey);
+  seguro(renderGastosPorCategoria, monthKey);
+  seguro(renderIngresosVsGastos, monthKey);
+  seguro(renderEvolucionAhorro, monthKey);
+}
+
+// Ultimo mes (anterior al dado) que tiene movimientos, o null.
+function ultimoMesConMovimientos(antesDe) {
+  const meses = Storage.getMovimientos()
+    .map((m) => m.fecha.slice(0, 7))
+    .filter((mes) => mes < antesDe);
+  return meses.length ? meses.sort().pop() : null;
 }
 
 function renderSaludo(monthKey) {
@@ -112,6 +143,27 @@ function renderKpisMes(monthKey) {
 
   animarMonto(document.getElementById('kpi-ingresos'), resumenMes.ingresos);
   animarMonto(document.getElementById('kpi-gastos'), resumenMes.gastos);
+
+  // Debajo: cuantos movimientos hay, o un aviso si el mes esta vacio (pasa
+  // al empezar el mes, antes de registrar o importar el extracto).
+  const delMes = getMovimientosDelMes(monthKey);
+  const subIngresos = document.getElementById('kpi-ingresos-sub');
+  const subGastos = document.getElementById('kpi-gastos-sub');
+  if (subIngresos && subGastos) {
+    if (delMes.length === 0) {
+      const anterior = ultimoMesConMovimientos(monthKey);
+      const nombre = MESES_LARGOS[Number(monthKey.split('-')[1]) - 1];
+      subIngresos.innerHTML = anterior
+        ? `Sin movimientos en ${nombre} · <button type="button" class="kpi-link" data-ir-mes="${anterior}">ver ${monthLabelLargo(anterior)} →</button>`
+        : `Sin movimientos en ${nombre}`;
+      subGastos.textContent = `Sin movimientos en ${nombre}`;
+    } else {
+      const nIngresos = delMes.filter((m) => m.tipo === 'ingreso').length;
+      const nGastos = delMes.length - nIngresos;
+      subIngresos.textContent = `${nIngresos} ingreso${nIngresos === 1 ? '' : 's'}`;
+      subGastos.textContent = `${nGastos} gasto${nGastos === 1 ? '' : 's'}`;
+    }
+  }
 
   const chipMes = document.getElementById('hero-balance-mes');
   chipMes.classList.remove('hero-chip-positivo', 'hero-chip-negativo');
