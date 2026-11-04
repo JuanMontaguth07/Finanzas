@@ -484,6 +484,9 @@ html.bloqueado .theme-toggle-btn {
   animation: icono-wiggle 0.45s ease;
 }
 
+/* Nombre corto: solo en la barra inferior del movil */
+.nav-label-corto { display: none; }
+
 @keyframes icono-wiggle {
   25% { transform: rotate(-12deg); }
   50% { transform: rotate(10deg); }
@@ -2545,13 +2548,602 @@ html.bloqueado .mascota { display: none; }
   to { opacity: 0; transform: scale(1.8); }
 }
 
+/* ---- Colores personalizables (variables puestas por js/mascota-vida.js) ---- */
+.tinte-maceta-1 { stop-color: var(--brote-maceta-1, #ffffff); }
+.tinte-maceta-2 { stop-color: var(--brote-maceta-2, #d6deea); }
+.tinte-borde-1 { stop-color: var(--brote-borde-1, #f1f4f8); }
+.tinte-borde-2 { stop-color: var(--brote-borde-2, #cdd6e2); }
+.tinte-franja { fill: var(--brote-franja, #3b5e91); }
+.tinte-hoja-1 { fill: var(--brote-hoja-1, #5fae7a); }
+.tinte-hoja-2 { fill: var(--brote-hoja-2, #7cc795); }
+.tinte-hoja-3 { fill: var(--brote-hoja-3, #4f9e6b); }
+.tinte-tallo { stroke: var(--brote-tallo, #2f7a4b); }
+
+/* ---- Accesorios ---- */
+.mascota-acc { display: none; }
+
+.mascota--acc-lazo .mascota-acc-lazo,
+.mascota--acc-gafas .mascota-acc-gafas,
+.mascota--acc-bufanda .mascota-acc-bufanda,
+.mascota--acc-monoculo .mascota-acc-monoculo,
+.mascota--acc-corona .mascota-acc-corona { display: inline; }
+
+/* ---- Habilidad: bailecito ---- */
+.mascota--baile .mascota-btn {
+  transform-origin: center bottom;
+  animation: mascota-baile 1.8s ease-in-out;
+}
+
+.mascota--baile .mascota-brazo-izq { animation: brazo-izq-aire 0.22s ease-in-out infinite alternate; }
+.mascota--baile .mascota-brazo-der { animation: brazo-der-aire 0.22s ease-in-out infinite alternate-reverse; }
+.mascota--baile .mascota-pata-izq { animation: pata-paso 0.45s ease-in-out infinite; }
+.mascota--baile .mascota-pata-der { animation: pata-paso 0.45s ease-in-out infinite -0.22s; }
+
+@keyframes mascota-baile {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  12% { transform: translate(-8px, -10px) rotate(-12deg); }
+  25% { transform: translate(0, 0) rotate(0deg) scale(1.08, 0.92); }
+  37% { transform: translate(8px, -10px) rotate(12deg); }
+  50% { transform: translate(0, 0) rotate(0deg) scale(1.08, 0.92); }
+  62% { transform: translate(0, -18px) rotate(180deg); }
+  75% { transform: translate(0, 0) rotate(360deg) scale(1.08, 0.92); }
+  87% { transform: translate(-4px, -6px) rotate(-6deg); }
+}
+
+/* ---- Boton ☰ del globo ---- */
+
+.mascota-burbuja-menu {
+  position: absolute;
+  top: 4px;
+  right: 28px;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 999px;
+}
+
+.mascota-burbuja-menu:hover { background: var(--surface-alt); color: var(--primary); }
+
+/* ---- Boton "Mascota" del menu lateral ---- */
+.nav-boton {
+  width: 100%;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+}
+
+.nav-badge {
+  margin-left: auto;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-badge[hidden] { display: none; }
+
+/* ---- Menu RPG de la mascota (js/mascota-menu.js) ---- */
+.mascota-menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 65;
+  background: rgba(8, 14, 24, 0.4);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: overlay-entra 0.15s ease both;
+}
+
+.mascota-menu-overlay[hidden] { display: none; }
+
+.mascota-menu {
+  width: 100%;
+  max-width: 900px;
+  max-height: calc(100vh - 32px);
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-solid);
+  color: var(--text);
+  border: 1px solid rgba(140, 176, 224, 0.4);
+  border-radius: var(--radius);
+  box-shadow: 0 24px 60px rgba(5, 10, 20, 0.45);
+  overflow: hidden;
+  animation: modal-entra 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+  outline: none;
+}
+
+.mascota-menu-barra {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 14px;
+  background: var(--terminal-bg);
+  color: var(--terminal-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.mascota-menu-barra i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #4a5568;
+}
+
+.mascota-menu-barra i:first-child { background: var(--terminal-acento); }
+.mascota-menu-barra span { margin-left: 6px; flex: 1; }
+
+.mascota-menu-cerrar {
+  border: none;
+  background: none;
+  color: var(--terminal-muted);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.mascota-menu-cerrar:hover { color: var(--terminal-text); }
+
+.mascota-menu-cuerpo {
+  display: grid;
+  /* minmax(0, ...) deja que las columnas se encojan (si no, las pestañas desbordan en movil) */
+  grid-template-columns: 250px minmax(0, 1fr);
+  min-height: 0;
+  flex: 1;
+}
+
+.mascota-menu-ficha {
+  padding: 18px;
+  border-right: 1px solid var(--border);
+  background: var(--surface-alt);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+}
+
+.mascota-menu-previa {
+  margin: 0 auto;
+}
+
+.mascota-menu-previa .mascota-btn {
+  width: 170px;
+  height: 160px;
+  cursor: default;
+}
+
+.mascota-menu-nombre {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 24px;
+  text-align: center;
+}
+
+.mascota-menu-titulo {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: -6px;
+}
+
+.barra-rpg {
+  display: grid;
+  grid-template-columns: 26px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.barra-rpg-etiqueta { color: var(--text-muted); font-weight: 700; }
+.barra-rpg-valor { color: var(--text-muted); }
+
+.barra-rpg-pista {
+  height: 9px;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.barra-rpg-relleno {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.barra-xp { background: linear-gradient(90deg, var(--primary), var(--accent)); }
+.barra-agua { background: linear-gradient(90deg, #4b9fd6, #8cc8ef); }
+.barra-baja { background: linear-gradient(90deg, var(--danger), #f2a59d); }
+
+.mascota-menu-recursos {
+  display: flex;
+  justify-content: space-around;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 0;
+  border-top: 1px dashed var(--border);
+  border-bottom: 1px dashed var(--border);
+}
+
+.mascota-menu-acciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+}
+
+.mascota-menu-acciones .btn { padding: 8px 4px; font-size: 12px; }
+
+.mascota-menu-contenido {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+.mascota-menu-pestanas {
+  flex-shrink: 0;
+  display: flex;
+  gap: 4px;
+  padding: 10px 14px 0;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.menu-pestana {
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 9px 12px;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.menu-pestana:hover { color: var(--text); }
+
+.menu-pestana.activa {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.menu-badge {
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mascota-menu-panel {
+  padding: 16px 18px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.menu-subtitulo {
+  font-size: 14px;
+  margin: 4px 0 10px;
+}
+
+.menu-subtitulo span {
+  color: var(--text-muted);
+  font-weight: 500;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.menu-ayuda {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.btn-mini { padding: 6px 12px; font-size: 12px; }
+
+/* Misiones */
+.misiones {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mision {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-solid);
+}
+
+.mision-completa { border-color: var(--success); background: var(--success-soft); }
+.mision-reclamada { opacity: 0.6; }
+
+.mision-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.mision-barra {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--primary);
+}
+
+.mision-premio,
+.mision-avance,
+.mision-hecha {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.mision-hecha { color: var(--success); font-weight: 700; }
+
+/* Habilidades */
+.habilidades {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.habilidad {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  grid-template-rows: auto auto;
+  gap: 4px 10px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-solid);
+}
+
+.habilidad .hab-icono {
+  grid-row: span 2;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--primary-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.habilidad.aprendida { border-color: rgba(var(--primary-rgb), 0.5); }
+.habilidad.aprendida .hab-icono { background: linear-gradient(135deg, var(--primary-soft), var(--success-soft)); }
+.habilidad.bloqueada { opacity: 0.55; }
+.habilidad.bloqueada .hab-icono { filter: grayscale(1); }
+
+.hab-info { display: flex; flex-direction: column; gap: 2px; }
+.hab-info strong { font-size: 14px; }
+.hab-info p { font-size: 12px; color: var(--text-muted); }
+
+.hab-tipo {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.habilidad > .btn,
+.habilidad > .hab-estado { grid-column: 2; justify-self: start; }
+
+.hab-estado {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.hab-activa { color: var(--success); font-weight: 700; }
+
+.menu-extra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Personalizar / tienda */
+.menu-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.menu-form label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.menu-form input {
+  flex: 1;
+  min-width: 140px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  background: var(--surface-solid);
+}
+
+.opciones {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.opcion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-solid);
+  font: inherit;
+  cursor: pointer;
+  transition: transform 0.12s ease, border-color 0.12s ease;
+}
+
+.opcion:hover { transform: translateY(-2px); border-color: rgba(var(--primary-rgb), 0.5); }
+.opcion.equipada { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-soft); }
+.opcion.bloqueada { opacity: 0.5; }
+
+.muestra {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+}
+
+.muestra-emoji {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: var(--surface-alt);
+  font-size: 18px;
+}
+
+.opcion-nombre { font-size: 12px; font-weight: 600; }
+
+.opcion-precio {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.opcion.equipada .opcion-precio { color: var(--primary); font-weight: 700; }
+
+/* Mascotas */
+.fichas-mascotas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.ficha-mascota {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  align-items: center;
+  gap: 4px 10px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-solid);
+}
+
+.ficha-mascota.activa { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-soft); }
+
+.mascota-mini { grid-row: span 2; }
+
+.mascota-mini .mascota-btn {
+  width: 64px;
+  height: 60px;
+  cursor: default;
+}
+
+.ficha-mascota-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+}
+
+.ficha-mascota-info span {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.ficha-mascota-acciones { display: flex; gap: 6px; align-items: center; }
+
+.mascota-menu-aviso {
+  min-height: 34px;
+  padding: 8px 16px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text);
+  background: var(--surface-alt);
+}
+
+@media (max-width: 720px) {
+  .mascota-menu { max-height: calc(100vh - 16px); }
+  .mascota-menu-overlay { padding: 8px; }
+  .mascota-menu-cuerpo { grid-template-columns: minmax(0, 1fr); overflow-y: auto; }
+  .habilidades { grid-template-columns: minmax(0, 1fr); }
+  .mascota-menu-acciones .btn { font-size: 11px; }
+  .mascota-menu-ficha { border-right: none; border-bottom: 1px solid var(--border); overflow: visible; }
+  .mascota-menu-previa .mascota-btn { width: 120px; height: 112px; }
+  .mascota-menu-panel { overflow: visible; }
+  .mision { grid-template-columns: 1fr auto; }
+  .mision-premio { grid-column: 1; }
+}
+
 .mascota-burbuja {
   position: absolute;
   bottom: calc(100% + 8px);
   left: 6px;
   width: max-content;
   max-width: min(230px, calc(100vw - 24px));
-  padding: 10px 30px 10px 14px;
+  padding: 10px 52px 10px 14px;
   background: var(--surface);
   -webkit-backdrop-filter: var(--vidrio);
   backdrop-filter: var(--vidrio);
@@ -2965,8 +3557,30 @@ html.bloqueado .comandos-btn { display: none; }
     flex-direction: column;
     gap: 2px;
     font-size: 10px;
-    padding: 6px 8px;
+    padding: 6px 2px;
     text-align: center;
+    /* seis botones: que se repartan el ancho y nunca se salgan de la pantalla */
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  /* En la barra inferior se usan nombres cortos (Inicio, Movim., Ajustes...) */
+  .nav-label { display: none; }
+  .nav-label-corto {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .nav-boton { text-align: center; }
+
+  .nav-badge {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    margin-left: 6px;
   }
 
   .main-content {

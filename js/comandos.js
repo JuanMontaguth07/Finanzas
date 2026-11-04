@@ -19,6 +19,10 @@
     return `${year}-${String(idx + 1).padStart(2, '0')}`;
   }
 
+  function abrirMenuMascota(pestana) {
+    if (typeof MenuMascota !== 'undefined') MenuMascota.abrir(pestana);
+  }
+
   const COMANDOS = [
     { nombre: 'nuevo', descripcion: 'Registrar un movimiento nuevo', accion: () => {
       const btn = document.getElementById('btn-nuevo-movimiento');
@@ -46,20 +50,11 @@
     { nombre: 'tema', descripcion: 'Cambiar entre modo día y noche', accion: () => {
       if (typeof establecerTema === 'function') establecerTema(esOscuroActivo() ? 'claro' : 'oscuro');
     } },
-    { nombre: 'brote', descripcion: 'Ver cómo está Brote: nivel, agua y XP 🌱', accion: () => {
-      if (typeof Mascota === 'undefined') return;
-      if (!Mascota.el) {
-        try {
-          localStorage.setItem('financeAppMascota', 'visible');
-        } catch {
-          // sin localStorage igual la mostramos en esta pagina
-        }
-        Mascota.montar();
-      }
-      if (typeof Mascota.mostrarEstado === 'function') Mascota.mostrarEstado();
-      else Mascota.siguienteMensaje();
-    } },
-    { nombre: 'monedas', descripcion: 'Que lluevan monedas para Brote 🪙', accion: () => {
+    { nombre: 'brote', descripcion: 'Abrir el menú de tu mascota (estado, misiones, habilidades…) 🌱', accion: () => abrirMenuMascota() },
+    { nombre: 'misiones', descripcion: 'Ver las misiones de tu mascota 🎯', accion: () => abrirMenuMascota('misiones') },
+    { nombre: 'habilidades', descripcion: 'Aprender y usar habilidades ✨', accion: () => abrirMenuMascota('habilidades') },
+    { nombre: 'personalizar', descripcion: 'Cambiar nombre, colores y accesorios 🎨', accion: () => abrirMenuMascota('personalizar') },
+    { nombre: 'monedas', descripcion: 'Que lluevan monedas para tu mascota 🪙', accion: () => {
       if (typeof lluviaMonedas === 'function') lluviaMonedas(5);
     } },
     { nombre: 'bloquear', descripcion: 'Bloquear la app con tu PIN', disponible: () => typeof pinActivo === 'function' && pinActivo(), accion: () => {

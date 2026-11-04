@@ -24,34 +24,34 @@ function mascotaSvg(sufijo = '') {
 <svg viewBox="0 0 120 112" aria-hidden="true">
   <defs>
     <linearGradient id="mascota-maceta${sufijo}" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#ffffff"/>
-      <stop offset="1" stop-color="#d6deea"/>
+      <stop class="tinte-maceta-1" offset="0" stop-color="#ffffff"/>
+      <stop class="tinte-maceta-2" offset="1" stop-color="#d6deea"/>
     </linearGradient>
     <linearGradient id="mascota-borde${sufijo}" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#f1f4f8"/>
-      <stop offset="1" stop-color="#cdd6e2"/>
+      <stop class="tinte-borde-1" offset="0" stop-color="#f1f4f8"/>
+      <stop class="tinte-borde-2" offset="1" stop-color="#cdd6e2"/>
     </linearGradient>
   </defs>
   <ellipse class="mascota-sombra" cx="60" cy="109.5" rx="28" ry="3.6"/>
   <g class="mascota-cuerpo">
     <g class="mascota-hojas">
-      <path d="M60 52 C60 42 59 34 60 24" fill="none" stroke="#2f7a4b" stroke-width="3" stroke-linecap="round"/>
+      <path class="tinte-tallo" d="M60 52 C60 42 59 34 60 24" fill="none" stroke="#2f7a4b" stroke-width="3" stroke-linecap="round"/>
       <g class="mascota-hoja mascota-hoja-izq">
-        <path d="M58 44 C50 30 36 22 22 24 C26 38 42 46 58 44 Z" fill="#5fae7a"/>
+        <path class="tinte-hoja-1" d="M58 44 C50 30 36 22 22 24 C26 38 42 46 58 44 Z" fill="#5fae7a"/>
         <path d="M56 43 Q40 34 25 25" fill="none" stroke="#3f8f5c" stroke-width="1.2" stroke-linecap="round"/>
       </g>
       <g class="mascota-hoja mascota-hoja-der">
-        <path d="M62 38 C70 24 84 16 98 18 C94 32 78 40 62 38 Z" fill="#7cc795"/>
+        <path class="tinte-hoja-2" d="M62 38 C70 24 84 16 98 18 C94 32 78 40 62 38 Z" fill="#7cc795"/>
         <path d="M64 37 Q80 28 95 19" fill="none" stroke="#4f9e6b" stroke-width="1.2" stroke-linecap="round"/>
       </g>
       <g class="mascota-hoja mascota-hoja-top">
-        <path d="M60 26 C52 18 54 6 61 2 C68 8 68 18 60 26 Z" fill="#4f9e6b"/>
+        <path class="tinte-hoja-3" d="M60 26 C52 18 54 6 61 2 C68 8 68 18 60 26 Z" fill="#4f9e6b"/>
         <path d="M60 24 Q61 14 61 5" fill="none" stroke="#3f8f5c" stroke-width="1.2" stroke-linecap="round"/>
       </g>
       <!-- Partes que aparecen al subir de nivel (js/mascota-vida.js) -->
       <g class="mascota-nivel mascota-n2">
-        <path d="M60 50 C55 45 48 44 43 46 C47 51 54 52 60 50 Z" fill="#7cc795"/>
-        <path d="M60 49 C65 44 72 43 77 45 C73 50 66 51 60 49 Z" fill="#6fbf8a"/>
+        <path class="tinte-hoja-2" d="M60 50 C55 45 48 44 43 46 C47 51 54 52 60 50 Z" fill="#7cc795"/>
+        <path class="tinte-hoja-1" d="M60 49 C65 44 72 43 77 45 C73 50 66 51 60 49 Z" fill="#6fbf8a"/>
       </g>
       <g class="mascota-nivel mascota-n3 mascota-capullo">
         <ellipse cx="61" cy="-1" rx="3.8" ry="5.4" fill="#f4a3b8"/>
@@ -72,6 +72,12 @@ function mascotaSvg(sufijo = '') {
         <circle cx="55.3" cy="1.1" r="4.2" fill="#fff" stroke="#e8c4cc"/>
         <circle cx="61" cy="2.8" r="3.2" fill="#e8b04a"/>
       </g>
+      <g class="mascota-acc mascota-acc-corona">
+        <path d="M51 -7 L51 -17 L56 -11.5 L61 -19 L66 -11.5 L71 -17 L71 -7 Z" fill="#f2c94c" stroke="#b8862a" stroke-width="1.2" stroke-linejoin="round"/>
+        <circle cx="61" cy="-10.5" r="1.6" fill="#d64545"/>
+        <circle cx="55" cy="-9.5" r="1.1" fill="#5a80b8"/>
+        <circle cx="67" cy="-9.5" r="1.1" fill="#5a80b8"/>
+      </g>
     </g>
 
     <g class="mascota-moneda">
@@ -90,8 +96,13 @@ function mascotaSvg(sufijo = '') {
     </g>
 
     <path d="M28 62 H92 L85 99 Q84 103 79 103 H41 Q36 103 35 99 Z" fill="url(#mascota-maceta${sufijo})" stroke="#c3cedb"/>
-    <path d="M33.7 92 H86.3 L85.4 97 H34.6 Z" fill="#3b5e91" opacity="0.85"/>
+    <path class="tinte-franja" d="M33.7 92 H86.3 L85.4 97 H34.6 Z" fill="#3b5e91" opacity="0.85"/>
     <path d="M34 67 Q36 79 38.5 89" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+    <g class="mascota-acc mascota-acc-bufanda">
+      <path d="M29.5 62 H90.5 L89.4 69 H30.6 Z" fill="#d64545"/>
+      <path d="M36 62 V69 M44 62 V69 M52 62 V69 M60 62 V69 M68 62 V69 M76 62 V69 M84 62 V69" stroke="#fff" stroke-opacity="0.35" stroke-width="2"/>
+      <path d="M77 66 L81 83 L75 84.5 L72 67 Z" fill="#c23b3b"/>
+    </g>
     <rect x="24" y="50" width="72" height="13" rx="5" fill="url(#mascota-borde${sufijo})" stroke="#b8c4d3"/>
     <ellipse cx="60" cy="51.5" rx="31" ry="3" fill="#6b5140"/>
 
@@ -133,6 +144,22 @@ function mascotaSvg(sufijo = '') {
       <g transform="translate(12 30)"><path class="mascota-brillo" d="M0 -7 L1.8 -1.8 L7 0 L1.8 1.8 L0 7 L-1.8 1.8 L-7 0 L-1.8 -1.8 Z"/></g>
       <g transform="translate(108 44)"><path class="mascota-brillo" d="M0 -6 L1.5 -1.5 L6 0 L1.5 1.5 L0 6 L-1.5 1.5 L-6 0 L-1.5 -1.5 Z"/></g>
       <g transform="translate(14 86)"><path class="mascota-brillo" d="M0 -5 L1.2 -1.2 L5 0 L1.2 1.2 L0 5 L-1.2 1.2 L-5 0 L-1.2 -1.2 Z"/></g>
+    </g>
+
+    <g class="mascota-acc mascota-acc-gafas">
+      <rect x="40" y="68.5" width="17.5" height="10.5" rx="4.5" fill="#1f2937"/>
+      <rect x="62.5" y="68.5" width="17.5" height="10.5" rx="4.5" fill="#1f2937"/>
+      <path d="M57.5 72 H62.5" stroke="#1f2937" stroke-width="2"/>
+      <path d="M43 71.5 H48 M65.5 71.5 H70.5" stroke="#fff" stroke-opacity="0.55" stroke-width="1.6" stroke-linecap="round"/>
+    </g>
+    <g class="mascota-acc mascota-acc-monoculo" fill="none" stroke="#c99a1e" stroke-width="1.6">
+      <circle cx="71" cy="74" r="7" fill="#ffffff" fill-opacity="0.18"/>
+      <path d="M77.5 77 Q82 86 79 95" stroke-dasharray="2 1.5"/>
+    </g>
+    <g class="mascota-acc mascota-acc-lazo">
+      <path d="M88 54 L79 48 L80 60 Z" fill="#f472b6" stroke="#db2777" stroke-width="0.8" stroke-linejoin="round"/>
+      <path d="M88 54 L97 48 L96 60 Z" fill="#f472b6" stroke="#db2777" stroke-width="0.8" stroke-linejoin="round"/>
+      <circle cx="88" cy="54" r="2.8" fill="#db2777"/>
     </g>
 
     <g class="mascota-extra mascota-ojos-x" fill="none" stroke="#1f1e1d" stroke-width="2.2" stroke-linecap="round">
@@ -208,7 +235,8 @@ function analizarFinanzasMascota() {
   const mensajes = [];
 
   if (movimientos.length === 0) {
-    mensajes.push('¡Hola! Soy Brote 🌱. Registra tu primer movimiento y te ayudo a que tu plata crezca.');
+    const nombre = typeof nombreMascota === 'function' ? nombreMascota() : 'Brote';
+    mensajes.push(`¡Hola! Soy ${nombre} 🌱. Registra tu primer movimiento y te ayudo a que tu plata crezca.`);
   }
 
   if (gastos > ingresos && gastos > 0) {
@@ -427,14 +455,16 @@ const Mascota = {
   montar() {
     if (this.el || !mascotaVisible()) return;
 
+    const nombreVisible = escapeHtml(typeof nombreMascota === 'function' ? nombreMascota() : 'Brote');
     const el = document.createElement('div');
     el.className = 'mascota';
     el.innerHTML = `
       <div class="mascota-burbuja" role="status" aria-live="polite" hidden>
         <span class="mascota-burbuja-texto"></span>
+        <button type="button" class="mascota-burbuja-menu" aria-label="Abrir el menú de la mascota" title="Menú">☰</button>
         <button type="button" class="mascota-burbuja-cerrar" aria-label="Cerrar mensaje">&times;</button>
       </div>
-      <button type="button" class="mascota-btn" aria-label="Brote, tu planta financiera. Tócala para un consejo, arrástrala o lánzala, acaríciala o mantenla presionada para regarla" title="¡Hola! Soy Brote. Tócame, arrástrame (¡o lánzame!), acaríciame o mantenme presionada para regarme">${mascotaSvg()}</button>`;
+      <button type="button" class="mascota-btn" aria-label="${nombreVisible}, tu planta financiera. Tócala para un consejo, arrástrala o lánzala, acaríciala o mantenla presionada para regarla" title="¡Hola! Soy ${nombreVisible}. Tócame, arrástrame (¡o lánzame!), acaríciame o mantenme presionada para regarme">${mascotaSvg()}</button>`;
     document.body.appendChild(el);
 
     this.el = el;

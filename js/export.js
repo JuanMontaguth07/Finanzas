@@ -83,6 +83,8 @@ function exportarExcel() {
 
 function exportarRespaldoJson() {
   const state = Storage.getState();
+  // Las mascotas (nivel, monedas, apariencia...) viajan en el mismo archivo
+  if (typeof leerMascotas === 'function') state.mascotas = leerMascotas();
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -103,11 +105,14 @@ function importarRespaldoJson(file, modo, callback) {
       if (!data || !Array.isArray(data.movimientos) || !data.config) {
         throw new Error('El archivo no tiene el formato de respaldo esperado.');
       }
+      const mascotas = data.mascotas;
+      delete data.mascotas;
       if (modo === 'combinar') {
         Storage.setState(mergeState(Storage.getState(), data));
       } else {
         Storage.setState(data);
       }
+      if (mascotas && Array.isArray(mascotas.mascotas)) importarMascotas(mascotas, modo);
       callback(true);
     } catch (err) {
       callback(false, err.message);
@@ -115,6 +120,21 @@ function importarRespaldoJson(file, modo, callback) {
   };
   reader.onerror = () => callback(false, 'No se pudo leer el archivo.');
   reader.readAsText(file);
+}
+
+// Mascotas del respaldo: al reemplazar quedan las del archivo; al combinar se
+// agregan las que no esten (por id) hasta el maximo permitido.
+function importarMascotas(importadas, modo) {
+  if (modo !== 'combinar' || typeof leerMascotas !== 'function') {
+    localStorage.setItem('financeAppMascotas', JSON.stringify(importadas));
+    return;
+  }
+  const actuales = leerMascotas();
+  const ids = new Set(actuales.mascotas.map((m) => m.id));
+  importadas.mascotas.forEach((m) => {
+    if (!ids.has(m.id) && actuales.mascotas.length < MASCOTAS_MAX) actuales.mascotas.push(m);
+  });
+  guardarMascotas(actuales);
 }
 
 // Combina un respaldo importado con el estado actual sin duplicar registros,
