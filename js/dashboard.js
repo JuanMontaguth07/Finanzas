@@ -52,6 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
 function cambiarMes(monthKey) {
   if (monthKey > currentMonthKey() || monthKey === mesSeleccionado) return;
   mesSeleccionado = monthKey;
+  // Mision de la mascota: revisar otro mes
+  if (typeof registrarEvento === 'function') registrarEvento('mes');
   const url = new URL(window.location.href);
   if (monthKey === currentMonthKey()) url.searchParams.delete('mes');
   else url.searchParams.set('mes', monthKey);

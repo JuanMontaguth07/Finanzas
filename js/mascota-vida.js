@@ -39,7 +39,7 @@ const HABILIDADES = [
   { id: 'supersalto', nombre: 'Súper salto', icono: '🚀', tipo: 'activa', nivel: 5, costo: 1, espera: 5 * 60 * 1000, desc: 'Un salto gigante con volteretas.' },
 ];
 
-// Tienda de apariencia. Lo de precio 0 viene incluido.
+// Tienda de apariencia. Lo de precio 0 viene incluido; "nivel" = nivel minimo.
 const TIENDA = {
   maceta: [
     { id: 'blanca', nombre: 'Blanca', precio: 0, colores: ['#ffffff', '#d6deea', '#f1f4f8', '#cdd6e2'] },
@@ -48,13 +48,26 @@ const TIENDA = {
     { id: 'rosa', nombre: 'Rosa', precio: 20, colores: ['#fff0f6', '#f2b8cf', '#fde3ee', '#e8a5c0'] },
     { id: 'lavanda', nombre: 'Lavanda', precio: 25, colores: ['#f4f0ff', '#c9bcef', '#ebe5fd', '#b8a9e3'] },
     { id: 'terracota', nombre: 'Terracota', precio: 30, colores: ['#e9a083', '#b85a3b', '#eea98d', '#c4603e'] },
+    { id: 'atardecer', nombre: 'Atardecer', precio: 35, colores: ['#ffe2b8', '#f4a09a', '#ffd9a8', '#ec9a8f'] },
+    { id: 'oceano', nombre: 'Océano', precio: 35, colores: ['#d4f1fb', '#6fb3dc', '#c4ebf8', '#5fa3cc'] },
     { id: 'dorada', nombre: 'Dorada', precio: 90, nivel: 5, colores: ['#fff3c4', '#e0b54a', '#fbe7a1', '#d4a53a'] },
+    { id: 'galaxia', nombre: 'Galaxia', precio: 150, nivel: 7, colores: ['#d9cffb', '#7b68c9', '#cbbef7', '#6d5bb8'] },
+  ],
+  patron: [
+    { id: 'ninguno', nombre: 'Lisa', precio: 0, icono: '▫️' },
+    { id: 'lunares', nombre: 'Lunares', precio: 20, icono: '⚪' },
+    { id: 'rayas', nombre: 'Rayas', precio: 20, icono: '〰️' },
+    { id: 'estrellas', nombre: 'Estrellas', precio: 35, icono: '⭐' },
+    { id: 'corazones', nombre: 'Corazones', precio: 35, icono: '💗' },
   ],
   franja: [
     { id: 'marino', nombre: 'Azul marino', precio: 0, color: '#3b5e91' },
     { id: 'verde', nombre: 'Verde', precio: 10, color: '#3f8f5c' },
     { id: 'coral', nombre: 'Coral', precio: 10, color: '#e0715f' },
+    { id: 'rosa', nombre: 'Rosa', precio: 10, color: '#e879a6' },
+    { id: 'menta', nombre: 'Menta', precio: 10, color: '#2fae86' },
     { id: 'violeta', nombre: 'Violeta', precio: 12, color: '#7c5cc4' },
+    { id: 'carbon', nombre: 'Carbón', precio: 15, color: '#1f2937' },
     { id: 'oro', nombre: 'Oro', precio: 30, color: '#d4a53a' },
   ],
   hojas: [
@@ -63,33 +76,92 @@ const TIENDA = {
     { id: 'otono', nombre: 'Otoño', precio: 25, colores: ['#e08a3c', '#f2b05e', '#c9622f', '#8a4a22'] },
     { id: 'sakura', nombre: 'Sakura', precio: 30, colores: ['#f29bb8', '#f7c1d3', '#e07a9e', '#9b5a6e'] },
     { id: 'lavanda', nombre: 'Lavanda', precio: 30, colores: ['#9f86d9', '#c2b0ef', '#8269c4', '#5a4691'] },
+    { id: 'nieve', nombre: 'Nieve', precio: 40, colores: ['#c9dcf2', '#e9f2fc', '#a9c3e3', '#6b87ab'] },
+    { id: 'fuego', nombre: 'Fuego', precio: 60, nivel: 5, colores: ['#f97316', '#fbbf24', '#ea580c', '#9a3412'] },
     { id: 'dorado', nombre: 'Dorado', precio: 120, nivel: 6, colores: ['#e5b93f', '#f5d77a', '#c99a1e', '#8a6a12'] },
+    { id: 'galaxia', nombre: 'Galaxia', precio: 150, nivel: 8, colores: ['#6d5bd0', '#a78bfa', '#4c3db5', '#312e81'] },
+  ],
+  ojos: [
+    { id: 'normal', nombre: 'Normales', precio: 0, icono: '👀' },
+    { id: 'pestanas', nombre: 'Pestañas', precio: 15, icono: '👁️' },
+    { id: 'brillos', nombre: 'Brillitos', precio: 25, icono: '✨' },
+    { id: 'corazon', nombre: 'Enamorada', precio: 40, icono: '😍' },
   ],
   accesorio: [
     { id: 'ninguno', nombre: 'Ninguno', precio: 0, icono: '·' },
+    { id: 'bigote', nombre: 'Bigote', precio: 15, icono: '🥸' },
     { id: 'lazo', nombre: 'Lazo', precio: 20, icono: '🎀' },
+    { id: 'corbatin', nombre: 'Corbatín', precio: 20, icono: '🎗️' },
     { id: 'bufanda', nombre: 'Bufanda', precio: 25, icono: '🧣' },
+    { id: 'gorra', nombre: 'Gorra', precio: 25, icono: '🧢' },
     { id: 'gafas', nombre: 'Gafas de sol', precio: 30, icono: '🕶️' },
+    { id: 'audifonos', nombre: 'Audífonos', precio: 40, icono: '🎧' },
     { id: 'monoculo', nombre: 'Monóculo', precio: 45, icono: '🧐' },
+    { id: 'copa', nombre: 'Sombrero de copa', precio: 50, icono: '🎩' },
+    { id: 'halo', nombre: 'Halo', precio: 100, nivel: 6, icono: '😇' },
     { id: 'corona', nombre: 'Corona', precio: 120, nivel: 5, icono: '👑' },
   ],
+  estela: [
+    { id: 'ninguna', nombre: 'Ninguna', precio: 0, icono: '·', particulas: [] },
+    { id: 'brillos', nombre: 'Brillitos', precio: 30, icono: '✨', particulas: ['✨', '⭐', '✦'] },
+    { id: 'hojitas', nombre: 'Hojitas', precio: 30, icono: '🍃', particulas: ['🍃', '🌿', '🍀'] },
+    { id: 'burbujas', nombre: 'Burbujas', precio: 30, icono: '🫧', particulas: ['○', '◦', '°'] },
+    { id: 'corazones', nombre: 'Corazones', precio: 40, icono: '💗', particulas: ['💗', '💖', '💕'] },
+    { id: 'monedas', nombre: 'Monedas', precio: 60, nivel: 4, icono: '🪙', particulas: ['🪙', '$', '💰'] },
+  ],
 };
+
+// Orden y titulos de las categorias en el menu
+const CATEGORIAS_TIENDA = [
+  ['maceta', '🪴 Maceta'],
+  ['patron', '🔸 Patrón de la maceta'],
+  ['franja', '🎗️ Franja'],
+  ['hojas', '🍃 Hojas'],
+  ['ojos', '👀 Ojos'],
+  ['accesorio', '🎩 Accesorio'],
+  ['estela', '✨ Estela al moverse'],
+];
+
+// Misiones rapidas que cambian cada hora (se eligen 2).
+const MISIONES_HORA = [
+  { id: 'h-caricia', texto: 'Hazle cosquillas a {n}', evento: 'caricia', meta: 1, xp: 3, monedas: 4 },
+  { id: 'h-monedas', texto: 'Atrapa 3 monedas', evento: 'moneda', meta: 3, xp: 4, monedas: 5 },
+  { id: 'h-baile', texto: 'Haz bailar a {n}', evento: 'baile', meta: 1, xp: 3, monedas: 4 },
+  { id: 'h-consejo', texto: 'Pídele un consejo a {n} (tócala)', evento: 'consejo', meta: 1, xp: 3, monedas: 4 },
+  { id: 'h-lanzar', texto: 'Lanza a {n} por los aires 🚀', evento: 'lanzar', meta: 1, xp: 4, monedas: 5 },
+  { id: 'h-llamar', texto: 'Llama a {n} con doble clic en un espacio vacío', evento: 'llamar', meta: 1, xp: 3, monedas: 4 },
+  { id: 'h-girar', texto: 'Haz girar a {n} (doble clic sobre ella)', evento: 'girar', meta: 1, xp: 3, monedas: 4 },
+  { id: 'h-comandos', texto: 'Abre la paleta de comandos (Ctrl + K)', evento: 'comandos', meta: 1, xp: 3, monedas: 4 },
+  { id: 'h-mes', texto: 'Revisa otro mes en el dashboard', evento: 'mes', meta: 1, xp: 4, monedas: 5 },
+  { id: 'h-equipar', texto: 'Cámbiale algo del look a {n}', evento: 'equipar', meta: 1, xp: 3, monedas: 4 },
+  { id: 'h-regar', texto: 'Dale agüita a {n}', evento: 'regar', meta: 1, xp: 3, monedas: 4 },
+  { id: 'h-trepar', texto: 'Mira a {n} agarrarse de una pared (o lánzala contra una)', evento: 'trepar', meta: 1, xp: 4, monedas: 5 },
+];
 
 const MISIONES_DIARIAS = [
   { id: 'movimientos', texto: 'Registra 2 movimientos', evento: 'movimiento', meta: 2, xp: 10, monedas: 15 },
   { id: 'regar', texto: 'Riega a {n}', evento: 'regar', meta: 1, xp: 5, monedas: 8 },
   { id: 'cosquillas', texto: 'Hazle cosquillas a {n}', evento: 'caricia', meta: 1, xp: 5, monedas: 8 },
   { id: 'monedas', texto: 'Atrapa 5 monedas', evento: 'moneda', meta: 5, xp: 8, monedas: 12 },
+  { id: 'monedas15', texto: 'Atrapa 15 monedas', evento: 'moneda', meta: 15, xp: 14, monedas: 20 },
   { id: 'dashboard', texto: 'Revisa tu dashboard', evento: 'pagina-dashboard', meta: 1, xp: 4, monedas: 6 },
   { id: 'presupuestos', texto: 'Revisa tus presupuestos', evento: 'pagina-presupuestos', meta: 1, xp: 4, monedas: 6 },
+  { id: 'objetivos', texto: 'Revisa tus objetivos de ahorro', evento: 'pagina-objetivos', meta: 1, xp: 4, monedas: 6 },
   { id: 'habilidad', texto: 'Usa una habilidad de {n}', evento: 'habilidad', meta: 1, xp: 5, monedas: 8 },
+  { id: 'baile3', texto: 'Haz bailar a {n} 3 veces', evento: 'baile', meta: 3, xp: 8, monedas: 12 },
+  { id: 'lanzar3', texto: 'Lanza a {n} 3 veces', evento: 'lanzar', meta: 3, xp: 8, monedas: 12 },
+  { id: 'misiones-hora', texto: 'Completa 3 misiones de hora', evento: 'mision-hora', meta: 3, xp: 12, monedas: 18 },
 ];
 
 const MISIONES_SEMANALES = [
   { id: 'aporte', texto: 'Haz un aporte a un objetivo de ahorro', evento: 'aporte', meta: 1, xp: 25, monedas: 40 },
+  { id: 'aportes3', texto: 'Haz 3 aportes a tus objetivos', evento: 'aporte', meta: 3, xp: 45, monedas: 70 },
   { id: 'movimientos10', texto: 'Registra 10 movimientos', evento: 'movimiento', meta: 10, xp: 30, monedas: 50 },
   { id: 'racha', texto: 'Abre la app 4 días distintos', evento: 'visita', meta: 4, xp: 25, monedas: 40 },
   { id: 'presupuestos-sanos', texto: 'Ten todos tus presupuestos en verde', condicion: 'presupuestosSanos', meta: 1, xp: 30, monedas: 45 },
+  { id: 'tasa-ahorro', texto: 'Ahorra al menos el 10% de lo que te entra este mes', condicion: 'tasaAhorro10', meta: 1, xp: 35, monedas: 50 },
+  { id: 'misiones10', texto: 'Reclama 10 misiones', evento: 'mision', meta: 10, xp: 40, monedas: 60 },
+  { id: 'monedas50', texto: 'Atrapa 50 monedas', evento: 'moneda', meta: 50, xp: 30, monedas: 45 },
 ];
 
 // ---- Guardado ----
@@ -112,8 +184,8 @@ function nuevaMascota(nombre = 'Brote') {
     ultimaVisita: '',
     habilidades: ['baile'],
     usos: {},
-    apariencia: { maceta: 'blanca', franja: 'marino', hojas: 'verde', accesorio: 'ninguno' },
-    inventario: ['maceta:blanca', 'franja:marino', 'hojas:verde', 'accesorio:ninguno'],
+    apariencia: { maceta: 'blanca', patron: 'ninguno', franja: 'marino', hojas: 'verde', ojos: 'normal', accesorio: 'ninguno', estela: 'ninguna' },
+    inventario: [],
     misiones: null,
     stats: { monedasAtrapadas: 0, riegos: 0, caricias: 0, misiones: 0 },
   };
@@ -222,6 +294,8 @@ function clasesDeMascota(mascota) {
   const clases = [];
   for (let i = 2; i <= nivel; i++) clases.push(`mascota--n${i}`);
   if (mascota.apariencia.accesorio !== 'ninguno') clases.push(`mascota--acc-${mascota.apariencia.accesorio}`);
+  if (mascota.apariencia.patron !== 'ninguno') clases.push(`mascota--patron-${mascota.apariencia.patron}`);
+  if (mascota.apariencia.ojos !== 'normal') clases.push(`mascota--ojos-${mascota.apariencia.ojos}`);
   if (new Date().getMonth() === 11) clases.push('mascota--diciembre');
   return clases.join(' ');
 }
@@ -254,7 +328,7 @@ function estiloVidaBrote() {
 
 function aplicarClasesVida(el, mascota = leerVida()) {
   if (!el) return;
-  [...el.classList].filter((c) => /^mascota--(n\d|acc-|diciembre)/.test(c)).forEach((c) => el.classList.remove(c));
+  [...el.classList].filter((c) => /^mascota--(n\d|acc-|patron-|ojos-|diciembre)/.test(c)).forEach((c) => el.classList.remove(c));
   clasesDeMascota(mascota)
     .split(' ')
     .filter(Boolean)
@@ -290,7 +364,9 @@ function ganarXp(cantidad) {
     setTimeout(() => {
       lanzarConfeti();
       Mascota.estadoTemporal('celebrando', 4500);
-      Mascota.animar('mascota--salto');
+      Mascota.animar('mascota--nivel');
+      Mascota.lanzarParticulas(['⭐', '✨', '🌟', '✨', '⭐', '🌟'], 'mascota-corazon', 1500);
+      if (typeof MenuMascota !== 'undefined') MenuMascota.celebrarNivel(despues);
       Mascota.mostrarMensaje(`¡Subí a nivel ${despues}: ${nivel.nombre}! ${nivel.emoji} Tengo un punto de habilidad nuevo ✨`, 6500);
     }, 500);
   }
@@ -303,6 +379,10 @@ function ganarMonedas(cantidad) {
 }
 
 // ---- Misiones ----
+function claveHora(fecha = new Date()) {
+  return `${todayIso()}T${String(fecha.getHours()).padStart(2, '0')}`;
+}
+
 function claveSemana(fecha = new Date()) {
   const lunes = new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate());
   lunes.setDate(lunes.getDate() - ((lunes.getDay() + 6) % 7));
@@ -330,9 +410,17 @@ function asegurarMisiones(mascota) {
   const m = mascota.misiones;
   if (m.dia !== hoy) {
     m.dia = hoy;
-    m.diarias = elegirMisiones(MISIONES_DIARIAS, 3, hoy + mascota.id);
+    m.diarias = elegirMisiones(MISIONES_DIARIAS, 4, hoy + mascota.id);
     m.progresoDia = {};
     m.reclamadasDia = [];
+    cambio = true;
+  }
+  const hora = claveHora();
+  if (m.hora !== hora) {
+    m.hora = hora;
+    m.horarias = elegirMisiones(MISIONES_HORA, 2, hora + mascota.id);
+    m.progresoHora = {};
+    m.reclamadasHora = [];
     cambio = true;
   }
   if (m.semana !== semana) {
@@ -359,6 +447,18 @@ const CONDICIONES = {
       });
     return presupuestos.every((p) => (gastos[p.categoria] || 0) <= p.limite);
   },
+  tasaAhorro10() {
+    const mes = currentMonthKey();
+    const ingresos = Storage.getMovimientos()
+      .filter((m) => m.tipo === 'ingreso' && m.fecha.startsWith(mes))
+      .reduce((s, m) => s + m.valor, 0);
+    if (!ingresos) return false;
+    const aportes = Storage.getObjetivos()
+      .flatMap((o) => o.aportes)
+      .filter((a) => a.fecha.startsWith(mes))
+      .reduce((s, a) => s + a.valor, 0);
+    return aportes / ingresos >= 0.1;
+  },
 };
 
 // Lista de misiones con su progreso, para el menu.
@@ -374,14 +474,15 @@ function misionesDe(mascota) {
         return { ...def, tipo, texto: def.texto.replace('{n}', mascota.nombre), avance, completa: avance >= def.meta, reclamada: reclamadas.includes(def.id) };
       });
   return {
+    horarias: armar(MISIONES_HORA, m.horarias, m.progresoHora, m.reclamadasHora, 'hora'),
     diarias: armar(MISIONES_DIARIAS, m.diarias, m.progresoDia, m.reclamadasDia, 'dia'),
     semanales: armar(MISIONES_SEMANALES, m.semanales, m.progresoSemana, m.reclamadasSemana, 'semana'),
   };
 }
 
 function misionesPorReclamar(mascota = leerVida()) {
-  const { diarias, semanales } = misionesDe(mascota);
-  return [...diarias, ...semanales].filter((x) => x.completa && !x.reclamada).length;
+  const { horarias, diarias, semanales } = misionesDe(mascota);
+  return [...horarias, ...diarias, ...semanales].filter((x) => x.completa && !x.reclamada).length;
 }
 
 function actualizarBadgeMisiones() {
@@ -407,6 +508,7 @@ function registrarEvento(evento, cantidad = 1) {
       if (antes < def.meta && progreso[id] >= def.meta) cumplidas.push(def.texto.replace('{n}', mascota.nombre));
     });
   };
+  avanzar(MISIONES_HORA, m.horarias, m.progresoHora);
   avanzar(MISIONES_DIARIAS, m.diarias, m.progresoDia);
   avanzar(MISIONES_SEMANALES, m.semanales, m.progresoSemana);
   guardarVida(mascota);
@@ -420,17 +522,27 @@ function registrarEvento(evento, cantidad = 1) {
   }
 }
 
+const LISTA_POR_TIPO = { hora: 'horarias', dia: 'diarias', semana: 'semanales' };
+const RECLAMADAS_POR_TIPO = { hora: 'reclamadasHora', dia: 'reclamadasDia', semana: 'reclamadasSemana' };
+
 function reclamarMision(tipo, id) {
   const mascota = leerVida();
-  const lista = misionesDe(mascota)[tipo === 'dia' ? 'diarias' : 'semanales'];
-  const mision = lista.find((x) => x.id === id);
+  const lista = misionesDe(mascota)[LISTA_POR_TIPO[tipo]];
+  const mision = lista && lista.find((x) => x.id === id);
   if (!mision || !mision.completa || mision.reclamada) return null;
-  (tipo === 'dia' ? mascota.misiones.reclamadasDia : mascota.misiones.reclamadasSemana).push(id);
+  mascota.misiones[RECLAMADAS_POR_TIPO[tipo]].push(id);
   mascota.monedas += mision.monedas;
   mascota.stats.misiones++;
   guardarVida(mascota);
   ganarXp(mision.xp);
+  registrarEvento('mision');
+  if (tipo === 'hora') registrarEvento('mision-hora');
   actualizarBadgeMisiones();
+  if (Mascota.el) {
+    Mascota.animar('mascota--salto');
+    Mascota.lanzarParticulas(['🪙', '🪙', '🎁', '🪙', '✨'], 'mascota-corazon', 1400);
+    setTimeout(() => textoFlotante(`+🪙${mision.monedas}`, 'mascota-xp mascota-xp-monedas'), 350);
+  }
   return mision;
 }
 
@@ -454,7 +566,8 @@ function aprenderHabilidad(id) {
   mascota.habilidades.push(id);
   guardarVida(mascota);
   if (Mascota.el) {
-    Mascota.animar('mascota--salto');
+    Mascota.animar('mascota--poder');
+    Mascota.lanzarParticulas(['✨', def.icono, '✨', '⚡', '✨'], 'mascota-corazon', 1400);
     textoFlotante(`${def.icono} ¡Nueva habilidad!`);
   }
   return true;
@@ -497,6 +610,7 @@ function usarHabilidad(id) {
   registrarEvento('habilidad');
 
   if (id === 'baile') {
+    registrarEvento('baile');
     Mascota.estadoTemporal('feliz', 2500);
     Mascota.animar('mascota--baile');
     Mascota.mostrarMensaje('💃 ¡A bailar!', 2500);
@@ -533,19 +647,25 @@ function equiparItem(categoria, id) {
   const mascota = leerVida();
   const item = TIENDA[categoria].find((i) => i.id === id);
   if (!item) return null;
+  let compro = false;
   if (!poseeItem(mascota, categoria, id)) {
     if (item.nivel && nivelDeXp(mascota.xp) < item.nivel) return `🔒 Se desbloquea en el nivel ${item.nivel}.`;
     if (mascota.monedas < item.precio) return `Te faltan 🪙 ${item.precio - mascota.monedas} para comprarlo.`;
     mascota.monedas -= item.precio;
     mascota.inventario.push(`${categoria}:${id}`);
+    compro = true;
   }
+  const cambio = mascota.apariencia[categoria] !== id;
   mascota.apariencia[categoria] = id;
   guardarVida(mascota);
+  if (cambio) registrarEvento('equipar');
   if (Mascota.el) {
     aplicarClasesVida(Mascota.el, mascota);
-    Mascota.animar('mascota--salto');
+    Mascota.animar('mascota--poof');
+    Mascota.lanzarParticulas(['✨', '💫', '✨', '⭐'], 'mascota-corazon', 1200);
+    if (compro) textoFlotante(`−🪙${item.precio}`, 'mascota-xp mascota-xp-gasto');
   }
-  return `${item.nombre} ✓`;
+  return compro ? `🛍️ ¡Compraste ${item.nombre}!` : `${item.nombre} ✓`;
 }
 
 function comprarPunto() {
@@ -559,10 +679,16 @@ function comprarPunto() {
 }
 
 // ---- Varias mascotas ----
-function remontarMascota() {
+function remontarMascota(entrada = false) {
   if (!Mascota.el) return;
   Mascota.desmontar();
   Mascota.montar();
+  if (entrada && Mascota.el && !sinMovimiento()) {
+    Mascota.y = window.innerHeight - Mascota.alto() - 10;
+    Mascota.soltarEnAire(0, 0, true);
+    Mascota.el.classList.add('mascota--volteretas');
+    Mascota.lanzarParticulas(['💨', '✨', '💨', '✨'], 'mascota-corazon', 1200);
+  }
 }
 
 function adoptarMascota(nombre) {
@@ -574,7 +700,8 @@ function adoptarMascota(nombre) {
   datos.mascotas.push(nueva);
   datos.activa = nueva.id;
   guardarMascotas(datos);
-  remontarMascota();
+  remontarMascota(true);
+  if (Mascota.el) setTimeout(() => Mascota.mostrarMensaje(`¡Hola! Soy ${nueva.nombre} 🐣 ¡Gracias por adoptarme!`, 5000), 900);
   return null;
 }
 
@@ -583,8 +710,9 @@ function activarMascota(id) {
   if (!datos.mascotas.some((m) => m.id === id)) return;
   datos.activa = id;
   guardarMascotas(datos);
-  remontarMascota();
+  remontarMascota(true);
   actualizarBadgeMisiones();
+  if (Mascota.el) setTimeout(() => Mascota.mostrarMensaje(`¡Aquí estoy! 🌱`, 2500), 900);
 }
 
 function liberarMascota(id) {
@@ -642,6 +770,31 @@ const vidaOriginal = {
   cosquillas: Mascota.cosquillas,
   celebrar: Mascota.celebrar,
   caminarA: Mascota.caminarA,
+  girar: Mascota.girar,
+  soltarArrastre: Mascota.soltarArrastre,
+  agarrarPared: Mascota.agarrarPared,
+  alTocar: Mascota.alTocar,
+};
+
+Mascota.girar = function () {
+  vidaOriginal.girar.call(this);
+  registrarEvento('girar');
+};
+
+Mascota.soltarArrastre = function (e) {
+  vidaOriginal.soltarArrastre.call(this, e);
+  if (this.modo === 'aire' && this.vel && Math.hypot(this.vel.x, this.vel.y) > 900) registrarEvento('lanzar');
+};
+
+Mascota.agarrarPared = function (lado) {
+  vidaOriginal.agarrarPared.call(this, lado);
+  registrarEvento('trepar');
+};
+
+Mascota.alTocar = function () {
+  const dormida = this.el?.classList.contains('mascota--dormida');
+  vidaOriginal.alTocar.call(this);
+  if (!dormida) registrarEvento('consejo');
 };
 
 Mascota.montar = function () {
@@ -865,6 +1018,7 @@ function venirA(cx, cy) {
     Mascota.caminarA(destino, null, 240);
   }
   Mascota.mostrarMensaje(elegirAlAzar(['¡Voy! 🏃', '¡Ahí voy!', '¿Me llamaste? 🌱']), 1800);
+  registrarEvento('llamar');
 }
 
 document.addEventListener('dblclick', (e) => {
@@ -888,7 +1042,7 @@ document.addEventListener('pointerover', (e) => {
 // Misiones de "revisar" paginas, y el contador de misiones por reclamar.
 document.addEventListener('DOMContentLoaded', () => {
   const pagina = document.body.dataset.page;
-  if (pagina === 'dashboard' || pagina === 'presupuestos') setTimeout(() => registrarEvento(`pagina-${pagina}`), 1500);
+  if (['dashboard', 'presupuestos', 'objetivos'].includes(pagina)) setTimeout(() => registrarEvento(`pagina-${pagina}`), 1500);
   actualizarBadgeMisiones();
 });
 
@@ -896,3 +1050,21 @@ document.addEventListener('DOMContentLoaded', () => {
 setInterval(() => {
   if (Mascota.el) Mascota.actualizar();
 }, 600000);
+
+// ---- Estela: deja particulas al caminar, correr, volar o trepar ----
+setInterval(() => {
+  if (!Mascota.el || sinMovimiento() || document.hidden) return;
+  const enMovimiento = Mascota.movimiento || Mascota.modo === 'aire' || Mascota.arrastre?.activo;
+  if (!enMovimiento) return;
+  const estela = itemTienda('estela', leerVida().apariencia.estela);
+  if (!estela.particulas.length) return;
+  const caja = Mascota.btn.getBoundingClientRect();
+  const p = document.createElement('span');
+  p.className = 'mascota-estela';
+  p.textContent = elegirAlAzar(estela.particulas);
+  p.style.left = `${caja.left + caja.width / 2 + (Math.random() - 0.5) * 40}px`;
+  p.style.top = `${caja.bottom - 14 - Math.random() * 30}px`;
+  p.style.setProperty('--dx', `${(Math.random() - 0.5) * 30}px`);
+  document.body.appendChild(p);
+  setTimeout(() => p.remove(), 1100);
+}, 130);

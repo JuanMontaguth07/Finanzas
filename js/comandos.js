@@ -116,6 +116,8 @@
   function abrir(textoInicial = '/') {
     if (document.documentElement.classList.contains('bloqueado')) return;
     overlay.hidden = false;
+    // Mision de la mascota: abrir la paleta
+    if (typeof registrarEvento === 'function') registrarEvento('comandos');
     input.value = textoInicial;
     seleccionado = 0;
     filtrar();

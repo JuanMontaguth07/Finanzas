@@ -19,6 +19,40 @@ const MASCOTA_TIPS = [
 
 // El SVG se genera con un sufijo para los ids de los degradados, asi puede
 // haber dos Brotes en la misma pagina (la flotante y la de la pantalla de PIN).
+// Un ojo con todas sus variantes (se elige cual se ve con clases CSS). Todo va
+// dentro de .mascota-pupila para que siga al cursor junto con la pupila.
+// lado: -1 ojo izquierdo, 1 ojo derecho (las pestañas van hacia afuera).
+function ojoMascota(x, lado) {
+  const p = (dx) => x + dx * lado;
+  return `<g class="mascota-pupila">
+        <circle class="ojo-base" cx="${x}" cy="74" r="4.2" fill="#1f1e1d"/>
+        <circle class="ojo-base" cx="${x + 1.4}" cy="72.6" r="1.4" fill="#fff"/>
+        <path class="ojo-corazon" d="M${x} 77.8 C${x - 5.6} 74 ${x - 4.6} 69.4 ${x - 1.6} 70.4 C${x - 0.6} 70.8 ${x} 71.6 ${x} 72.2 C${x} 71.6 ${x + 0.6} 70.8 ${x + 1.6} 70.4 C${x + 4.6} 69.4 ${x + 5.6} 74 ${x} 77.8 Z" fill="#e0475f"/>
+        <path class="ojo-brillo" d="M${x - 1.6} 74.4 l0.6 -1.3 l0.6 1.3 l1.3 0.6 l-1.3 0.6 l-0.6 1.3 l-0.6 -1.3 l-1.3 -0.6 z" fill="#fff"/>
+        <path class="ojo-pestanas" d="M${p(3.4)} 70.8 l${2.4 * lado} -1.8 M${p(1.8)} 69.6 l${1.3 * lado} -2.6 M${p(-0.2)} 69.4 l${0.3 * lado} -2.9" fill="none" stroke="#1f1e1d" stroke-width="1.3" stroke-linecap="round"/>
+      </g>`;
+}
+
+// Patrones de la maceta (lunares, rayas, estrellas, corazones), recortados con
+// la forma de la maceta. Se colorean con la franja (ver CSS .mascota-patron).
+function patronesMascota(sufijo) {
+  const lunares = [];
+  for (let fila = 0, y = 66; y <= 101; y += 8.5, fila++) {
+    for (let x = 30 + (fila % 2) * 5; x <= 92; x += 10) lunares.push(`<circle cx="${x}" cy="${y}" r="2.1"/>`);
+  }
+  const rayas = [];
+  for (let i = -44; i < 72; i += 9) rayas.push(`<path d="M${28 + i} 106 L${50 + i} 58"/>`);
+  const puntos = [[34, 68], [86, 67], [40, 96], [80, 97], [30, 83], [90, 84], [60, 100], [47, 65], [73, 65]];
+  const estrellas = puntos.map(([x, y]) => `<path d="M${x} ${y - 3} l0.9 2.1 l2.1 0.9 l-2.1 0.9 l-0.9 2.1 l-0.9 -2.1 l-2.1 -0.9 l2.1 -0.9 z"/>`);
+  const corazones = puntos.map(([x, y]) => `<path d="M${x} ${y + 2.4} C${x - 3.6} ${y} ${x - 3} ${y - 3} ${x - 1} ${y - 2.4} C${x - 0.4} ${y - 2.1} ${x} ${y - 1.6} ${x} ${y - 1.2} C${x} ${y - 1.6} ${x + 0.4} ${y - 2.1} ${x + 1} ${y - 2.4} C${x + 3} ${y - 3} ${x + 3.6} ${y} ${x} ${y + 2.4} Z"/>`);
+  return `<g class="mascota-patron" clip-path="url(#mascota-clip${sufijo})">
+      <g class="patron patron-lunares">${lunares.join('')}</g>
+      <g class="patron patron-rayas">${rayas.join('')}</g>
+      <g class="patron patron-estrellas">${estrellas.join('')}</g>
+      <g class="patron patron-corazones">${corazones.join('')}</g>
+    </g>`;
+}
+
 function mascotaSvg(sufijo = '') {
   return `
 <svg viewBox="0 0 120 112" aria-hidden="true">
@@ -31,6 +65,9 @@ function mascotaSvg(sufijo = '') {
       <stop class="tinte-borde-1" offset="0" stop-color="#f1f4f8"/>
       <stop class="tinte-borde-2" offset="1" stop-color="#cdd6e2"/>
     </linearGradient>
+    <clipPath id="mascota-clip${sufijo}">
+      <path d="M28 62 H92 L85 99 Q84 103 79 103 H41 Q36 103 35 99 Z"/>
+    </clipPath>
   </defs>
   <ellipse class="mascota-sombra" cx="60" cy="109.5" rx="28" ry="3.6"/>
   <g class="mascota-cuerpo">
@@ -78,6 +115,10 @@ function mascotaSvg(sufijo = '') {
         <circle cx="55" cy="-9.5" r="1.1" fill="#5a80b8"/>
         <circle cx="67" cy="-9.5" r="1.1" fill="#5a80b8"/>
       </g>
+      <g class="mascota-acc mascota-acc-halo">
+        <ellipse cx="61" cy="-12" rx="11" ry="3.2" fill="none" stroke="#f2c94c" stroke-width="2.6"/>
+        <ellipse cx="61" cy="-12" rx="11" ry="3.2" fill="none" stroke="#fff6c9" stroke-width="0.9"/>
+      </g>
     </g>
 
     <g class="mascota-moneda">
@@ -96,6 +137,7 @@ function mascotaSvg(sufijo = '') {
     </g>
 
     <path d="M28 62 H92 L85 99 Q84 103 79 103 H41 Q36 103 35 99 Z" fill="url(#mascota-maceta${sufijo})" stroke="#c3cedb"/>
+    ${patronesMascota(sufijo)}
     <path class="tinte-franja" d="M33.7 92 H86.3 L85.4 97 H34.6 Z" fill="#3b5e91" opacity="0.85"/>
     <path d="M34 67 Q36 79 38.5 89" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
     <g class="mascota-acc mascota-acc-bufanda">
@@ -114,10 +156,27 @@ function mascotaSvg(sufijo = '') {
       <path class="mascota-gorro-borde" d="M23 53 Q36 47 49 51" fill="none" stroke-width="5" stroke-linecap="round"/>
       <circle class="mascota-gorro-pompon" cx="12" cy="26" r="4.2"/>
     </g>
+    <g class="mascota-acc mascota-acc-copa" transform="rotate(-12 38 49)">
+      <rect x="29" y="29" width="18" height="19" rx="2" fill="#1f2937"/>
+      <rect x="29" y="41.5" width="18" height="3.6" fill="#d64545"/>
+      <ellipse cx="38" cy="48.5" rx="13" ry="3" fill="#111827"/>
+    </g>
+    <g class="mascota-acc mascota-acc-gorra" transform="rotate(-10 38 48)">
+      <path d="M26 49 Q27 34 39 34 Q51 34 51 49 Z" fill="#3b82f6"/>
+      <path d="M26 49 Q18 49 13 52.5 Q24 53.5 34 50 Z" fill="#1d4ed8"/>
+      <circle cx="39" cy="34.6" r="1.9" fill="#1d4ed8"/>
+    </g>
+    <g class="mascota-acc mascota-acc-audifonos">
+      <path d="M26 70 Q23 35 60 32 Q97 35 94 70" fill="none" stroke="#334155" stroke-width="3.6" stroke-linecap="round"/>
+      <rect x="20.5" y="64" width="9.5" height="15" rx="4.5" fill="#1f2937"/>
+      <rect x="90" y="64" width="9.5" height="15" rx="4.5" fill="#1f2937"/>
+      <rect x="22.2" y="66.8" width="2.8" height="9.4" rx="1.4" fill="#8cb0e0"/>
+      <rect x="95" y="66.8" width="2.8" height="9.4" rx="1.4" fill="#8cb0e0"/>
+    </g>
 
     <g class="mascota-ojos">
-      <g class="mascota-pupila"><circle cx="49" cy="74" r="4.2" fill="#1f1e1d"/><circle cx="50.4" cy="72.6" r="1.4" fill="#fff"/></g>
-      <g class="mascota-pupila"><circle cx="71" cy="74" r="4.2" fill="#1f1e1d"/><circle cx="72.4" cy="72.6" r="1.4" fill="#fff"/></g>
+      ${ojoMascota(49, -1)}
+      ${ojoMascota(71, 1)}
     </g>
     <g class="mascota-extra mascota-ojos-cerrados" fill="none" stroke="#1f1e1d" stroke-width="2.4" stroke-linecap="round">
       <path d="M44 75 q5 4 10 0"/>
@@ -160,6 +219,14 @@ function mascotaSvg(sufijo = '') {
       <path d="M88 54 L79 48 L80 60 Z" fill="#f472b6" stroke="#db2777" stroke-width="0.8" stroke-linejoin="round"/>
       <path d="M88 54 L97 48 L96 60 Z" fill="#f472b6" stroke="#db2777" stroke-width="0.8" stroke-linejoin="round"/>
       <circle cx="88" cy="54" r="2.8" fill="#db2777"/>
+    </g>
+    <g class="mascota-acc mascota-acc-corbatin">
+      <path d="M60 92.5 L50.5 87.5 L50.5 97.5 Z" fill="#d64545" stroke="#a52a2a" stroke-width="0.8" stroke-linejoin="round"/>
+      <path d="M60 92.5 L69.5 87.5 L69.5 97.5 Z" fill="#d64545" stroke="#a52a2a" stroke-width="0.8" stroke-linejoin="round"/>
+      <circle cx="60" cy="92.5" r="2.4" fill="#a52a2a"/>
+    </g>
+    <g class="mascota-acc mascota-acc-bigote">
+      <path d="M60 80.4 C57 77.4 52 77.9 50 80.4 C48.5 82.4 46 81.9 45.5 80.4 C46.5 84.4 52 84.9 55.5 82.4 C57.5 81.2 59 81.1 60 81.9 C61 81.1 62.5 81.2 64.5 82.4 C68 84.9 73.5 84.4 74.5 80.4 C74 81.9 71.5 82.4 70 80.4 C68 77.9 63 77.4 60 80.4 Z" fill="#4a3426"/>
     </g>
 
     <g class="mascota-extra mascota-ojos-x" fill="none" stroke="#1f1e1d" stroke-width="2.2" stroke-linecap="round">
@@ -1241,13 +1308,22 @@ const Mascota = {
       const porLetra = Math.max(12, Math.min(30, 1100 / letras.length));
       duracionEscritura = pausa + porLetra * letras.length;
       escrito.innerHTML = '<span class="mascota-pensando">✻</span>';
+      // Mientras "piensa" se lleva la mano a la barbilla; mientras escribe mueve la boca.
+      this.el.classList.remove('mascota--hablando');
+      this.el.classList.add('mascota--piensa');
       let i = 0;
       const escribir = () => {
         i++;
+        if (i === 1) {
+          this.el?.classList.remove('mascota--piensa');
+          this.el?.classList.add('mascota--hablando');
+        }
         escrito.textContent = letras.slice(0, i).join('');
         if (i < letras.length) {
           escrito.insertAdjacentHTML('beforeend', '<span class="mascota-cursor"></span>');
           this.timerEscritura = setTimeout(escribir, porLetra);
+        } else {
+          this.el?.classList.remove('mascota--hablando');
         }
       };
       this.timerEscritura = setTimeout(escribir, pausa);
@@ -1260,6 +1336,7 @@ const Mascota = {
   ocultarBurbuja() {
     clearTimeout(this.timerBurbuja);
     clearTimeout(this.timerEscritura);
+    this.el?.classList.remove('mascota--piensa', 'mascota--hablando');
     if (this.burbuja) this.burbuja.hidden = true;
   },
 
