@@ -307,12 +307,16 @@ const MenuMascota = {
     previa.classList.toggle('mascota--sediento', agua < VIDA_UMBRAL_SED);
     previa.classList.toggle('mascota--feliz', agua >= VIDA_UMBRAL_SED);
 
-    const porReclamar = misionesPorReclamar(mascota);
+    // La recompensa diaria se cuenta en su propia pestaña
+    const diaria = typeof calendarioPendiente === 'function' ? calendarioPendiente() : 0;
+    const porReclamar = misionesPorReclamar(mascota) - diaria;
     const pestanas = [
       ['misiones', `🎯 Misiones${porReclamar ? ` <span class="menu-badge">${porReclamar}</span>` : ''}`],
+      ['recompensas', `🎁 Recompensas${diaria ? ' <span class="menu-badge menu-badge-brilla">1</span>' : ''}`],
       ['habilidades', `✨ Habilidades${puntosDisponibles(mascota) > 0 ? ' <span class="menu-badge">!</span>' : ''}`],
       ['personalizar', '🎨 Personalizar'],
       ['mascotas', '🐾 Mascotas'],
+      ['perfil', '👤 Perfil'],
     ];
     q('.mascota-menu-pestanas').innerHTML = pestanas
       .map(([id, texto]) => `<button type="button" role="tab" class="menu-pestana${this.pestana === id ? ' activa' : ''}" aria-selected="${this.pestana === id}" data-accion="pestana" data-valor="${id}">${texto}</button>`)
@@ -368,6 +372,12 @@ const MenuMascota = {
       b.classList.toggle('activa', b.dataset.valor === this.pestana);
       b.setAttribute('aria-selected', b.dataset.valor === this.pestana);
     });
+    // En movil la pestaña activa se desliza a la vista
+    const barra = this.panel.querySelector('.mascota-menu-pestanas');
+    const activa = barra.querySelector('.menu-pestana.activa');
+    if (activa && barra.scrollWidth > barra.clientWidth) {
+      barra.scrollTo({ left: activa.offsetLeft - barra.clientWidth / 2 + activa.offsetWidth / 2, behavior: 'smooth' });
+    }
     if (conTransicion) {
       contenedor.scrollTop = 0;
       contenedor.classList.remove('panel-entra');
@@ -493,6 +503,7 @@ const MenuMascota = {
     const finDia = new Date(ahora);
     finDia.setHours(24, 0, 0, 0);
     return `
+      ${typeof htmlMisionesEspeciales === 'function' ? htmlMisionesEspeciales(mascota) : ''}
       <h3 class="menu-subtitulo">⏱️ De esta hora <span>· nuevas en ${duracionCorta(finHora - ahora)}</span></h3>
       <ul class="misiones misiones-hora">${horarias.map(fila).join('')}</ul>
       <h3 class="menu-subtitulo">📅 Diarias <span>· se renuevan en ${duracionCorta(finDia - ahora)}</span></h3>
@@ -549,9 +560,12 @@ const MenuMascota = {
         if (item.colores) muestra = `<span class="muestra" style="background:linear-gradient(135deg, ${item.colores[categoria === 'hojas' ? 1 : 0]}, ${item.colores[categoria === 'hojas' ? 2 : 1]})"></span>`;
         else if (item.color) muestra = `<span class="muestra" style="background:${item.color}"></span>`;
         else muestra = `<span class="muestra muestra-emoji">${item.icono}</span>`;
-        const etiqueta = equipado ? '✓ Puesto' : tiene ? 'Usar' : bloqueado ? `🔒 Nv ${item.nivel}` : `🪙 ${item.precio}`;
+        // Lo exclusivo solo sale en cofres: se muestra con su rareza (y brilla si ya lo tienes)
+        const exclusivo = item.exclusivo && !tiene;
+        const nombreRareza = item.exclusivo && typeof RAREZAS !== 'undefined' ? RAREZAS[item.exclusivo].nombre : '';
+        const etiqueta = equipado ? '✓ Puesto' : tiene ? 'Usar' : exclusivo ? `🎁 Cofre ${nombreRareza}` : bloqueado ? `🔒 Nv ${item.nivel}` : `🪙 ${item.precio}`;
         return `
-          <button type="button" class="opcion${equipado ? ' equipada' : ''}${bloqueado ? ' bloqueada' : ''}${!tiene && !bloqueado ? ' en-venta' : ''}" data-accion="equipar" data-cat="${categoria}" data-id="${item.id}" aria-pressed="${equipado}" style="animation-delay:${i * 25}ms">
+          <button type="button" class="opcion${equipado ? ' equipada' : ''}${bloqueado ? ' bloqueada' : ''}${!tiene && !bloqueado && !exclusivo ? ' en-venta' : ''}${item.exclusivo ? ` exclusiva rareza-${item.exclusivo}${exclusivo ? ' sin-tener' : ''}` : ''}" data-accion="equipar" data-cat="${categoria}" data-id="${item.id}" aria-pressed="${equipado}" style="animation-delay:${i * 25}ms">
             ${muestra}
             <span class="opcion-nombre">${item.nombre}</span>
             <span class="opcion-precio">${etiqueta}</span>

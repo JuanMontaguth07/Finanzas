@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mis-finanzas-v16';
+const CACHE_NAME = 'mis-finanzas-v18';
 
 // El "app shell" (HTML/JS/CSS/manifest) se sirve siempre de red primero,
 // para que las actualizaciones se vean de inmediato mientras haya internet.
@@ -34,6 +34,7 @@ const ASSETS = [
   './js/mascota.js',
   './js/mascota-vida.js',
   './js/mascota-menu.js',
+  './js/mascota-recompensas.js',
   './js/fondo.js',
   './js/comandos.js',
   './lib/xlsx.full.min.js',

@@ -85,6 +85,7 @@ function exportarRespaldoJson() {
   const state = Storage.getState();
   // Las mascotas (nivel, monedas, apariencia...) viajan en el mismo archivo
   if (typeof leerMascotas === 'function') state.mascotas = leerMascotas();
+  if (typeof leerPerfil === 'function') state.perfil = leerPerfil();
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -106,13 +107,16 @@ function importarRespaldoJson(file, modo, callback) {
         throw new Error('El archivo no tiene el formato de respaldo esperado.');
       }
       const mascotas = data.mascotas;
+      const perfil = data.perfil;
       delete data.mascotas;
+      delete data.perfil;
       if (modo === 'combinar') {
         Storage.setState(mergeState(Storage.getState(), data));
       } else {
         Storage.setState(data);
       }
       if (mascotas && Array.isArray(mascotas.mascotas)) importarMascotas(mascotas, modo);
+      if (perfil && typeof perfil === 'object') importarPerfil(perfil, modo);
       callback(true);
     } catch (err) {
       callback(false, err.message);
@@ -135,6 +139,20 @@ function importarMascotas(importadas, modo) {
     if (!ids.has(m.id) && actuales.mascotas.length < MASCOTAS_MAX) actuales.mascotas.push(m);
   });
   guardarMascotas(actuales);
+}
+
+// Perfil del respaldo: al reemplazar queda el del archivo; al combinar se suman
+// los logros y se queda la mejor racha.
+function importarPerfil(importado, modo) {
+  if (modo !== 'combinar' || typeof leerPerfil !== 'function') {
+    localStorage.setItem('financeAppPerfil', JSON.stringify(importado));
+    return;
+  }
+  const actual = leerPerfil();
+  actual.logros = { ...(importado.logros || {}), ...actual.logros };
+  actual.racha.mejor = Math.max(actual.racha.mejor, importado.racha?.mejor || 0);
+  if (!actual.nombre && importado.nombre) actual.nombre = importado.nombre;
+  guardarPerfil(actual);
 }
 
 // Combina un respaldo importado con el estado actual sin duplicar registros,

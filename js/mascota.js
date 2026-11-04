@@ -25,8 +25,10 @@ const MASCOTA_TIPS = [
 function ojoMascota(x, lado) {
   const p = (dx) => x + dx * lado;
   return `<g class="mascota-pupila">
-        <circle class="ojo-base" cx="${x}" cy="74" r="4.2" fill="#1f1e1d"/>
-        <circle class="ojo-base" cx="${x + 1.4}" cy="72.6" r="1.4" fill="#fff"/>
+        <circle class="ojo-base" cx="${x}" cy="74" r="4.8" fill="#1f1e1d"/>
+        <circle class="ojo-base" cx="${x + 1.6}" cy="72.3" r="1.7" fill="#fff"/>
+        <circle class="ojo-base" cx="${x - 1.5}" cy="75.9" r="0.8" fill="#fff" opacity="0.85"/>
+        <path class="ojo-estrella" d="M${x} 68.8 L${x + 1.6} 72.4 L${x + 5.2} 72.8 L${x + 2.5} 75.3 L${x + 3.3} 79 L${x} 77.1 L${x - 3.3} 79 L${x - 2.5} 75.3 L${x - 5.2} 72.8 L${x - 1.6} 72.4 Z" fill="#f2c94c" stroke="#b8862a" stroke-width="0.7" stroke-linejoin="round"/>
         <path class="ojo-corazon" d="M${x} 77.8 C${x - 5.6} 74 ${x - 4.6} 69.4 ${x - 1.6} 70.4 C${x - 0.6} 70.8 ${x} 71.6 ${x} 72.2 C${x} 71.6 ${x + 0.6} 70.8 ${x + 1.6} 70.4 C${x + 4.6} 69.4 ${x + 5.6} 74 ${x} 77.8 Z" fill="#e0475f"/>
         <path class="ojo-brillo" d="M${x - 1.6} 74.4 l0.6 -1.3 l0.6 1.3 l1.3 0.6 l-1.3 0.6 l-0.6 1.3 l-0.6 -1.3 l-1.3 -0.6 z" fill="#fff"/>
         <path class="ojo-pestanas" d="M${p(3.4)} 70.8 l${2.4 * lado} -1.8 M${p(1.8)} 69.6 l${1.3 * lado} -2.6 M${p(-0.2)} 69.4 l${0.3 * lado} -2.9" fill="none" stroke="#1f1e1d" stroke-width="1.3" stroke-linecap="round"/>
@@ -65,6 +67,10 @@ function mascotaSvg(sufijo = '') {
       <stop class="tinte-borde-1" offset="0" stop-color="#f1f4f8"/>
       <stop class="tinte-borde-2" offset="1" stop-color="#cdd6e2"/>
     </linearGradient>
+    <radialGradient id="mascota-rubor${sufijo}">
+      <stop offset="0" stop-color="#f4a3a8" stop-opacity="0.8"/>
+      <stop offset="1" stop-color="#f4a3a8" stop-opacity="0"/>
+    </radialGradient>
     <clipPath id="mascota-clip${sufijo}">
       <path d="M28 62 H92 L85 99 Q84 103 79 103 H41 Q36 103 35 99 Z"/>
     </clipPath>
@@ -76,10 +82,12 @@ function mascotaSvg(sufijo = '') {
       <g class="mascota-hoja mascota-hoja-izq">
         <path class="tinte-hoja-1" d="M58 44 C50 30 36 22 22 24 C26 38 42 46 58 44 Z" fill="#5fae7a"/>
         <path d="M56 43 Q40 34 25 25" fill="none" stroke="#3f8f5c" stroke-width="1.2" stroke-linecap="round"/>
+        <path class="hoja-brillo" d="M52 37 C46 31 37 26.5 28 26" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity="0.4"/>
       </g>
       <g class="mascota-hoja mascota-hoja-der">
         <path class="tinte-hoja-2" d="M62 38 C70 24 84 16 98 18 C94 32 78 40 62 38 Z" fill="#7cc795"/>
         <path d="M64 37 Q80 28 95 19" fill="none" stroke="#4f9e6b" stroke-width="1.2" stroke-linecap="round"/>
+        <path class="hoja-brillo" d="M68 30 C74 24 82 20.5 92 20" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity="0.4"/>
       </g>
       <g class="mascota-hoja mascota-hoja-top">
         <path class="tinte-hoja-3" d="M60 26 C52 18 54 6 61 2 C68 8 68 18 60 26 Z" fill="#4f9e6b"/>
@@ -126,6 +134,16 @@ function mascotaSvg(sufijo = '') {
       <text x="82" y="17.3" text-anchor="middle" font-size="9" font-weight="800" fill="#6b4c0e">$</text>
     </g>
 
+    <!-- Accesorios de cofre que van detras de la maceta -->
+    <g class="mascota-acc mascota-acc-capa">
+      <path class="capa-tela" d="M27 58 L16 106 Q60 114 104 106 L93 58 Z" fill="#7c3aed"/>
+      <path d="M27 58 L16 106 Q60 114 104 106 L93 58" fill="none" stroke="#f2c94c" stroke-width="1.6"/>
+    </g>
+    <g class="mascota-acc mascota-acc-alas">
+      <g class="ala ala-izq"><path d="M31 72 C15 57 3 63 5 74 C7 83 20 83 31 78 Z" fill="#ffffff" stroke="#bcd7f2" stroke-width="1.2"/><path d="M28 73 C20 68 13 68 9 72 M27 76 C21 74 15 75 11 78" fill="none" stroke="#bcd7f2" stroke-width="1"/></g>
+      <g class="ala ala-der"><path d="M89 72 C105 57 117 63 115 74 C113 83 100 83 89 78 Z" fill="#ffffff" stroke="#bcd7f2" stroke-width="1.2"/><path d="M92 73 C100 68 107 68 111 72 M93 76 C99 74 105 75 109 78" fill="none" stroke="#bcd7f2" stroke-width="1"/></g>
+    </g>
+
     <!-- Patitas: van antes de la maceta para que asomen por debajo -->
     <g class="mascota-pata mascota-pata-izq">
       <ellipse cx="46" cy="104.6" rx="7.6" ry="4.7" fill="#f8fafc" stroke="#b8c4d3" stroke-width="1.4"/>
@@ -145,8 +163,12 @@ function mascotaSvg(sufijo = '') {
       <path d="M36 62 V69 M44 62 V69 M52 62 V69 M60 62 V69 M68 62 V69 M76 62 V69 M84 62 V69" stroke="#fff" stroke-opacity="0.35" stroke-width="2"/>
       <path d="M77 66 L81 83 L75 84.5 L72 67 Z" fill="#c23b3b"/>
     </g>
+    <path d="M29 63 H91 L90.2 68 H29.8 Z" fill="#1f2937" opacity="0.08"/>
     <rect x="24" y="50" width="72" height="13" rx="5" fill="url(#mascota-borde${sufijo})" stroke="#b8c4d3"/>
+    <path d="M28 59.5 H92" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity="0.45"/>
     <ellipse cx="60" cy="51.5" rx="31" ry="3" fill="#6b5140"/>
+    <ellipse cx="60" cy="50.9" rx="28" ry="1.5" fill="#7d604b" opacity="0.6"/>
+    <g fill="#9a7b62"><ellipse cx="45" cy="51.4" rx="1.6" ry="0.7"/><ellipse cx="73" cy="51.8" rx="1.3" ry="0.6"/><ellipse cx="38" cy="52.3" rx="1" ry="0.5"/><ellipse cx="81" cy="51.2" rx="1.1" ry="0.5"/></g>
 
     <!-- Gorro: de dormir en modo noche, navideño en diciembre -->
     <g class="mascota-gorro">
@@ -173,6 +195,18 @@ function mascotaSvg(sufijo = '') {
       <rect x="22.2" y="66.8" width="2.8" height="9.4" rx="1.4" fill="#8cb0e0"/>
       <rect x="95" y="66.8" width="2.8" height="9.4" rx="1.4" fill="#8cb0e0"/>
     </g>
+    <g class="mascota-acc mascota-acc-antenas" fill="none" stroke="#1f2937" stroke-width="1.6" stroke-linecap="round">
+      <path class="antena" d="M47 50 Q42 37 35 32"/><path class="antena" d="M73 50 Q78 37 85 32"/>
+      <circle cx="35" cy="31" r="3" fill="#f2c94c" stroke="#b8862a"/><circle cx="85" cy="31" r="3" fill="#f2c94c" stroke="#b8862a"/>
+    </g>
+    <g class="mascota-acc mascota-acc-corona-flores">
+      <path d="M27 52 Q60 44 93 52" fill="none" stroke="#4f9e6b" stroke-width="2"/>
+      ${[[29, 52, "#f4a3b8"], [39, 49.5, "#fff3b0"], [49, 48, "#c9bcef"], [60, 47.4, "#f4a3b8"], [71, 48, "#fff3b0"], [81, 49.5, "#c9bcef"], [91, 52, "#f4a3b8"]].map(([x, y, c]) => `<circle cx="${x}" cy="${y}" r="3.2" fill="${c}" stroke="#fff" stroke-width="0.8"/><circle cx="${x}" cy="${y}" r="1.1" fill="#e8b04a"/>`).join("")}
+    </g>
+    <g class="mascota-acc mascota-acc-flor">
+      ${[0, 72, 144, 216, 288].map((a) => `<ellipse cx="${(91 + 5 * Math.cos((a * Math.PI) / 180)).toFixed(1)}" cy="${(52 + 5 * Math.sin((a * Math.PI) / 180)).toFixed(1)}" rx="4.2" ry="3.2" transform="rotate(${a} ${(91 + 5 * Math.cos((a * Math.PI) / 180)).toFixed(1)} ${(52 + 5 * Math.sin((a * Math.PI) / 180)).toFixed(1)})" fill="#f26d8f"/>`).join("")}
+      <circle cx="91" cy="52" r="2.6" fill="#ffe066"/>
+    </g>
 
     <g class="mascota-ojos">
       ${ojoMascota(49, -1)}
@@ -183,8 +217,14 @@ function mascotaSvg(sufijo = '') {
       <path d="M66 75 q5 4 10 0"/>
     </g>
 
-    <ellipse cx="42" cy="82" rx="5" ry="3" fill="#f4a3a8" opacity="0.5"/>
-    <ellipse cx="78" cy="82" rx="5" ry="3" fill="#f4a3a8" opacity="0.5"/>
+    <ellipse cx="41" cy="82" rx="7" ry="4.2" fill="url(#mascota-rubor${sufijo})"/>
+    <ellipse cx="79" cy="82" rx="7" ry="4.2" fill="url(#mascota-rubor${sufijo})"/>
+
+    <!-- Cejas: solo se ven en algunos animos (preocupada, celebrando...) -->
+    <g class="mascota-cejas" fill="none" stroke="#1f1e1d" stroke-width="1.8" stroke-linecap="round">
+      <path class="ceja-triste" d="M44 67.6 L52.5 65.6 M67.5 65.6 L76 67.6"/>
+      <path class="ceja-alegre" d="M44.5 66.4 Q48.5 63.4 52.5 66 M67.5 66 Q71.5 63.4 75.5 66.4"/>
+    </g>
 
     <g fill="none" stroke="#1f1e1d" stroke-width="2.4" stroke-linecap="round">
       <path class="mascota-boca mascota-boca-neutral" d="M56 85 h8"/>

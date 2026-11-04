@@ -52,6 +52,9 @@ const TIENDA = {
     { id: 'oceano', nombre: 'Océano', precio: 35, colores: ['#d4f1fb', '#6fb3dc', '#c4ebf8', '#5fa3cc'] },
     { id: 'dorada', nombre: 'Dorada', precio: 90, nivel: 5, colores: ['#fff3c4', '#e0b54a', '#fbe7a1', '#d4a53a'] },
     { id: 'galaxia', nombre: 'Galaxia', precio: 150, nivel: 7, colores: ['#d9cffb', '#7b68c9', '#cbbef7', '#6d5bb8'] },
+    { id: 'arcoiris', nombre: 'Arcoíris', precio: null, exclusivo: 'raro', colores: ['#ffd6e8', '#9fd3ff', '#ffe8f1', '#a9d4f7'] },
+    { id: 'oro-rosa', nombre: 'Oro rosa', precio: null, exclusivo: 'epico', colores: ['#ffe4e1', '#e39b8f', '#ffd9d3', '#d8897d'] },
+    { id: 'aurora', nombre: 'Aurora', precio: null, exclusivo: 'legendario', colores: ['#c7f9e5', '#9b7cf2', '#b6f3dc', '#8b6be6'] },
   ],
   patron: [
     { id: 'ninguno', nombre: 'Lisa', precio: 0, icono: '▫️' },
@@ -80,12 +83,15 @@ const TIENDA = {
     { id: 'fuego', nombre: 'Fuego', precio: 60, nivel: 5, colores: ['#f97316', '#fbbf24', '#ea580c', '#9a3412'] },
     { id: 'dorado', nombre: 'Dorado', precio: 120, nivel: 6, colores: ['#e5b93f', '#f5d77a', '#c99a1e', '#8a6a12'] },
     { id: 'galaxia', nombre: 'Galaxia', precio: 150, nivel: 8, colores: ['#6d5bd0', '#a78bfa', '#4c3db5', '#312e81'] },
+    { id: 'cristal', nombre: 'Cristal', precio: null, exclusivo: 'raro', colores: ['#7fd8ea', '#c9f3fb', '#4fbcd6', '#0e7490'] },
+    { id: 'aurora', nombre: 'Aurora', precio: null, exclusivo: 'legendario', colores: ['#34d399', '#a78bfa', '#22d3ee', '#4c1d95'] },
   ],
   ojos: [
     { id: 'normal', nombre: 'Normales', precio: 0, icono: '👀' },
     { id: 'pestanas', nombre: 'Pestañas', precio: 15, icono: '👁️' },
     { id: 'brillos', nombre: 'Brillitos', precio: 25, icono: '✨' },
     { id: 'corazon', nombre: 'Enamorada', precio: 40, icono: '😍' },
+    { id: 'estrella', nombre: 'Estelares', precio: null, exclusivo: 'epico', icono: '🤩' },
   ],
   accesorio: [
     { id: 'ninguno', nombre: 'Ninguno', precio: 0, icono: '·' },
@@ -100,6 +106,11 @@ const TIENDA = {
     { id: 'copa', nombre: 'Sombrero de copa', precio: 50, icono: '🎩' },
     { id: 'halo', nombre: 'Halo', precio: 100, nivel: 6, icono: '😇' },
     { id: 'corona', nombre: 'Corona', precio: 120, nivel: 5, icono: '👑' },
+    { id: 'antenas', nombre: 'Antenitas', precio: null, exclusivo: 'comun', icono: '🐝' },
+    { id: 'flor', nombre: 'Flor tropical', precio: null, exclusivo: 'comun', icono: '🌺' },
+    { id: 'capa', nombre: 'Capa heroica', precio: null, exclusivo: 'raro', icono: '🦸' },
+    { id: 'corona-flores', nombre: 'Corona de flores', precio: null, exclusivo: 'epico', icono: '💐' },
+    { id: 'alas', nombre: 'Alas de hada', precio: null, exclusivo: 'epico', icono: '🧚' },
   ],
   estela: [
     { id: 'ninguna', nombre: 'Ninguna', precio: 0, icono: '·', particulas: [] },
@@ -108,8 +119,15 @@ const TIENDA = {
     { id: 'burbujas', nombre: 'Burbujas', precio: 30, icono: '🫧', particulas: ['○', '◦', '°'] },
     { id: 'corazones', nombre: 'Corazones', precio: 40, icono: '💗', particulas: ['💗', '💖', '💕'] },
     { id: 'monedas', nombre: 'Monedas', precio: 60, nivel: 4, icono: '🪙', particulas: ['🪙', '$', '💰'] },
+    { id: 'notas', nombre: 'Notas musicales', precio: null, exclusivo: 'comun', icono: '🎵', particulas: ['🎵', '🎶', '♪'] },
+    { id: 'fuego', nombre: 'Fuego', precio: null, exclusivo: 'raro', icono: '🔥', particulas: ['🔥', '✨'] },
+    { id: 'nieve', nombre: 'Copos de nieve', precio: null, exclusivo: 'raro', icono: '❄️', particulas: ['❄️', '❅', '❆'] },
+    { id: 'arcoiris', nombre: 'Arcoíris', precio: null, exclusivo: 'epico', icono: '🌈', particulas: ['🌈', '💜', '💙', '💚', '💛'] },
+    { id: 'galaxia', nombre: 'Galaxia', precio: null, exclusivo: 'legendario', icono: '🪐', particulas: ['🌟', '🪐', '✦', '★'] },
   ],
 };
+
+const RAREZAS_TEXTO = { comun: 'comunes', raro: 'raros', epico: 'épicos', legendario: 'legendarios' };
 
 // Orden y titulos de las categorias en el menu
 const CATEGORIAS_TIENDA = [
@@ -649,6 +667,7 @@ function equiparItem(categoria, id) {
   if (!item) return null;
   let compro = false;
   if (!poseeItem(mascota, categoria, id)) {
+    if (item.exclusivo) return `🎁 Solo sale en cofres ${RAREZAS_TEXTO[item.exclusivo]}. ¡Completa misiones para ganarlos!`;
     if (item.nivel && nivelDeXp(mascota.xp) < item.nivel) return `🔒 Se desbloquea en el nivel ${item.nivel}.`;
     if (mascota.monedas < item.precio) return `Te faltan 🪙 ${item.precio - mascota.monedas} para comprarlo.`;
     mascota.monedas -= item.precio;
